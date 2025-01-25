@@ -1,4 +1,5 @@
-import { computed, effect, inject, input } from '@angular/core';
+import { computed, effect, inject } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
 import {
   getState,
   patchState,
@@ -8,11 +9,10 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { map, of, pipe, switchMap, tap } from 'rxjs';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { pipe, switchMap } from 'rxjs';
 import { SnappinMap } from '../../shared/models';
 import { MapsService } from './services/maps.service';
-import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { tapResponse } from '@ngrx/operators';
 
 type MapsState = {
   maps: { [mapId: string]: SnappinMap };
@@ -37,7 +37,7 @@ export const MapsStore = signalStore(
     onInit(store) {
       effect(() => {
         const state = getState(store);
-        console.log(state);
+        console.log('mapsState', state);
       });
     },
   }),
@@ -49,9 +49,12 @@ export const MapsStore = signalStore(
             tapResponse({
               next: (newMap) => {
                 patchState(store, (state) => {
+                  let currentMaps = { ...state.maps };
+                  currentMaps[newMap.mapId] = newMap;
+
                   return {
                     ...state,
-                    maps: { ...state.maps, newMap },
+                    maps: { ...currentMaps },
                   };
                 });
               },

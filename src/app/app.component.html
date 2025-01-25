@@ -5,17 +5,22 @@
 
 <div>
   <p>{{ map.mapId }}</p>
-  <button (click)="mapsStore.deleteMap({ mapId: map.mapId })">Delete</button>
-</div>
-<div>
-  <p>{{ map.title }}</p>
-  <input type="text" #mapTitle />
+  <button (click)="mapsStore.deleteMap({ mapId: map.mapId })">
+    Delete map
+  </button>
   <button
     (click)="
       mapsStore.updateMap({ mapId: map.mapId, data: { title: mapTitle.value } })
     "
   >
-    Update
+    Update map
+  </button>
+</div>
+<div>
+  <p>{{ map.title }}</p>
+  <input type="text" #mapTitle />
+  <button (click)="markersStore.loadMarkers({ mapId: map.mapId })">
+    Load Markers
   </button>
 </div>
 }
@@ -26,3 +31,25 @@
 <button (click)="mapsStore.createMap({ title: newMapTitle.value })">
   New Map
 </button>
+
+<hr />
+<h1>Create marker</h1>
+<label for="lat"
+  >Lat
+  <input #lat type="number" name="lat" />
+</label>
+<label for="long"
+  >Long
+  <input #lng type="number" name="lng" />
+</label>
+title<input #title type="text" /> journal<input #journal type="text" />
+mapId<input #mapId type="text" />
+
+<button (click)="createMarkers()">New Markers</button>
+<button (click)="deleteMarkers()">Delete Markers</button>
+<button (click)="updateMarker()">Update Marker</button>
+
+<hr />
+<h1>Images</h1>
+
+<button (click)="getImagesForMarker()">Get Images</button>

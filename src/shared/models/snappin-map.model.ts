@@ -1,3 +1,5 @@
+import { Marker } from './marker';
+
 export type SnappinMap = {
   mapId: string;
   owner?: string;
@@ -7,4 +9,5 @@ export type SnappinMap = {
   markersCount: number;
   title: string;
   claims: 'EDIT' | 'OWN' | 'VIEW';
+  markers: Marker[];
 };
