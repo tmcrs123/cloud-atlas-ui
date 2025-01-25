@@ -1,16 +1,14 @@
 <router-outlet />
-<h1>You have {{ mapsStore.mapsCount() }} maps</h1>
+<h1>You have {{ appStore.mapsCount() }} maps</h1>
 
-@for (map of mapsStore.mapsIterable(); track $index) {
+@for (map of appStore.mapsIterable(); track $index) {
 
 <div>
   <p>{{ map.mapId }}</p>
-  <button (click)="mapsStore.deleteMap({ mapId: map.mapId })">
-    Delete map
-  </button>
+  <button (click)="appStore.deleteMap({ mapId: map.mapId })">Delete map</button>
   <button
     (click)="
-      mapsStore.updateMap({ mapId: map.mapId, data: { title: mapTitle.value } })
+      appStore.updateMap({ mapId: map.mapId, data: { title: mapTitle.value } })
     "
   >
     Update map
@@ -19,7 +17,7 @@
 <div>
   <p>{{ map.title }}</p>
   <input type="text" #mapTitle />
-  <button (click)="markersStore.loadMarkers({ mapId: map.mapId })">
+  <button (click)="appStore.loadMarkers({ mapId: map.mapId })">
     Load Markers
   </button>
 </div>
@@ -28,7 +26,7 @@
 <hr />
 <h1>Create Map</h1>
 <input type="text" #newMapTitle />
-<button (click)="mapsStore.createMap({ title: newMapTitle.value })">
+<button (click)="appStore.createMap({ title: newMapTitle.value })">
   New Map
 </button>
 

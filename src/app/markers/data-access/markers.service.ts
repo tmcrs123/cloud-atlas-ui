@@ -15,34 +15,14 @@ export class MarkersService {
   public createMarkers(
     mapId: string,
     data: Partial<Marker>[]
-  ): Observable<{ [markerId: string]: Marker }> {
-    return this.http
-      .post<Marker[]>(buildApiEndpoint(`markers/${mapId}`), {
-        markers: data,
-      })
-      .pipe(
-        map((apiResponse) => {
-          let newMarkers: { [markerId: string]: Marker } = {};
-          apiResponse?.forEach((newMarker) => {
-            newMarkers[newMarker.markerId] = newMarker;
-          });
-          return newMarkers;
-        })
-      );
+  ): Observable<Marker[]> {
+    return this.http.post<Marker[]>(buildApiEndpoint(`markers/${mapId}`), {
+      markers: data,
+    });
   }
 
-  public getMarkersForMap(
-    mapId: string
-  ): Observable<{ [markerId: string]: Marker }> {
-    return this.http.get<Marker[]>(buildApiEndpoint(`markers/${mapId}`)).pipe(
-      map((apiResponse) => {
-        let loadedMarkers: { [markerId: string]: Marker } = {};
-        apiResponse?.forEach((marker) => {
-          loadedMarkers[marker.markerId] = marker;
-        });
-        return loadedMarkers;
-      })
-    );
+  public getMarkersForMap(mapId: string): Observable<Marker[]> {
+    return this.http.get<Marker[]>(buildApiEndpoint(`markers/${mapId}`));
   }
   public deleteMarkers(mapId: string, markerIds: string[]): Observable<void> {
     return this.http.delete<void>(buildApiEndpoint(`markers/${mapId}`), {

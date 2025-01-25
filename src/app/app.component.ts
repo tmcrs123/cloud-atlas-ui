@@ -2,14 +2,12 @@ import { JsonPipe } from '@angular/common';
 import { Component, inject, Injector } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
-import { MapsStore } from '../maps/data-access/maps.store';
-import { MarkersStore } from './markers/data-access/markers.store';
-import { ImagesStore } from './images/data-access/images-store';
+import { AppStore } from '../maps/data-access/maps.store';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, JsonPipe, ReactiveFormsModule],
-  providers: [MapsStore],
+  providers: [AppStore],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -17,21 +15,19 @@ export class AppComponent {
   title = 'snappin-ui';
 
   injector = inject(Injector);
-  mapsStore = inject(MapsStore);
-  markersStore = inject(MarkersStore);
-  imagesStore = inject(ImagesStore);
+  appStore = inject(AppStore);
 
   constructor() {
-    this.mapsStore.loadMaps(void '', { injector: this.injector });
+    this.appStore.loadMaps(void '', { injector: this.injector });
   }
 
   ngOnInit() {
-    console.log(this.mapsStore.mapsIterable().length);
+    console.log(this.appStore.mapsIterable().length);
   }
 
   createMarkers() {
-    this.markersStore.createMarkers({
-      mapId: this.mapsStore.mapsIterable()[0].mapId,
+    this.appStore.createMarkers({
+      mapId: this.appStore.mapsIterable()[0].mapId,
       data: Array(1).fill({
         coordinates: { lat: Math.random(), lng: Math.random() },
       }),
@@ -39,24 +35,27 @@ export class AppComponent {
   }
 
   deleteMarkers() {
-    const ids = this.markersStore
-      .getMarkersForMap(this.mapsStore.mapsIterable()[0].mapId)
+    const ids = this.appStore
+      .getMarkersForMap(this.appStore.mapsIterable()[0].mapId)
       .map((m) => m.markerId);
 
-    this.markersStore.deleteMarkers({
-      mapId: this.mapsStore.mapsIterable()[0].mapId,
-      markerIds: [ids[0], ids[1]],
+    this.appStore.deleteMarkers({
+      mapId: this.appStore.mapsIterable()[0].mapId,
+      markerIds: [
+        this.appStore.mapsIterable()[0].markers[0].markerId,
+        this.appStore.mapsIterable()[0].markers[1].markerId,
+      ],
     });
   }
 
   updateMarker() {
-    const mapId = this.mapsStore.mapsIterable()[0].mapId;
+    const mapId = this.appStore.mapsIterable()[0].mapId;
 
-    const markerId = this.markersStore
-      .getMarkersForMap(this.mapsStore.mapsIterable()[0].mapId)
+    const markerId = this.appStore
+      .getMarkersForMap(this.appStore.mapsIterable()[0].mapId)
       .map((m) => m.markerId)[0];
 
-    this.markersStore.updateMarker({
+    this.appStore.updateMarker({
       mapId,
       markerId,
       data: {
@@ -72,6 +71,6 @@ export class AppComponent {
 
     const markerId = '1d0532bd-6c42-4437-9083-7f66b8c76b51';
 
-    this.imagesStore.getImagesForMarker({ mapId, markerId });
+    this.appStore.getImagesForMarker({ mapId, markerId });
   }
 }

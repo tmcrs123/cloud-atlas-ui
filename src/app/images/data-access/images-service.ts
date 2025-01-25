@@ -20,4 +20,14 @@ export class ImagesService {
       buildApiEndpoint(`images/${mapId}/${markerId}/markers`)
     );
   }
+
+  public updateImageForMarker(
+    mapId: string,
+    data: Partial<Image>
+  ): Observable<Image> {
+    return this.http.post<Image>(
+      buildApiEndpoint(`images/${mapId}/${data.imageId}`),
+      data
+    );
+  }
 }

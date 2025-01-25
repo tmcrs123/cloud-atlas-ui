@@ -7,26 +7,29 @@ import {
   withComputed,
   withHooks,
   withMethods,
+  withProps,
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
-import { SnappinMap } from '../../shared/models';
+import { Marker, SnappinMap, Image } from '../../shared/models';
 import { MapsService } from './services/maps.service';
+import { MarkersService } from '../../app/markers/data-access/markers.service';
+import { ImagesService } from '../../app/images/data-access/images-service';
 
-type MapsState = {
+type AppState = {
   maps: { [mapId: string]: SnappinMap };
   isLoading: boolean;
   loadingError: Error | null;
 };
 
-const initialState: MapsState = {
+const initialState: AppState = {
   maps: {},
   isLoading: false,
   loadingError: null,
 };
 
-export const MapsStore = signalStore(
+export const AppStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed((state) => ({
@@ -41,7 +44,13 @@ export const MapsStore = signalStore(
       });
     },
   }),
-  withMethods((store, mapsService = inject(MapsService)) => ({
+  withProps(() => ({
+    mapsService: inject(MapsService),
+    markersService: inject(MarkersService),
+    imagesService: inject(ImagesService),
+  })),
+  withMethods(({ mapsService, markersService, imagesService, ...store }) => ({
+    //MAPS
     createMap: rxMethod<Partial<SnappinMap>>(
       pipe(
         switchMap((data) => {
@@ -49,7 +58,8 @@ export const MapsStore = signalStore(
             tapResponse({
               next: (newMap) => {
                 patchState(store, (state) => {
-                  let currentMaps = { ...state.maps };
+                  let currentMaps = structuredClone(state.maps);
+                  newMap.markers = [];
                   currentMaps[newMap.mapId] = newMap;
 
                   return {
@@ -69,12 +79,16 @@ export const MapsStore = signalStore(
         switchMap(() => {
           return mapsService.loadMaps().pipe(
             tapResponse({
-              next: (maps) => {
-                patchState(store, (state) => ({
-                  ...state,
-                  maps: { ...maps },
-                  isLoading: false,
-                }));
+              next: (loadedMaps) => {
+                patchState(store, (state) => {
+                  let updatedMaps: { [mapId: string]: SnappinMap } = {};
+
+                  loadedMaps?.forEach((loadedMap) => {
+                    loadedMap.markers = [];
+                    updatedMaps[loadedMap.mapId] = loadedMap;
+                  });
+                  return { ...state, maps: updatedMaps };
+                });
               },
               error: console.error,
             })
@@ -89,11 +103,11 @@ export const MapsStore = signalStore(
             tapResponse({
               next: () => {
                 patchState(store, (state) => {
-                  let currentMaps = { ...state.maps };
-                  delete currentMaps[val.mapId];
+                  let updatedState = structuredClone(state.maps);
+                  delete updatedState[val.mapId];
                   return {
                     ...state,
-                    maps: { ...currentMaps },
+                    maps: { ...updatedState },
                   };
                 });
               },
@@ -110,7 +124,7 @@ export const MapsStore = signalStore(
             tapResponse({
               next: (updatedMap) => {
                 patchState(store, (state) => {
-                  let currentMaps = { ...state.maps };
+                  let currentMaps = structuredClone(state.maps);
                   currentMaps[updatedMap.mapId] = updatedMap;
 
                   return {
@@ -129,5 +143,224 @@ export const MapsStore = signalStore(
       //even if its null we still want to return
       return store.maps()[mapId];
     },
+    //MARKERS
+    createMarkers: rxMethod<{ mapId: string; data: Partial<Marker>[] }>(
+      pipe(
+        switchMap((params) => {
+          return markersService.createMarkers(params.mapId, params.data).pipe(
+            tapResponse({
+              next: (newMarkers) => {
+                patchState(store, (state) => {
+                  const updatedState = structuredClone(state.maps);
+                  updatedState[params.mapId].markers = [
+                    ...updatedState[params.mapId].markers,
+                    ...newMarkers,
+                  ];
+                  return { ...state, maps: updatedState };
+                });
+              },
+              error: console.error,
+            })
+          );
+        })
+      )
+    ),
+    loadMarkers: rxMethod<{ mapId: string }>(
+      pipe(
+        switchMap((params) => {
+          return markersService.getMarkersForMap(params.mapId).pipe(
+            tapResponse({
+              next: (loadedMarkers) => {
+                patchState(store, (state) => {
+                  const updatedState = structuredClone(state.maps);
+
+                  //a map may have no markers so I need to check that first
+                  if (loadedMarkers) {
+                    loadedMarkers.map((marker) => {
+                      marker.images = [];
+                      return marker;
+                    });
+                  } else loadedMarkers = [];
+
+                  updatedState[params.mapId].markers = [
+                    ...updatedState[params.mapId].markers,
+                    ...loadedMarkers.map((marker) => {
+                      marker.images = [];
+                      return marker;
+                    }),
+                  ];
+                  return { ...state, maps: updatedState };
+                });
+              },
+              error: console.error,
+            })
+          );
+        })
+      )
+    ),
+    updateMarker: rxMethod<{
+      mapId: string;
+      markerId: string;
+      data: Partial<Marker>;
+    }>(
+      pipe(
+        switchMap((params) => {
+          return markersService
+            .updateMarker(params.mapId, params.markerId, params.data)
+            .pipe(
+              tapResponse({
+                next: (updatedMarker) => {
+                  patchState(store, (state) => {
+                    const updatedState = structuredClone(state.maps);
+                    const oldMarkerIndex = findMarkerIndex(
+                      state,
+                      params.mapId,
+                      params.markerId
+                    );
+
+                    updatedState[params.mapId].markers[oldMarkerIndex] =
+                      updatedMarker;
+                    return { ...state, maps: updatedState };
+                  });
+                },
+                error: console.error,
+              })
+            );
+        })
+      )
+    ),
+    deleteMarkers: rxMethod<{ mapId: string; markerIds: string[] }>(
+      pipe(
+        switchMap((params) => {
+          return markersService
+            .deleteMarkers(params.mapId, params.markerIds)
+            .pipe(
+              tapResponse({
+                next: () => {
+                  patchState(store, (state) => {
+                    const updatedState = structuredClone(state.maps);
+
+                    const oldMarkers = updatedState[params.mapId].markers;
+                    const filteredMarkers = oldMarkers.filter(
+                      (marker) => !params.markerIds.includes(marker.markerId)
+                    );
+
+                    updatedState[params.mapId].markers = filteredMarkers;
+
+                    return { ...state, maps: updatedState };
+                  });
+                },
+                error: console.error,
+              })
+            );
+        })
+      )
+    ),
+    getMarkersForMap(mapId: string): Marker[] {
+      return store.maps()[mapId].markers;
+    },
+    // IMAGES
+    getImagesForMarker: rxMethod<{ mapId: string; markerId: string }>(
+      pipe(
+        switchMap((params) => {
+          return imagesService
+            .getImagesForMarker(params.mapId, params.markerId)
+            .pipe(
+              tapResponse({
+                next: (images) => {
+                  patchState(store, (state) => {
+                    const updatedState = structuredClone(state.maps);
+
+                    const markerIndex = findMarkerIndex(
+                      state,
+                      params.mapId,
+                      params.markerId
+                    );
+
+                    updatedState[params.mapId].markers[markerIndex].images =
+                      images;
+
+                    return {
+                      ...state,
+                      maps: updatedState,
+                    };
+                  });
+                },
+                error: console.error,
+              })
+            );
+        })
+      )
+    ),
+    updateImageForMarker: rxMethod<{
+      mapId: string;
+      markerId: string;
+      imageId: string;
+      data: Partial<Image>;
+    }>(
+      pipe(
+        switchMap((params) => {
+          return imagesService
+            .updateImageForMarker(params.mapId, params.data)
+            .pipe(
+              tapResponse({
+                next: (updatedImage) => {
+                  patchState(store, (state) => {
+                    const updatedState = structuredClone(state.maps);
+
+                    const oldMarkerIndex = findMarkerIndex(
+                      state,
+                      params.mapId,
+                      params.markerId
+                    );
+                    const oldImageIndex = findImageIndex(
+                      state,
+                      params.mapId,
+                      params.markerId,
+                      params.imageId
+                    );
+
+                    updatedState[params.mapId].markers[oldMarkerIndex].images[
+                      oldImageIndex
+                    ] = updatedImage;
+
+                    return {
+                      ...state,
+                      maps: updatedState,
+                    };
+                  });
+                },
+                error: console.error,
+              })
+            );
+        })
+      )
+    ),
   }))
 );
+
+const findMarkerIndex = (state: AppState, mapId: string, markerId: string) => {
+  const markerIndex = state.maps[mapId].markers.findIndex(
+    (marker) => marker.markerId === markerId
+  );
+
+  if (markerIndex === -1) throw new Error('Marker not found');
+
+  return markerIndex;
+};
+
+const findImageIndex = (
+  state: AppState,
+  mapId: string,
+  markerId: string,
+  imageId: string
+) => {
+  const markerIndex = findMarkerIndex(state, mapId, markerId);
+  const imageIndex = state.maps[mapId].markers[markerIndex].images.findIndex(
+    (img) => img.imageId === imageId
+  );
+
+  if (imageIndex === -1) throw new Error('Marker not found');
+
+  return imageIndex;
+};

@@ -16,17 +16,8 @@ export class MapsService {
     return this.http.post<SnappinMap>(buildApiEndpoint('maps'), data);
   }
 
-  loadMaps(): Observable<{ [mapId: string]: SnappinMap }> {
-    return this.http.get<SnappinMap[]>(buildApiEndpoint('maps')).pipe(
-      map((apiResponse) => {
-        let loadedMaps: { [mapId: string]: SnappinMap } = {};
-
-        apiResponse?.forEach((loadedMap) => {
-          loadedMaps[loadedMap.mapId] = loadedMap;
-        });
-        return loadedMaps;
-      })
-    );
+  loadMaps(): Observable<SnappinMap[]> {
+    return this.http.get<SnappinMap[]>(buildApiEndpoint('maps'));
   }
 
   deleteMap(mapId: string): Observable<void> {
