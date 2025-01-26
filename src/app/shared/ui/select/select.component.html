@@ -1,0 +1,27 @@
+<div class="max-w-sm mx-auto">
+  <!-- Label for Select -->
+  <label
+    for="travel-destination"
+    class="block text-sm font-medium text-gray-700 mb-2"
+  >
+    Select a Travel Destination:
+  </label>
+
+  <!-- Select Dropdown -->
+  <select
+    id="travel-destination"
+    [(ngModel)]="selectedOption"
+    class="block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
+  >
+    <option value="" disabled>Select an option</option>
+    <option *ngFor="let destination of destinations" [value]="destination">
+      {{ destination }}
+    </option>
+  </select>
+
+  <!-- Display Selected Value -->
+  <p class="mt-4 text-gray-700" *ngIf="selectedOption">
+    You selected:
+    <span class="font-semibold text-blue-500">{{ selectedOption }}</span>
+  </p>
+</div>

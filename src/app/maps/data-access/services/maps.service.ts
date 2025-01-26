@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { SnappinMap } from '../../../shared/models';
 import { buildApiEndpoint } from '../../../shared/utils';
 

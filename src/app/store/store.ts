@@ -12,10 +12,10 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
-import { Marker, SnappinMap, Image } from '../../shared/models';
-import { MapsService } from './services/maps.service';
-import { MarkersService } from '../../app/markers/data-access/markers.service';
-import { ImagesService } from '../../app/images/data-access/images-service';
+import { Marker, SnappinMap, Image } from '../shared/models';
+import { MarkersService } from '../markers/data-access/markers.service';
+import { ImagesService } from '../images/data-access/images-service';
+import { MapsService } from '../maps/data-access/services/maps.service';
 
 type AppState = {
   maps: { [mapId: string]: SnappinMap };
@@ -83,7 +83,7 @@ export const AppStore = signalStore(
                 patchState(store, (state) => {
                   let updatedMaps: { [mapId: string]: SnappinMap } = {};
 
-                  loadedMaps?.forEach((loadedMap) => {
+                  loadedMaps.forEach((loadedMap) => {
                     loadedMap.markers = [];
                     updatedMaps[loadedMap.mapId] = loadedMap;
                   });
@@ -151,6 +151,12 @@ export const AppStore = signalStore(
             tapResponse({
               next: (newMarkers) => {
                 patchState(store, (state) => {
+                  //populate images
+                  newMarkers = newMarkers.map((marker) => {
+                    marker.images = [];
+                    return marker;
+                  });
+
                   const updatedState = structuredClone(state.maps);
                   updatedState[params.mapId].markers = [
                     ...updatedState[params.mapId].markers,

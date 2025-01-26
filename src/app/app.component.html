@@ -1,53 +1,74 @@
-<router-outlet />
-<h1>You have {{ appStore.mapsCount() }} maps</h1>
+<section class="grid-layout">
+  <!-- Navbar -->
+  <!-- Navbar -->
+  <nav class="bg-white text-gray-800 p-4">
+    <div class="container mx-auto flex items-center justify-between">
+      <!-- Logo -->
+      <div class="text-xl font-semibold">Cloud/Atlas</div>
 
-@for (map of appStore.mapsIterable(); track $index) {
+      <!-- Menu items for large screens -->
+      <div class="hidden md:flex space-x-6">
+        <a
+          routerLink="maps"
+          href="#"
+          class="hover:bg-gray-200 px-3 py-2 rounded"
+          >Maps</a
+        >
+        <a
+          routerLink="markers"
+          href="#about"
+          class="hover:bg-gray-200 px-3 py-2 rounded"
+          >Markers</a
+        >
+        <a
+          routerLink="detail"
+          href="#services"
+          class="hover:bg-gray-200 px-3 py-2 rounded"
+          >Detail</a
+        >
+        <a href="#contact" class="hover:bg-gray-200 px-3 py-2 rounded"
+          >Contact</a
+        >
+      </div>
+    </div>
+  </nav>
 
-<div>
-  <p>{{ map.mapId }}</p>
-  <button (click)="appStore.deleteMap({ mapId: map.mapId })">Delete map</button>
-  <button
-    (click)="
-      appStore.updateMap({ mapId: map.mapId, data: { title: mapTitle.value } })
-    "
-  >
-    Update map
-  </button>
-</div>
-<div>
-  <p>{{ map.title }}</p>
-  <input type="text" #mapTitle />
-  <button (click)="appStore.loadMarkers({ mapId: map.mapId })">
-    Load Markers
-  </button>
-</div>
-}
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden">
+    <a href="#" class="block px-3 py-2 rounded hover:bg-gray-200">Home</a>
+    <a href="#about" class="block px-3 py-2 rounded hover:bg-gray-200">About</a>
+    <a href="#services" class="block px-3 py-2 rounded hover:bg-gray-200"
+      >Services</a
+    >
+    <a href="#contact" class="block px-3 py-2 rounded hover:bg-gray-200"
+      >Contact</a
+    >
+  </div>
 
-<hr />
-<h1>Create Map</h1>
-<input type="text" #newMapTitle />
-<button (click)="appStore.createMap({ title: newMapTitle.value })">
-  New Map
-</button>
+  <script>
+    // Toggle the mobile menu
+    const menuButton = document.getElementById("mobile-menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
 
-<hr />
-<h1>Create marker</h1>
-<label for="lat"
-  >Lat
-  <input #lat type="number" name="lat" />
-</label>
-<label for="long"
-  >Long
-  <input #lng type="number" name="lng" />
-</label>
-title<input #title type="text" /> journal<input #journal type="text" />
-mapId<input #mapId type="text" />
+    menuButton.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+  </script>
 
-<button (click)="createMarkers()">New Markers</button>
-<button (click)="deleteMarkers()">Delete Markers</button>
-<button (click)="updateMarker()">Update Marker</button>
+  <!-- Content Container -->
+  <div class="content">
+    <router-outlet />
+  </div>
 
-<hr />
-<h1>Images</h1>
-
-<button (click)="getImagesForMarker()">Get Images</button>
+  <!-- Footer -->
+  <footer class="border border-gray-300 w-full absolute bottom-0 h-20 z-0">
+    <div class="container mx-auto text-center text-gray-400">
+      <div class="mt-4">
+        <a href="#" class="hover:text-gray-800 mx-2">Privacy Policy</a>
+        <a href="#" class="hover:text-gray-800 mx-2">Terms of Service</a>
+        <a href="#" class="hover:text-gray-800 mx-2">Contact</a>
+      </div>
+    </div>
+    <p class="text-sm">© 2025 MyApp. All rights reserved.</p>
+  </footer>
+</section>

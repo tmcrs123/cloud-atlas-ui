@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { buildApiEndpoint } from '../../../shared/utils';
-import { Image } from '../../../shared/models/index.js';
-import { Observable } from 'rxjs';
+import { buildApiEndpoint } from '../../shared/utils';
+import { Image } from '../../shared/models/index.js';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

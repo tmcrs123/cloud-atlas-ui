@@ -1,12 +1,11 @@
-import { JsonPipe } from '@angular/common';
 import { Component, inject, Injector } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
-import { AppStore } from '../maps/data-access/maps.store';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { AppStore } from './store/store';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, JsonPipe, ReactiveFormsModule],
+  imports: [RouterOutlet, ReactiveFormsModule, RouterLink],
   providers: [AppStore],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -18,7 +17,7 @@ export class AppComponent {
   appStore = inject(AppStore);
 
   constructor() {
-    this.appStore.loadMaps(void '', { injector: this.injector });
+    // this.appStore.loadMaps(void '', { injector: this.injector });
   }
 
   ngOnInit() {
@@ -67,10 +66,23 @@ export class AppComponent {
   }
 
   getImagesForMarker() {
-    const mapId = 'd8a150cd-f253-4bef-93b4-4fac401e9052';
-
-    const markerId = '1d0532bd-6c42-4437-9083-7f66b8c76b51';
+    const mapId = this.appStore.mapsIterable()[0].mapId;
+    const markerId = this.appStore.mapsIterable()[0].markers[0].markerId;
 
     this.appStore.getImagesForMarker({ mapId, markerId });
+  }
+
+  updateImageForMarker() {
+    const mapId = this.appStore.mapsIterable()[0].mapId;
+    const markerId = this.appStore.mapsIterable()[0].markers[0].markerId;
+    const imageId =
+      this.appStore.mapsIterable()[0].markers[0].images[0].imageId;
+
+    this.appStore.updateImageForMarker({
+      mapId,
+      markerId,
+      imageId,
+      data: { legend: 'bananas updated' },
+    });
   }
 }
