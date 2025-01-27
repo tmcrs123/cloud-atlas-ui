@@ -1,18 +1,10 @@
 <!-- Dialog (Modal) -->
-@if (isDialogOpen()){
-<div
-  class="fixed inset-0 flex items-center justify-center bg-gray-900 opacity-90 z-1"
->
+@if (open()){
+<div class="fixed inset-0 flex items-center justify-center bg-gray-900/90">
   <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
     <!-- Dialog Header -->
     <div class="flex justify-between items-center border-b pb-3">
-      <h2 class="text-xl font-semibold">Dialog Title</h2>
-      <button
-        (click)="dialogClosed.emit()"
-        class="text-gray-600 hover:text-gray-900"
-      >
-        &times;
-      </button>
+      <h2 class="text-xl font-semibold">{{ dialogConfig().data?.title }}</h2>
     </div>
 
     <!-- Dialog Body -->
@@ -25,7 +17,7 @@
     <!-- Dialog Footer -->
     <div class="mt-6 flex justify-end space-x-2">
       <button
-        (click)="dialogClosed.emit()"
+        (click)="cancelAction()"
         class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md"
       >
         Cancel
@@ -34,7 +26,7 @@
         (click)="confirmAction()"
         class="px-4 py-2 bg-blue-500 text-white rounded-md"
       >
-        Confirm
+        {{ dialogConfig().data?.confirmButtonText }}
       </button>
     </div>
   </div>

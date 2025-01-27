@@ -1,5 +1,20 @@
+import { DialogConfig } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
+import {
+  outputFromObservable,
+  outputToObservable,
+} from '@angular/core/rxjs-interop';
+
+export type DialogData = {
+  title: string;
+  confirmButtonText: string;
+};
+
+// my modals always have data
+export interface CustomDialogConfig extends Omit<DialogConfig, 'data'> {
+  data: DialogData;
+}
 
 @Component({
   selector: 'app-dialog',
@@ -8,10 +23,16 @@ import { Component, input, output } from '@angular/core';
   styleUrl: './dialog.component.css',
 })
 export class DialogComponent {
-  isDialogOpen = input<boolean>(false);
-  dialogClosed = output<void>();
+  dialogConfig = input.required<CustomDialogConfig>();
+  open = input.required<boolean>();
+  dialogClosed = output<boolean>();
+  dialogClosed$ = outputToObservable(this.dialogClosed);
 
   confirmAction() {
-    this.dialogClosed.emit();
+    this.dialogClosed.emit(true);
+  }
+
+  cancelAction() {
+    this.dialogClosed.emit(false);
   }
 }
