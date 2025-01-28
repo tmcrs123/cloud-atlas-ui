@@ -7,13 +7,11 @@
   <ng-template
     cdkConnectedOverlay
     [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="isDropdownOpen"
+    [cdkConnectedOverlayOpen]="isDropdownOpen()"
     [cdkConnectedOverlayHasBackdrop]="false"
+    (overlayOutsideClick)="isDropdownOpen.set(false)"
   >
-    <div
-      #dropdownDiv
-      class="mt-2 w-48 bg-white border border-gray-300 rounded shadow-md"
-    >
+    <div class="mt-2 w-48 bg-white border border-gray-300 rounded shadow-md">
       <ul class="py-2 text-gray-700">
         @for (option of config().options; track $index) {
         <li

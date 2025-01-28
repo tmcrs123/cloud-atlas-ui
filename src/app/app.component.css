@@ -11,23 +11,14 @@
   }
   .navbar {
     grid-row: 1 / 2;
-    background-color: #2d3748;
-    color: white;
-    padding: 1rem;
+    padding: 4rem;
   }
   .content {
     grid-row: 2 / 3;
     padding: 2rem;
-    background-color: #f7fafc;
   }
   .footer {
     grid-row: 3 / 4;
-    background-color: #4a5568;
-    color: white;
     padding: 1rem;
     text-align: center;
-  }
-
-  footer {
-    position: relative;
   }

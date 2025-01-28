@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './select.component.html',
 })
 export default class SelectComponent {
-  public isDialogOpen = signal(false);
   public selectedOption: string = '';
   destinations: string[] = ['Paris', 'New York', 'Tokyo', 'Sydney', 'London'];
 }

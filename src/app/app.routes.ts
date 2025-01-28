@@ -9,6 +9,10 @@ export const routes: Routes = [
     loadComponent: () => import('./markers/marker.component'),
   },
   {
+    path: 'atlas',
+    loadComponent: () => import('./markers/ui/atlas/atlas.component'),
+  },
+  {
     path: 'detail',
     loadComponent: () =>
       import('./markers/ui/marker-detail/marker-detail.component'),

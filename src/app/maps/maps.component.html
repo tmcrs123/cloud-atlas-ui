@@ -3,43 +3,113 @@
     <input
       type="text"
       placeholder="Search maps..."
-      class="w-1/2 p-2 border border-gray-300 rounded"
+      class="w-1/2 p-4 border border-zinc-300"
     />
     <div class="flex gap-2">
-      <app-dropdown [config]="dropdownConfig"></app-dropdown>
+      <app-dropdown
+        [config]="dropdownConfig"
+        (selectedOption)="
+          $event
+            ? this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())
+            : this.isAddDialogOpen.set(!this.isAddDialogOpen())
+        "
+      >
+        <button
+          class="bg-sky-600 flex flex-row cursor-pointer items-center mx-2 text-white font-bold px-8 py-4 text-lg hover:bg-sky-700 focus:outline-none shadow-md"
+          #dropdownButton
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            aria-hidden="true"
+            data-slot="icon"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
+            ></path>
+          </svg>
+          <div class="ml-2">Add or Delete</div>
+        </button>
+      </app-dropdown>
 
-      <button class="p-2 border border-gray-300 rounded">List</button>
+      <button
+        class="p-3 border border-zinc-300 cursor-pointer flex flex-row items-end mx-2 font-bold px-8 py-4 text-lg"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+          data-slot="icon"
+          class="size-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z"
+          ></path>
+        </svg>
+        <div class="ml-2">List</div>
+      </button>
     </div>
   </div>
   <div class="container mx-auto p-4">
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-4"
     >
-      <div class="p-4 text-center shadow-lg rounded-2xl border border-gray-300">
-        <h3 class="text-xl font-bold">Mountain Exploration</h3>
-        <p class="text-sm text-gray-500">Terrain</p>
-        <p class="text-xs text-gray-400">Last updated: Jan 10, 2025</p>
+      <div
+        class="p-4 text-center shadow-lg rounded-2xl border border-zinc-300 hover:shadow-xl cursor-pointer transition-shadow duration-300"
+      >
+        <h3 class="text-xl font-bold text-zinc-800">❤ Mountain Exploration</h3>
+        <p class="text-xs text-zinc-400">Last updated: Jan 10, 2025</p>
       </div>
-      <div class="p-4 text-center shadow-lg rounded-2xl border border-gray-300">
+      <div
+        class="p-4 text-center shadow-lg rounded-2xl border border-zinc-300 hover:shadow-xl cursor-pointer transition-shadow duration-300"
+      >
         <h3 class="text-xl font-bold">Urban City Guide</h3>
-        <p class="text-sm text-gray-500">City</p>
-        <p class="text-xs text-gray-400">Last updated: Feb 15, 2025</p>
+        <p class="text-xs text-zinc-400">Last updated: Feb 15, 2025</p>
       </div>
-      <div class="p-4 text-center shadow-lg rounded-2xl border border-gray-300">
+      <div
+        class="p-4 text-center shadow-lg rounded-2xl border border-zinc-300 hover:shadow-xl cursor-pointer transition-shadow duration-300"
+      >
         <h3 class="text-xl font-bold">Desert Adventure</h3>
-        <p class="text-sm text-gray-500">Adventure</p>
-        <p class="text-xs text-gray-400">Last updated: Mar 5, 2025</p>
+        <p class="text-xs text-zinc-400">Last updated: Mar 5, 2025</p>
       </div>
-      <div class="p-4 text-center shadow-lg rounded-2xl border border-gray-300">
+      <div
+        class="p-4 text-center shadow-lg rounded-2xl border border-zinc-300 hover:shadow-xl cursor-pointer transition-shadow duration-300"
+      >
         <h3 class="text-xl font-bold">Forest Trails</h3>
-        <p class="text-sm text-gray-500">Nature</p>
-        <p class="text-xs text-gray-400">Last updated: Apr 1, 2025</p>
+        <p class="text-xs text-zinc-400">Last updated: Apr 1, 2025</p>
       </div>
     </div>
   </div>
-  <button (click)="openDialog()">Dialog</button>
-  <!-- <app-dialog
-    [isDialogOpen]="isDialogOpen()"
-    (dialogClosed)="isDialogOpen.set(false)"
-  ></app-dialog> -->
+  <app-dialog
+    [dialogConfig]="addMapDialogConfig"
+    [open]="isAddDialogOpen()"
+    (dialogClosed)="isAddDialogOpen.set(false)"
+  >
+    <input
+      type="text"
+      name=""
+      id=""
+      placeholder="Fiji 2020"
+      class="w-100 p-4 border border-zinc-300"
+    />
+  </app-dialog>
+
+  <app-dialog
+    [dialogConfig]="deleteMapDialogConfig"
+    [open]="isDeleteDialogOpen()"
+    (dialogClosed)="isDeleteDialogOpen.set(false)"
+  >
+    <app-select></app-select>
+  </app-dialog>
 </section>

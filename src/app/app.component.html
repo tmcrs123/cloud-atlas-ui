@@ -1,33 +1,37 @@
 <section class="grid-layout">
   <!-- Navbar -->
   <!-- Navbar -->
-  <nav class="bg-white text-gray-800 p-4">
+  <nav class="bg-white font-semibold p-4 navbar">
     <div class="container mx-auto flex items-center justify-between">
       <!-- Logo -->
-      <div class="text-xl font-semibold">Cloud/Atlas</div>
+      <div class="text-4xl font-semibold">Cloud/Atlas</div>
 
       <!-- Menu items for large screens -->
       <div class="hidden md:flex space-x-6">
         <a
           routerLink="maps"
-          href="#"
-          class="hover:bg-gray-200 px-3 py-2 rounded"
+          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
           >Maps</a
         >
         <a
           routerLink="markers"
-          href="#about"
-          class="hover:bg-gray-200 px-3 py-2 rounded"
+          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
           >Markers</a
         >
         <a
           routerLink="detail"
-          href="#services"
-          class="hover:bg-gray-200 px-3 py-2 rounded"
+          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
           >Detail</a
         >
-        <a href="#contact" class="hover:bg-gray-200 px-3 py-2 rounded"
-          >Contact</a
+        <a
+          href="#contact"
+          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
+          >Login</a
+        >
+        <a
+          href="#contact"
+          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
+          >About</a
         >
       </div>
     </div>
@@ -35,13 +39,15 @@
 
   <!-- Mobile menu -->
   <div id="mobile-menu" class="hidden md:hidden">
-    <a href="#" class="block px-3 py-2 rounded hover:bg-gray-200">Home</a>
-    <a href="#about" class="block px-3 py-2 rounded hover:bg-gray-200">About</a>
-    <a href="#services" class="block px-3 py-2 rounded hover:bg-gray-200"
+    <a href="#" class="block px-3 py-2 rounded hover:font-semibold">Home</a>
+    <a href="#about" class="block px-3 py-2 rounded hover:font-semibold"
+      >About</a
+    >
+    <a href="#services" class="block px-3 py-2 rounded hover:font-semibold"
       >Services</a
     >
-    <a href="#contact" class="block px-3 py-2 rounded hover:bg-gray-200"
-      >Contact</a
+    <a href="#contact" class="block px-3 py-2 rounded hover:font-semibold"
+      >About us</a
     >
   </div>
 
@@ -56,19 +62,20 @@
   </script>
 
   <!-- Content Container -->
-  <div class="content">
+  <div>
     <router-outlet />
   </div>
 
   <!-- Footer -->
-  <footer class="border border-gray-300 w-full absolute bottom-0 h-20 z-0">
-    <div class="container mx-auto text-center text-gray-400">
-      <div class="mt-4">
-        <a href="#" class="hover:text-gray-800 mx-2">Privacy Policy</a>
-        <a href="#" class="hover:text-gray-800 mx-2">Terms of Service</a>
-        <a href="#" class="hover:text-gray-800 mx-2">Contact</a>
-      </div>
+  <footer class="foooter border-t-2 p-2 border-zinc-200 w-full">
+    <div
+      class="container mx-auto font-semibold flex flex-row justify-between items-center"
+    >
+      <!-- <a href="#" class="font-light mx-2">Privacy Policy</a>
+        <a href="#" class="font-light mx-2">About</a>
+        <a href="#" class="font-light mx-2">Contact</a> -->
+      <span class="text-sm right-100">Made with ❤ by me</span>
+      <span class="text-sm"> © 2025 CloudAtlas. All rights reserved. </span>
     </div>
-    <p class="text-sm">© 2025 MyApp. All rights reserved.</p>
   </footer>
 </section>
