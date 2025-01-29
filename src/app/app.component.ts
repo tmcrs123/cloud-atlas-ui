@@ -2,10 +2,13 @@ import { Component, inject, Injector } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { AppStore } from './store/store';
+import { AuthService } from './auth/auth.service';
+import { LoaderService } from './shared/services/loader.service';
+import { NavbarComponent } from './shared/ui/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ReactiveFormsModule, RouterLink],
+  imports: [RouterOutlet, ReactiveFormsModule, RouterLink, NavbarComponent],
   providers: [AppStore],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -15,14 +18,8 @@ export class AppComponent {
 
   injector = inject(Injector);
   appStore = inject(AppStore);
-
-  constructor() {
-    // this.appStore.loadMaps(void '', { injector: this.injector });
-  }
-
-  ngOnInit() {
-    console.log(this.appStore.mapsIterable().length);
-  }
+  auth = inject(AuthService);
+  loaderService = inject(LoaderService);
 
   createMarkers() {
     this.appStore.createMarkers({

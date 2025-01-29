@@ -40,7 +40,7 @@ export const AppStore = signalStore(
     onInit(store) {
       effect(() => {
         const state = getState(store);
-        console.log('mapsState', state);
+        // console.log('mapsState', state);k
       });
     },
   }),

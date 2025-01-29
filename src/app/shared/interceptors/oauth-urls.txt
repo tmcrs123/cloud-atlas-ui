@@ -1,0 +1,4 @@
+"https://cognito-idp.us-east-1.amazonaws.com/us-east-1_szwZtfXgl/.well-known/openid-configuration"
+"https://snappin-test.auth.us-east-1.amazoncognito.com/oauth2/token"
+"https://cognito-idp.us-east-1.amazonaws.com/us-east-1_szwZtfXgl/.well-known/jwks.json"
+"https://snappin-test.auth.us-east-1.amazoncognito.com/oauth2/userInfo"

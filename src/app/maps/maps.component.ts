@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ButtonComponent } from '../shared/ui/button/button.component';
 import { CardComponent } from '../shared/ui/card/card.component';
 import {
@@ -9,6 +9,8 @@ import DropdownComponent, {
   DropdownConfig,
 } from '../shared/ui/dropdown/dropdown.component';
 import SelectComponent from '../shared/ui/select/select.component';
+import { AppStore } from '../store/store';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-maps',
@@ -18,6 +20,12 @@ import SelectComponent from '../shared/ui/select/select.component';
 export default class MapsComponent {
   public isDeleteDialogOpen = signal(false);
   public isAddDialogOpen = signal(false);
+  public store = inject(AppStore);
+  public auth = inject(AuthService);
+
+  ngOnInit() {
+    this.store.loadMaps();
+  }
 
   protected dropdownConfig: DropdownConfig = {
     options: [

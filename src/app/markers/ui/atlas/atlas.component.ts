@@ -207,10 +207,7 @@ export default class AtlasComponent {
           ).pipe(tap(() => this.newMarkerNameFormControl.setValue(null)))
         )
       )
-      .subscribe({
-        next: () => console.log('next'),
-        complete: () => console.log('complete'),
-      });
+      .subscribe({});
   }
 
   existingMarkers = input<Marker[]>(Array(5).fill({ title: 'banannas' }));

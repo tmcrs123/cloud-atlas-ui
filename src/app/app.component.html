@@ -1,66 +1,15 @@
 <section class="grid-layout">
-  <!-- Navbar -->
-  <!-- Navbar -->
-  <nav class="bg-white font-semibold p-4 navbar">
-    <div class="container mx-auto flex items-center justify-between">
-      <!-- Logo -->
-      <div class="text-4xl font-semibold">Cloud/Atlas</div>
-
-      <!-- Menu items for large screens -->
-      <div class="hidden md:flex space-x-6">
-        <a
-          routerLink="maps"
-          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
-          >Maps</a
-        >
-        <a
-          routerLink="markers"
-          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
-          >Markers</a
-        >
-        <a
-          routerLink="detail"
-          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
-          >Detail</a
-        >
-        <a
-          href="#contact"
-          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
-          >Login</a
-        >
-        <a
-          href="#contact"
-          class="text-zinc-800 text-2xl font-medium px-3 py-2 hover:text-yellow-600"
-          >About</a
-        >
-      </div>
-    </div>
-  </nav>
-
-  <!-- <div id="mobile-menu" class="hidden md:hidden">
-    <a href="#" class="block px-3 py-2 rounded hover:font-semibold">Home</a>
-    <a href="#about" class="block px-3 py-2 rounded hover:font-semibold"
-      >About</a
-    >
-    <a href="#services" class="block px-3 py-2 rounded hover:font-semibold"
-      >Services</a
-    >
-    <a href="#contact" class="block px-3 py-2 rounded hover:font-semibold"
-      >About us</a
-    >
-  </div>
-
-  <script>
-    const menuButton = document.getElementById("mobile-menu-button");
-    const mobileMenu = document.getElementById("mobile-menu");
-
-    menuButton.addEventListener("click", () => {
-      mobileMenu.classList.toggle("hidden");
-    });
-  </script> -->
+  <app-navbar></app-navbar>
 
   <!-- Content Container -->
   <div class="app">
+    @if (loaderService.isLoaderVisible()) {
+    <div
+      class="fixed top-0 left-0 w-full h-full bg-black opacity-75 flex items-center justify-center z-1"
+    >
+      <div class="loader"></div>
+    </div>
+    }
     <router-outlet />
   </div>
 

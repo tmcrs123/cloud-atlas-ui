@@ -1,0 +1,20 @@
+<nav class="bg-white font-semibold p-4 navbar">
+  <div class="container mx-auto flex items-center justify-between">
+    <!-- Logo -->
+    <div class="text-4xl font-semibold">Cloud/Atlas</div>
+
+    <!-- Menu items for large screens -->
+    <div class="hidden md:flex space-x-6">
+      @if(auth.isAuthenticated()){
+      <a routerLink="maps" [class]="navItemCss">Maps</a>
+      <a routerLink="markers" [class]="navItemCss">Markers</a>
+      <a routerLink="detail" [class]="navItemCss">Detail</a>
+      <a (click)="auth.logout()" [class]="navItemCss">Logout</a>
+
+      }@else {
+      <a (click)="auth.login()" [class]="navItemCss">Login</a>
+      <a [class]="navItemCss">About</a>
+      }
+    </div>
+  </div>
+</nav>
