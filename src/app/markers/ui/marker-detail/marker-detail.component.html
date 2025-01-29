@@ -19,11 +19,17 @@
       <app-dropdown [config]="dropdownConfig" class="absolute right-1 top-1">
       </app-dropdown>
 
+      <app-button
+        [config]="displayCaptionButtonConfig"
+        (btnClick)="handleClick($index)"
+        class="absolute left-1 top-1"
+      ></app-button>
+
       <img
         [src]="image"
         (click)="updateLbConfig(true)"
         alt="Travel Image 1"
-        class="w-full h-auto shadow-lg cursor-pointer"
+        class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
       />
     </div>
     }
@@ -35,7 +41,7 @@
 ></app-lightbox>
 
 <app-dialog
-  #deleteDialog
+  #deleteImageDialog
   [dialogConfig]="deleteDialogConfig"
   [open]="isDeleteDialogOpen()"
 >
@@ -43,9 +49,23 @@
 </app-dialog>
 
 <app-dialog
-  #captionDialog
-  [dialogConfig]="captionDialogConfig"
-  [open]="isCaptionDialogOpen()"
+  #addCaptionDialog
+  [dialogConfig]="addCaptionDialogConfig"
+  [open]="isAddCaptionDialogOpen()"
 >
-  <p>Add caption</p>
+  <input
+    type="text"
+    name=""
+    id=""
+    placeholder="Fiji 2020"
+    class="w-100 p-4 border border-zinc-300"
+  />
+</app-dialog>
+
+<app-dialog
+  #displayCaptionDialog
+  [dialogConfig]="displayCaptionDialogConfig"
+  [open]="isDisplayCaptionDialogOpen()"
+>
+  <i>{{ test }}</i>
 </app-dialog>

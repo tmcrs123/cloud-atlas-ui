@@ -1,17 +1,32 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import {
   ARROW_BACK_SVG,
   ARROW_DOWN_SVG,
   GLOBE_SVG,
   LIST_SVG,
   PLUS_SVG,
+  SPEECH_BUBBLE_SVG,
 } from './button.svg';
 import { DomSanitizer } from '@angular/platform-browser';
 
 export type ButtonConfig = {
-  type: 'add' | 'delete' | 'secondary_action' | 'primary_action';
-  svg?: 'globe' | 'arrow_down' | 'plus' | 'list' | 'arrow_back' | null;
+  type: 'add' | 'delete' | 'secondary_action' | 'primary_action' | 'accent';
+  svg?:
+    | 'globe'
+    | 'arrow_down'
+    | 'plus'
+    | 'list'
+    | 'arrow_back'
+    | 'speech_bubble'
+    | null;
   text: string;
   customCss?: string;
 };
@@ -34,7 +49,7 @@ export class ButtonComponent {
     'bg-yellow-500 text-white hover:bg-yellow-600 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4';
 
   config = input.required<ButtonConfig>();
-  click = output<void>();
+  btnClick = output<void>();
   buttonType = computed(() => {
     switch (this.config().type) {
       case 'add':
@@ -62,6 +77,8 @@ export class ButtonComponent {
         return this.sanitizer.bypassSecurityTrustHtml(PLUS_SVG);
       case 'list':
         return this.sanitizer.bypassSecurityTrustHtml(LIST_SVG);
+      case 'speech_bubble':
+        return this.sanitizer.bypassSecurityTrustHtml(SPEECH_BUBBLE_SVG);
       default:
         return null;
     }

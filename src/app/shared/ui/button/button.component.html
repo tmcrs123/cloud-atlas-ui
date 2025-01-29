@@ -1,4 +1,7 @@
-<button [ngClass]="config().customCss || buttonType()" (click)="click.emit()">
+<button
+  [ngClass]="config()?.customCss || buttonType()"
+  (click)="btnClick.emit()"
+>
   @if (config().svg) {
   <div [innerHTML]="svgIcon()"></div>
   }

@@ -12,7 +12,7 @@ export type DialogData = {
 // my modals always have data
 export interface CustomDialogConfig extends Omit<DialogConfig, 'data'> {
   data: DialogData;
-  primaryActionButtonConfig: ButtonConfig;
+  primaryActionButtonConfig?: ButtonConfig;
   secondaryActionButtonConfig: ButtonConfig;
 }
 
@@ -34,5 +34,10 @@ export class DialogComponent {
 
   cancelAction() {
     this.dialogClosed.emit(false);
+  }
+
+  protected fetchPrimaryActionButtonConfig(): ButtonConfig {
+    return this.dialogConfig()
+      .primaryActionButtonConfig as unknown as ButtonConfig;
   }
 }

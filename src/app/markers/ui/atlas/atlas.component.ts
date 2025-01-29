@@ -107,6 +107,8 @@ export default class AtlasComponent {
     svg: 'globe',
   };
 
+  goToMarker() {}
+
   protected addButtonConfig: ButtonConfig = {
     text: 'Add marker',
     type: 'add',
@@ -185,7 +187,6 @@ export default class AtlasComponent {
    *
    */
   constructor() {
-    effect(() => console.log(this.mapMode()));
     // const param = this.ar.snapshot.queryParamMap.get('mapMode');
     // this.mapMode.set(param ? (param as MapMode) : this.mapMode());
   }
@@ -226,4 +227,13 @@ export default class AtlasComponent {
         } as google.maps.marker.AdvancedMarkerElementOptions)
     )
   );
+
+  onCardClick(index: number) {
+    const m = this.existingAtlasMarkers()[index];
+    if (!m.position?.lat && !m.position?.lng) return;
+    this.googleMapRef().googleMap?.setCenter({
+      lat: Number(m.position.lat),
+      lng: Number(m.position.lng),
+    });
+  }
 }

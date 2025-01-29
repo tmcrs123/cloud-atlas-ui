@@ -18,12 +18,16 @@
     <div class="mt-6 flex justify-end space-x-2">
       <app-button
         [config]="dialogConfig().secondaryActionButtonConfig"
-        (click)="cancelAction()"
+        (btnClick)="confirmAction()"
       ></app-button>
+
+      @if (dialogConfig().primaryActionButtonConfig !== null &&
+      dialogConfig().primaryActionButtonConfig !==undefined) {
       <app-button
-        [config]="dialogConfig().primaryActionButtonConfig"
-        (click)="confirmAction()"
+        [config]="fetchPrimaryActionButtonConfig()"
+        (btnClick)="cancelAction()"
       ></app-button>
+      }
     </div>
   </div>
 </div>

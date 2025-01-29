@@ -40,7 +40,7 @@ export default class DropdownComponent {
 
   ngAfterContentInit() {
     merge(
-      outputToObservable(this.dropdownButton().click),
+      outputToObservable(this.dropdownButton().btnClick),
       outputToObservable(this.selectedOption)
     )
       .pipe(

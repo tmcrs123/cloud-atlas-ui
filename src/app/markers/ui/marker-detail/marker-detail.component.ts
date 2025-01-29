@@ -22,6 +22,10 @@ import {
   LightboxComponent,
   LightboxConfig,
 } from '../../../shared/ui/lightbox/lightbox.component';
+import {
+  ButtonComponent,
+  ButtonConfig,
+} from '../../../shared/ui/button/button.component';
 
 function getRandomLetters() {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -37,12 +41,18 @@ function getRandomNumber() {
 }
 
 function buildRandomSeed() {
-  return `https://picsum.photos/seed/${getRandomLetters()}/${getRandomNumber()}/${getRandomNumber()}`;
+  // return `https://picsum.photos/seed/${getRandomLetters()}/${getRandomNumber()}/${getRandomNumber()}`;
+  return `https://picsum.photos/seed/${getRandomLetters()}/${1200}/${1400}`;
 }
 
 @Component({
   selector: 'app-marker-detail',
-  imports: [LightboxComponent, DropdownComponent, DialogComponent],
+  imports: [
+    LightboxComponent,
+    DropdownComponent,
+    DialogComponent,
+    ButtonComponent,
+  ],
   templateUrl: './marker-detail.component.html',
   styleUrl: './marker-detail.component.css',
 })
@@ -63,7 +73,7 @@ export default class MarkerDetailComponent {
     },
   };
 
-  protected readonly captionDialogConfig: CustomDialogConfig = {
+  protected readonly addCaptionDialogConfig: CustomDialogConfig = {
     data: {
       confirmButtonText: 'Add',
       title: 'Add caption for image',
@@ -79,6 +89,18 @@ export default class MarkerDetailComponent {
     },
   };
 
+  protected readonly displayCaptionDialogConfig: CustomDialogConfig = {
+    data: {
+      confirmButtonText: 'Add',
+      title: 'Caption',
+      isDeleteDialog: false,
+    },
+    secondaryActionButtonConfig: {
+      text: 'Cancel',
+      type: 'secondary_action',
+    },
+  };
+
   protected dropdownConfig: DropdownConfig = {
     options: [
       { label: 'Add caption', index: 0 },
@@ -87,20 +109,39 @@ export default class MarkerDetailComponent {
     buttonConfig: {
       text: '',
       type: 'primary_action',
-      svg: 'arrow_down',
+      svg: 'plus',
       customCss:
         'rounded-full bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer p-1',
     },
   };
+  protected displayCaptionButtonConfig: ButtonConfig = {
+    text: '',
+    type: 'accent',
+    svg: 'speech_bubble',
+    customCss:
+      'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-1',
+  };
 
   protected isDeleteDialogOpen = signal(false);
-  protected isCaptionDialogOpen = signal(false);
+  protected isAddCaptionDialogOpen = signal(false);
+  protected isDisplayCaptionDialogOpen = signal(false);
   protected deleteDialogRef =
-    viewChild.required<DialogComponent>('deleteDialog');
-  protected captionDialogRef =
-    viewChild.required<DialogComponent>('captionDialog');
+    viewChild.required<DialogComponent>('deleteImageDialog');
+  protected addCaptionDialogRef =
+    viewChild.required<DialogComponent>('addCaptionDialog');
+  protected displayCaptionDialogRef = viewChild.required<DialogComponent>(
+    'displayCaptionDialog'
+  );
   protected dropdowns = viewChildren(DropdownComponent);
   destroyRef = inject(DestroyRef);
+
+  protected test = 'apples';
+
+  handleClick(imgIndex: number) {
+    this.isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen());
+
+    this.test = 'pears' + imgIndex;
+  }
 
   ngOnInit() {
     this.fakeImgArray = Array(20)
@@ -122,28 +163,31 @@ export default class MarkerDetailComponent {
 
     const captionOptionSelected$ = optionSelected$.pipe(
       filter((v) => v === 0),
-      tap(() => this.isCaptionDialogOpen.set(true))
+      tap(() => this.isAddCaptionDialogOpen.set(true))
     );
 
     const deleteDialogClosed$ = outputToObservable(
       this.deleteDialogRef().dialogClosed
     );
-    const captionDialogClosed$ = outputToObservable(
-      this.captionDialogRef().dialogClosed
+    const addCaptionDialogClosed$ = outputToObservable(
+      this.addCaptionDialogRef().dialogClosed
+    );
+    const displayCaptionDialogClosed$ = outputToObservable(
+      this.displayCaptionDialogRef().dialogClosed
     );
 
     //replace with proper htpp method
     const deleteImage$ = of(true);
     const saveCaption$ = of(true);
 
-    //caption flow
+    //add caption flow
     captionOptionSelected$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        switchMap(() => captionDialogClosed$),
+        switchMap(() => addCaptionDialogClosed$),
         switchMap((complete) =>
           iif(() => complete, saveCaption$, of(null)).pipe(
-            tap(() => this.isCaptionDialogOpen.set(false))
+            tap(() => this.isAddCaptionDialogOpen.set(false))
           )
         )
       )
@@ -159,6 +203,19 @@ export default class MarkerDetailComponent {
             tap(() => this.isDeleteDialogOpen.set(false))
           )
         )
+      )
+      .subscribe();
+
+    //display caption flow
+    displayCaptionDialogClosed$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap(() => {
+          this.test = '';
+          this.isDisplayCaptionDialogOpen.set(
+            !this.isDisplayCaptionDialogOpen()
+          );
+        })
       )
       .subscribe();
   }

@@ -3,19 +3,15 @@
 <div
   class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-1"
 >
-  <div>
-    <button class="absolute bg-red-900">delete</button>
-    <button>Close</button>
-  </div>
   <div class="relative max-w-3xl w-full p-4">
     <img
       id="lightbox-img"
       [src]="lightboxConfig().images[currentIndex()].url"
       alt="Lightbox"
-      class="w-full h-auto rounded-lg shadow-lg"
+      class="max-w-full max-h-full"
     />
     <button
-      class="absolute top-4 right-4 text-white text-3xl"
+      class="absolute top-4 right-4 text-white text-3xl cursor-pointer"
       (click)="closeLb()"
     >
       &times;
