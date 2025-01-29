@@ -9,23 +9,26 @@ import {
   input,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
 import {
   outputToObservable,
   takeUntilDestroyed,
 } from '@angular/core/rxjs-interop';
-import { fromEvent, merge, tap } from 'rxjs';
+import { merge, tap } from 'rxjs';
+import { ButtonComponent, ButtonConfig } from '../button/button.component';
 
-type DropdownConfig = {
+export type DropdownConfig = {
   options: {
     label: string;
     index: number;
   }[];
+  buttonConfig?: ButtonConfig;
 };
 
 @Component({
   selector: 'app-dropdown',
-  imports: [CommonModule, OverlayModule],
+  imports: [CommonModule, OverlayModule, ButtonComponent],
   templateUrl: './dropdown.component.html',
 })
 export default class DropdownComponent {
@@ -33,12 +36,11 @@ export default class DropdownComponent {
   destroyRef = inject(DestroyRef);
   config = input.required<DropdownConfig>();
   selectedOption = output<number>();
-  dropdownButton =
-    contentChild<ElementRef<HTMLButtonElement>>('dropdownButton');
+  dropdownButton = viewChild.required(ButtonComponent);
 
   ngAfterContentInit() {
     merge(
-      fromEvent<Event>(this.dropdownButton()?.nativeElement!, 'click'),
+      outputToObservable(this.dropdownButton().click),
       outputToObservable(this.selectedOption)
     )
       .pipe(
@@ -46,5 +48,9 @@ export default class DropdownComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
+  }
+
+  protected fetchButtonConfig(): ButtonConfig {
+    return this.config().buttonConfig as unknown as ButtonConfig;
   }
 }

@@ -37,8 +37,7 @@
     </div>
   </nav>
 
-  <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden">
+  <!-- <div id="mobile-menu" class="hidden md:hidden">
     <a href="#" class="block px-3 py-2 rounded hover:font-semibold">Home</a>
     <a href="#about" class="block px-3 py-2 rounded hover:font-semibold"
       >About</a
@@ -52,30 +51,26 @@
   </div>
 
   <script>
-    // Toggle the mobile menu
     const menuButton = document.getElementById("mobile-menu-button");
     const mobileMenu = document.getElementById("mobile-menu");
 
     menuButton.addEventListener("click", () => {
       mobileMenu.classList.toggle("hidden");
     });
-  </script>
+  </script> -->
 
   <!-- Content Container -->
-  <div>
+  <div class="app">
     <router-outlet />
   </div>
 
   <!-- Footer -->
-  <footer class="foooter border-t-2 p-2 border-zinc-200 w-full">
+  <!-- <footer class="footer bottom-0 border-t-2 p-2 border-zinc-200 w-full">
     <div
       class="container mx-auto font-semibold flex flex-row justify-between items-center"
     >
-      <!-- <a href="#" class="font-light mx-2">Privacy Policy</a>
-        <a href="#" class="font-light mx-2">About</a>
-        <a href="#" class="font-light mx-2">Contact</a> -->
       <span class="text-sm right-100">Made with ❤ by me</span>
       <span class="text-sm"> © 2025 CloudAtlas. All rights reserved. </span>
     </div>
-  </footer>
+  </footer> -->
 </section>

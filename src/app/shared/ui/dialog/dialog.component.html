@@ -16,21 +16,14 @@
 
     <!-- Dialog Footer -->
     <div class="mt-6 flex justify-end space-x-2">
-      <button
+      <app-button
+        [config]="dialogConfig().secondaryActionButtonConfig"
         (click)="cancelAction()"
-        class="bg-gray-400 text-white hover:bg-gray-500 focus:outline-none shadow-md cursor-pointer font-bold text-lg w-25 x-4 py-2"
-      >
-        Cancel
-      </button>
-
-      <button
+      ></app-button>
+      <app-button
+        [config]="dialogConfig().primaryActionButtonConfig"
         (click)="confirmAction()"
-        [ngClass]="
-          dialogConfig().data.isDeleteDialog ? deleteButton : addButton
-        "
-      >
-        {{ dialogConfig().data.confirmButtonText }}
-      </button>
+      ></app-button>
     </div>
   </div>
 </div>

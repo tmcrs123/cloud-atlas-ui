@@ -1,94 +1,33 @@
 <section class="max-w-6xl mx-auto p-6">
-  <div class="flex justify-between items-center mb-6">
+  <div class="flex flex-row justify-around m-6">
     <input
       type="text"
       placeholder="Search maps..."
-      class="w-1/2 p-4 border border-zinc-300"
+      class="basis-2/4 p-4 border border-zinc-300"
     />
-    <div class="flex gap-2">
-      <app-dropdown
-        [config]="dropdownConfig"
-        (selectedOption)="
-          $event
-            ? this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())
-            : this.isAddDialogOpen.set(!this.isAddDialogOpen())
-        "
-      >
-        <button
-          class="bg-sky-600 flex flex-row cursor-pointer items-center mx-2 text-white font-bold px-8 py-4 text-lg hover:bg-sky-700 focus:outline-none shadow-md"
-          #dropdownButton
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            aria-hidden="true"
-            data-slot="icon"
-            class="size-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
-            ></path>
-          </svg>
-          <div class="ml-2">Add or Delete</div>
-        </button>
-      </app-dropdown>
-
-      <button
-        class="p-3 border border-zinc-300 cursor-pointer flex flex-row items-end mx-2 font-bold px-8 py-4 text-lg"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          aria-hidden="true"
-          data-slot="icon"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z"
-          ></path>
-        </svg>
-        <div class="ml-2">List</div>
-      </button>
-    </div>
+    <app-dropdown
+      class="grow-0"
+      [config]="dropdownConfig"
+      (selectedOption)="
+        $event
+          ? this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())
+          : this.isAddDialogOpen.set(!this.isAddDialogOpen())
+      "
+    >
+    </app-dropdown>
   </div>
   <div class="container mx-auto p-4">
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-4"
     >
-      <div
-        class="p-4 text-center shadow-lg rounded-2xl border border-zinc-300 hover:shadow-xl cursor-pointer transition-shadow duration-300"
-      >
-        <h3 class="text-xl font-bold text-zinc-800">❤ Mountain Exploration</h3>
-        <p class="text-xs text-zinc-400">Last updated: Jan 10, 2025</p>
-      </div>
-      <div
-        class="p-4 text-center shadow-lg rounded-2xl border border-zinc-300 hover:shadow-xl cursor-pointer transition-shadow duration-300"
-      >
-        <h3 class="text-xl font-bold">Urban City Guide</h3>
-        <p class="text-xs text-zinc-400">Last updated: Feb 15, 2025</p>
-      </div>
-      <div
-        class="p-4 text-center shadow-lg rounded-2xl border border-zinc-300 hover:shadow-xl cursor-pointer transition-shadow duration-300"
-      >
-        <h3 class="text-xl font-bold">Desert Adventure</h3>
-        <p class="text-xs text-zinc-400">Last updated: Mar 5, 2025</p>
-      </div>
-      <div
-        class="p-4 text-center shadow-lg rounded-2xl border border-zinc-300 hover:shadow-xl cursor-pointer transition-shadow duration-300"
-      >
-        <h3 class="text-xl font-bold">Forest Trails</h3>
-        <p class="text-xs text-zinc-400">Last updated: Apr 1, 2025</p>
-      </div>
+      @for (item of [1,2,3,4]; track $index) {
+      <app-card
+        [cardConfig]="{
+          title: '❤ Mountain Exploration',
+          subtitle: 'Last updated: Jan 10, 2025'
+        }"
+      ></app-card>
+      }
     </div>
   </div>
   <app-dialog

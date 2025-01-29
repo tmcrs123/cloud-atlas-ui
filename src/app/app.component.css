@@ -1,24 +1,15 @@
-/* :host {
-    display: block;
-    height: 100vh;
-} */
-
 .grid-layout {
     display: grid;
-    grid-template-rows: auto 1fr auto; /* Navbar, content, and footer */
-    grid-template-columns: 1fr; /* Single column */
-    height: 100vh; /* Full viewport height */
+    grid-template-rows: 100px calc(100vh - 100px);
+    grid-template-columns: 1fr;
+    height: 100vh;
   }
   .navbar {
     grid-row: 1 / 2;
-    padding: 4rem;
   }
-  .content {
+  .app {
     grid-row: 2 / 3;
-    padding: 2rem;
   }
   .footer {
     grid-row: 3 / 4;
-    padding: 1rem;
-    text-align: center;
   }

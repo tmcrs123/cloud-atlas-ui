@@ -10,17 +10,18 @@ import {
   outputToObservable,
   takeUntilDestroyed,
 } from '@angular/core/rxjs-interop';
-import { filter, finalize, iif, merge, of, switchMap, tap } from 'rxjs';
+import { filter, iif, merge, of, switchMap, tap } from 'rxjs';
 import {
   CustomDialogConfig,
   DialogComponent,
 } from '../../../shared/ui/dialog/dialog.component';
-import DropdownComponent from '../../../shared/ui/dropdown/dropdown.component';
+import DropdownComponent, {
+  DropdownConfig,
+} from '../../../shared/ui/dropdown/dropdown.component';
 import {
   LightboxComponent,
   LightboxConfig,
 } from '../../../shared/ui/lightbox/lightbox.component';
-import { Router } from '@angular/router';
 
 function getRandomLetters() {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -52,6 +53,14 @@ export default class MarkerDetailComponent {
       title: 'Delete image',
       isDeleteDialog: true,
     },
+    primaryActionButtonConfig: {
+      text: 'Delete image',
+      type: 'delete',
+    },
+    secondaryActionButtonConfig: {
+      text: 'Cancel',
+      type: 'secondary_action',
+    },
   };
 
   protected readonly captionDialogConfig: CustomDialogConfig = {
@@ -59,6 +68,28 @@ export default class MarkerDetailComponent {
       confirmButtonText: 'Add',
       title: 'Add caption for image',
       isDeleteDialog: false,
+    },
+    primaryActionButtonConfig: {
+      text: 'Add marker',
+      type: 'add',
+    },
+    secondaryActionButtonConfig: {
+      text: 'Cancel',
+      type: 'secondary_action',
+    },
+  };
+
+  protected dropdownConfig: DropdownConfig = {
+    options: [
+      { label: 'Add caption', index: 0 },
+      { label: 'Delete', index: 1 },
+    ],
+    buttonConfig: {
+      text: '',
+      type: 'primary_action',
+      svg: 'arrow_down',
+      customCss:
+        'rounded-full bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer p-1',
     },
   };
 
@@ -70,8 +101,9 @@ export default class MarkerDetailComponent {
     viewChild.required<DialogComponent>('captionDialog');
   protected dropdowns = viewChildren(DropdownComponent);
   destroyRef = inject(DestroyRef);
+
   ngOnInit() {
-    this.fakeImgArray = Array(15)
+    this.fakeImgArray = Array(20)
       .fill('')
       .map(() => buildRandomSeed());
   }
@@ -134,13 +166,6 @@ export default class MarkerDetailComponent {
   protected fakeImgArray: any[] = [];
   showDeleteDialog = false;
   showCaptionDialog = false;
-
-  protected dropdownConfig = {
-    options: [
-      { label: 'Add caption', index: 0 },
-      { label: 'Delete', index: 1 },
-    ],
-  };
 
   lightboxConfig: LightboxConfig = {
     displayControls: true,

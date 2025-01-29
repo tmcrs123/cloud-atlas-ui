@@ -26,6 +26,11 @@ import {
   CustomDialogConfig,
   DialogComponent,
 } from '../../../shared/ui/dialog/dialog.component';
+import { CardComponent } from '../../../shared/ui/card/card.component';
+import {
+  ButtonComponent,
+  ButtonConfig,
+} from '../../../shared/ui/button/button.component';
 
 const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
   draggableCursor: 'grab',
@@ -79,26 +84,40 @@ function generateRandomCoordinates(): LatLong {
     RouterLink,
     DialogComponent,
     ReactiveFormsModule,
+    CardComponent,
+    ButtonComponent,
   ],
+  templateUrl: './atlas.component.html',
   styles: [
     `
       :host {
-        position: relative;
+        display: block;
+        height: calc(100vh - 100px);
       }
     `,
   ],
-  templateUrl: './atlas.component.html',
 })
 export default class AtlasComponent {
   destroyRef = inject(DestroyRef);
   router = inject(Router);
   ar = inject(ActivatedRoute);
-  protected infoWindowOptions = INFO_WINDOW_OPTIONS;
-  protected isDialogOpen = false;
-  protected newMarkerNameFormControl = new FormControl(
-    '',
-    Validators.minLength(5)
-  );
+  protected moveButtonConfig: ButtonConfig = {
+    text: 'Move around',
+    type: 'primary_action',
+    svg: 'globe',
+  };
+
+  protected addButtonConfig: ButtonConfig = {
+    text: 'Add marker',
+    type: 'add',
+    svg: 'plus',
+  };
+
+  protected goBackButtonConfig: ButtonConfig = {
+    text: 'Go back',
+    type: 'secondary_action',
+    svg: 'arrow_back',
+  };
 
   protected dialogConfig: CustomDialogConfig = {
     data: {
@@ -106,7 +125,22 @@ export default class AtlasComponent {
       title: 'What is the name of the new marker?',
       isDeleteDialog: false,
     },
+    primaryActionButtonConfig: {
+      text: 'Add marker',
+      type: 'add',
+    },
+    secondaryActionButtonConfig: {
+      text: 'Cancel',
+      type: 'secondary_action',
+    },
   };
+
+  protected infoWindowOptions = INFO_WINDOW_OPTIONS;
+  protected isDialogOpen = false;
+  protected newMarkerNameFormControl = new FormControl(
+    '',
+    Validators.minLength(5)
+  );
 
   dialogComponentRef = viewChild.required<DialogComponent>(DialogComponent);
   googleMapRef = viewChild.required<GoogleMap>(GoogleMap);

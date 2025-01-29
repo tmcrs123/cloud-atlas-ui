@@ -1,7 +1,5 @@
-<div class="relative">
-  <div cdkOverlayOrigin #trigger="cdkOverlayOrigin">
-    <ng-content></ng-content>
-  </div>
+<div cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+  <app-button [config]="fetchButtonConfig()"></app-button>
 
   <!-- Dropdown Menu (CDK Overlay) -->
   <ng-template
