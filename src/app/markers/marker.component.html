@@ -4,11 +4,19 @@
     <div class="flex gap-2">
       <app-button
         [config]="goToMapButtonConfig"
-        (btnClick)="goToMap('move')"
+        (btnClick)="
+          router.navigate(['atlas', this.mapId], {
+            queryParams: { mapMode: 'move' }
+          })
+        "
       ></app-button>
       <app-button
         [config]="addMarkerButtonConfig"
-        (btnClick)="goToMap('add')"
+        (btnClick)="
+          router.navigate(['atlas', this.mapId], {
+            queryParams: { mapMode: 'add' }
+          })
+        "
       ></app-button>
     </div>
   </div>
@@ -16,13 +24,16 @@
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-4"
     >
-      @for (item of [1,2,3,4]; track $index) {
+      @for (item of markers(); track $index) {
       <app-card
         [cardConfig]="{
-          title: '❤ Mountain Exploration',
-          subtitle: 'Last updated: Jan 10, 2025'
+          title: item.title,
+          subtitle: item.startDate ?? item.endDate ?? item.createdAt
         }"
+        (click)="router.navigate(['markers', item.markerId, 'detail'])"
       ></app-card>
+      } @empty {
+      <h1>No markers yet 🤷‍♂️</h1>
       }
     </div>
   </div>

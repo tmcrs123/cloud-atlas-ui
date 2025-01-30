@@ -8,7 +8,7 @@ export type Marker = {
   createdAt: string;
   updatedAt?: string;
   imageCount: number;
-  title?: string;
+  title: string;
   journal?: string;
   coordinates: {
     lng: number;

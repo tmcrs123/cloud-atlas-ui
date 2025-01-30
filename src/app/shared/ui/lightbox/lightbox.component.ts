@@ -1,15 +1,16 @@
 import {
   Component,
   DestroyRef,
-  effect,
+  ElementRef,
   inject,
   input,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
-import { Image } from '../../models';
-import { filter, from, fromEvent, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, fromEvent, tap } from 'rxjs';
+import { Image } from '../../models';
 export interface LightboxConfig {
   displayCount: boolean;
   displayControls: boolean;
@@ -32,33 +33,39 @@ export class LightboxComponent {
   lightboxConfig = input.required<LightboxConfig>();
   close = output<void>();
   currentIndex = signal<number>(0);
+  lightboxContainer = viewChild.required('lightboxContainer', {
+    read: ElementRef,
+  });
 
-  handleKeyboardEvents$ = fromEvent<KeyboardEvent>(document, 'keydown')
-    .pipe(
-      takeUntilDestroyed(this.destroyRef),
-      tap(() => {
-        event?.preventDefault();
-        event?.stopPropagation();
-      }),
-      filter(() => !this.lightboxConfig().slideshowMode),
-      filter((event) => handledKeyboardEvents.includes(event.code)),
-      tap((event) => {
-        switch (event.code) {
-          case 'Escape':
-            this.close.emit();
-            break;
-          case 'ArrowRight':
-            this.onNext();
-            break;
-          case 'ArrowLeft':
-            this.onPrev();
-            break;
-          default:
-            break;
-        }
-      })
-    )
-    .subscribe();
+  ngAfterViewInit() {
+    fromEvent<KeyboardEvent>(document, 'keydown')
+      .pipe(
+        tap(() => console.log('evemt')),
+        takeUntilDestroyed(this.destroyRef),
+        tap(() => {
+          event?.preventDefault();
+          event?.stopPropagation();
+        }),
+        filter(() => !this.lightboxConfig().slideshowMode),
+        filter((event) => handledKeyboardEvents.includes(event.code)),
+        tap((event) => {
+          switch (event.code) {
+            case 'Escape':
+              this.close.emit();
+              break;
+            case 'ArrowRight':
+              this.onNext();
+              break;
+            case 'ArrowLeft':
+              this.onPrev();
+              break;
+            default:
+              break;
+          }
+        })
+      )
+      .subscribe();
+  }
 
   closeLb() {
     this.close.emit();

@@ -1,11 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Signal, signal } from '@angular/core';
 import { CustomDialogConfig } from '../shared/ui/dialog/dialog.component';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   ButtonComponent,
   ButtonConfig,
 } from '../shared/ui/button/button.component';
 import { CardComponent } from '../shared/ui/card/card.component';
+import { AppStore } from '../store/store';
+import { Marker } from '../shared/models';
 
 @Component({
   selector: 'app-marker',
@@ -13,8 +15,22 @@ import { CardComponent } from '../shared/ui/card/card.component';
   templateUrl: './marker.component.html',
 })
 export default class MarkerComponent {
+  protected mapId: string | null = '';
   showMap = signal(false);
+  route = inject(ActivatedRoute);
   router = inject(Router);
+  store = inject(AppStore);
+  markers: Signal<Marker[]> = signal([]);
+
+  ngOnInit() {
+    this.mapId = this.route.snapshot.paramMap.get('mapId');
+    if (!this.mapId) throw new Error('map id not found');
+
+    //try to fetch from store first. If no markers there ask API
+    this.markers = this.store.getMarkersForMap(this.mapId);
+    if (!this.markers() || this.markers().length === 0)
+      this.store.loadMarkers({ mapId: this.mapId });
+  }
 
   protected goToMapButtonConfig: ButtonConfig = {
     text: 'Show on map',
@@ -29,11 +45,8 @@ export default class MarkerComponent {
   };
 
   protected dialogConfig: CustomDialogConfig = {
-    data: {
-      confirmButtonText: 'Delete',
-      title: 'Delete image',
-      isDeleteDialog: true,
-    },
+    title: 'Delete image',
+    isDeleteDialog: true,
     primaryActionButtonConfig: {
       text: 'Delete image',
       type: 'add',
@@ -45,6 +58,6 @@ export default class MarkerComponent {
   };
 
   protected goToMap(mapMode: string) {
-    this.router.navigate(['atlas'], { queryParams: { mapMode } });
+    this.router.navigate(['atlas', this.mapId], { queryParams: { mapMode } });
   }
 }

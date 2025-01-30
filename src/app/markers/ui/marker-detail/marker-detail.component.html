@@ -1,14 +1,17 @@
 <div class="max-w-7xl mx-auto p-4">
   <!-- Title and Journal Entry -->
-  <div class="mb-6">
+  <div class="mb-6 relative">
     <h1 class="text-4xl font-semibold text-gray-800">My Travel Journal</h1>
-    <p class="mt-2 text-lg text-gray-600">
-      This is where I document my travels, experiences, and adventures. Today I
-      visited the beautiful mountains, and the weather was perfect. I felt at
-      peace and took some amazing photos of the landscape.
-    </p>
   </div>
-
+  <p>
+    This is a sample paragraph. Click the edit button to modify this content.
+  </p>
+  <button
+    (click)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
+    class="text-sm text-blue-600 underline hover:text-blue-800"
+  >
+    Edit Paragraph
+  </button>
   <!-- Dropdown and Grid Container -->
 
   <!-- Image Grid Section -->
@@ -35,10 +38,6 @@
     }
   </div>
 </div>
-<app-lightbox
-  [lightboxConfig]="lightboxConfig"
-  (close)="updateLbConfig(false)"
-></app-lightbox>
 
 <app-dialog
   #deleteImageDialog
@@ -67,5 +66,26 @@
   [dialogConfig]="displayCaptionDialogConfig"
   [open]="isDisplayCaptionDialogOpen()"
 >
-  <i>{{ test }}</i>
+  <i>bananas</i>
 </app-dialog>
+
+<app-dialog
+  #addJournalEntryDialog
+  [dialogConfig]="addJournalEntryDialogConfig"
+  [open]="isJournalEntryDialogOpen()"
+>
+  <textarea
+    [formControl]="addJournalEntryFormControl"
+    class="w-full p-2 border rounded-md"
+    rows="4"
+  >
+This is a sample paragraph. Click the edit button to modify this content.</textarea
+  >
+</app-dialog>
+
+@if (lightboxConfig.isVisible) {
+<app-lightbox
+  [lightboxConfig]="lightboxConfig"
+  (close)="updateLbConfig(false)"
+></app-lightbox>
+}

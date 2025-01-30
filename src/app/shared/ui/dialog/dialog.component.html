@@ -5,7 +5,7 @@
     <!-- Dialog Header -->
     <div class="flex justify-between items-center pb-3">
       <h2 class="text-xl font-semibold text-zinc-800">
-        {{ dialogConfig().data.title }}
+        {{ dialogConfig().title }}
       </h2>
     </div>
 
@@ -18,14 +18,14 @@
     <div class="mt-6 flex justify-end space-x-2">
       <app-button
         [config]="dialogConfig().secondaryActionButtonConfig"
-        (btnClick)="confirmAction()"
+        (btnClick)="cancelAction()"
       ></app-button>
 
       @if (dialogConfig().primaryActionButtonConfig !== null &&
       dialogConfig().primaryActionButtonConfig !==undefined) {
       <app-button
         [config]="fetchPrimaryActionButtonConfig()"
-        (btnClick)="cancelAction()"
+        (btnClick)="confirmAction()"
       ></app-button>
       }
     </div>

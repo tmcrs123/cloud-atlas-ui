@@ -9,12 +9,13 @@
   <!-- Select Dropdown -->
   <select
     id="travel-destination"
-    [(ngModel)]="selectedOption"
+    [ngModel]="selectedOption"
+    (ngModelChange)="onSelect($event)"
     class="block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
   >
-    <option value="" disabled>Select an option</option>
-    <option *ngFor="let destination of destinations" [value]="destination">
-      {{ destination }}
+    <option [value]="" disabled>Select an option</option>
+    <option *ngFor="let option of options()" [value]="option.value">
+      {{ option.title }}
     </option>
   </select>
 

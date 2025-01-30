@@ -15,7 +15,7 @@ export function AuthInterceptor(
   return next(
     request.clone({
       setHeaders: {
-        Authorization: `Bearer ${authService.token}`,
+        Authorization: `Bearer ${authService.idToken}`,
       },
     })
   );

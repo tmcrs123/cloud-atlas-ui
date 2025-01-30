@@ -1,7 +1,7 @@
 <!-- Lightbox Modal -->
-@if (lightboxConfig().isVisible) {
 <div
-  class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-1"
+  #lightboxContainer
+  class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center"
 >
   <div class="relative max-w-3xl w-full p-4">
     <img
@@ -18,4 +18,3 @@
     </button>
   </div>
 </div>
-}

@@ -2,9 +2,7 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   inject,
-  input,
   signal,
   viewChild,
   WritableSignal,
@@ -20,17 +18,17 @@ import {
   MapInfoWindow,
 } from '@angular/google-maps';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { iif, of, switchMap, tap } from 'rxjs';
-import { Marker } from '../../../shared/models';
-import {
-  CustomDialogConfig,
-  DialogComponent,
-} from '../../../shared/ui/dialog/dialog.component';
-import { CardComponent } from '../../../shared/ui/card/card.component';
+import { defer, map, tap } from 'rxjs';
 import {
   ButtonComponent,
   ButtonConfig,
 } from '../../../shared/ui/button/button.component';
+import { CardComponent } from '../../../shared/ui/card/card.component';
+import {
+  CustomDialogConfig,
+  DialogComponent,
+} from '../../../shared/ui/dialog/dialog.component';
+import { AppStore } from '../../../store/store';
 
 const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
   draggableCursor: 'grab',
@@ -56,26 +54,6 @@ const INFO_WINDOW_OPTIONS: google.maps.InfoWindowOptions = {
   headerDisabled: true,
 };
 
-type MapMode = 'add' | 'move' | 'loading';
-
-type LatLong = {
-  latitude: number;
-  longitude: number;
-};
-
-function generateRandomCoordinates(): LatLong {
-  // Latitude ranges from -90 to 90
-  const latitude = (Math.random() * 180 - 90).toFixed(6);
-
-  // Longitude ranges from -180 to 180
-  const longitude = (Math.random() * 360 - 180).toFixed(6);
-
-  return {
-    latitude: parseFloat(latitude),
-    longitude: parseFloat(longitude),
-  };
-}
-
 @Component({
   selector: 'app-atlas',
   imports: [
@@ -98,16 +76,12 @@ function generateRandomCoordinates(): LatLong {
   ],
 })
 export default class AtlasComponent {
-  destroyRef = inject(DestroyRef);
-  router = inject(Router);
-  ar = inject(ActivatedRoute);
+  //#region  config
   protected moveButtonConfig: ButtonConfig = {
     text: 'Move around',
     type: 'primary_action',
     svg: 'globe',
   };
-
-  goToMarker() {}
 
   protected addButtonConfig: ButtonConfig = {
     text: 'Add marker',
@@ -122,11 +96,8 @@ export default class AtlasComponent {
   };
 
   protected dialogConfig: CustomDialogConfig = {
-    data: {
-      confirmButtonText: 'Add',
-      title: 'What is the name of the new marker?',
-      isDeleteDialog: false,
-    },
+    isDeleteDialog: false,
+    title: 'What is the name of the new marker?',
     primaryActionButtonConfig: {
       text: 'Add marker',
       type: 'add',
@@ -137,16 +108,9 @@ export default class AtlasComponent {
     },
   };
 
+  //#endregion
+
   protected infoWindowOptions = INFO_WINDOW_OPTIONS;
-  protected isDialogOpen = false;
-  protected newMarkerNameFormControl = new FormControl(
-    '',
-    Validators.minLength(5)
-  );
-
-  dialogComponentRef = viewChild.required<DialogComponent>(DialogComponent);
-  googleMapRef = viewChild.required<GoogleMap>(GoogleMap);
-
   protected mapMode: WritableSignal<string> = signal('loading');
   protected mapOptions = computed(() => {
     switch (this.mapMode()) {
@@ -182,51 +146,91 @@ export default class AtlasComponent {
         };
     }
   });
+  protected canOpenDialog = computed(() => this.mapMode() === 'add');
 
-  /**
-   *
-   */
-  constructor() {
-    // const param = this.ar.snapshot.queryParamMap.get('mapMode');
-    // this.mapMode.set(param ? (param as MapMode) : this.mapMode());
-  }
+  activatedRoute = inject(ActivatedRoute);
+  destroyRef = inject(DestroyRef);
+  router = inject(Router);
+  store = inject(AppStore);
 
-  ngAfterViewInit() {
-    const param = this.ar.snapshot.queryParamMap.get('mapMode');
-    this.mapMode.set(param ? (param as MapMode) : this.mapMode());
+  dialogComponentRef = viewChild.required<DialogComponent>(DialogComponent);
+  googleMapRef = viewChild.required<GoogleMap>(GoogleMap);
 
-    //what happens when add marker dialog is closed
-    outputToObservable(this.dialogComponentRef().dialogClosed)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        switchMap((complete) =>
-          iif(
-            () => complete,
-            of(this.newMarkerNameFormControl.value),
-            of(null)
-          ).pipe(tap(() => this.newMarkerNameFormControl.setValue(null)))
-        )
-      )
-      .subscribe({});
-  }
+  protected mapId: string = this.activatedRoute.snapshot.paramMap.get(
+    'mapId'
+  ) as string;
+  protected markers = this.store.getMarkersForMap(this.mapId);
+  protected newMarkerNameFormControl = new FormControl('', {
+    validators: Validators.minLength(5),
+    nonNullable: true,
+  });
+  protected isDialogOpen = false;
 
-  existingMarkers = input<Marker[]>(Array(5).fill({ title: 'banannas' }));
-
-  existingAtlasMarkers = computed(() =>
-    this.existingMarkers().map(
+  readonly atlasMarkers = computed(() =>
+    this.markers().map(
       (marker) =>
         ({
           title: marker.title,
           position: {
-            lat: generateRandomCoordinates().latitude,
-            lng: generateRandomCoordinates().longitude,
+            lat: marker.coordinates.lat,
+            lng: marker.coordinates.lng,
           },
         } as google.maps.marker.AdvancedMarkerElementOptions)
     )
   );
 
+  lastLatLngClicked = signal<google.maps.LatLng | null>(null);
+  lastLatLngClicked$ = defer(() =>
+    this.googleMapRef().mapClick.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      map((click) => click.latLng),
+      tap((latLng) => this.lastLatLngClicked.set(latLng))
+    )
+  );
+
+  //Effects
+  readonly clearFormControlOnDialogClose$ = defer(() =>
+    outputToObservable(this.dialogComponentRef().dialogClosed).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      tap(() => this.newMarkerNameFormControl.setValue(''))
+    )
+  );
+
+  ngAfterViewInit() {
+    this.lastLatLngClicked$.subscribe();
+  }
+
+  //Actions
+  protected readonly userCompletesAddDialog = (hasMarkerToCreate: boolean) => {
+    if (!hasMarkerToCreate) {
+      this.isDialogOpen = false;
+      return;
+    }
+
+    this.store.createMarkers({
+      mapId: this.mapId,
+      data: [
+        {
+          mapId: this.mapId,
+          title: this.newMarkerNameFormControl.value,
+          coordinates: {
+            lat: this.lastLatLngClicked()?.lat() as number,
+            lng: this.lastLatLngClicked()?.lng() as number,
+          },
+        },
+      ],
+    });
+
+    this.isDialogOpen = false;
+  };
+
+  ngOnInit() {
+    // this.existingMarkers.set(this.store.getMarkersForMap(this.mapId));
+    this.clearFormControlOnDialogClose$.subscribe();
+  }
+
   onCardClick(index: number) {
-    const m = this.existingAtlasMarkers()[index];
+    const m = this.atlasMarkers()[index];
     if (!m.position?.lat && !m.position?.lng) return;
     this.googleMapRef().googleMap?.setCenter({
       lat: Number(m.position.lat),

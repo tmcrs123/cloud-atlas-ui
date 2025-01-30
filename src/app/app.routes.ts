@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home/home.component';
 import { RedirectComponent } from './redirect/redirect.component';
 import { AuthGuard } from './shared/guards/auth.guard';
+import { LandingComponent } from './landing/landing/landing.component';
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: LandingComponent },
   { path: 'redirect', component: RedirectComponent },
   {
     path: 'maps',
@@ -11,17 +11,17 @@ export const routes: Routes = [
     loadComponent: () => import('./maps/maps.component'),
   },
   {
-    path: 'markers',
+    path: 'markers/:mapId',
     canActivate: [AuthGuard],
     loadComponent: () => import('./markers/marker.component'),
   },
   {
-    path: 'atlas',
+    path: 'atlas/:mapId',
     canActivate: [AuthGuard],
     loadComponent: () => import('./markers/ui/atlas/atlas.component'),
   },
   {
-    path: 'detail',
+    path: 'markers/:markerId/detail',
     canActivate: [AuthGuard],
     loadComponent: () =>
       import('./markers/ui/marker-detail/marker-detail.component'),

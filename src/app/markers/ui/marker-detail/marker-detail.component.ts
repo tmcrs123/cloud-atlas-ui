@@ -10,7 +10,12 @@ import {
   outputToObservable,
   takeUntilDestroyed,
 } from '@angular/core/rxjs-interop';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { filter, iif, merge, of, switchMap, tap } from 'rxjs';
+import {
+  ButtonComponent,
+  ButtonConfig,
+} from '../../../shared/ui/button/button.component';
 import {
   CustomDialogConfig,
   DialogComponent,
@@ -22,10 +27,6 @@ import {
   LightboxComponent,
   LightboxConfig,
 } from '../../../shared/ui/lightbox/lightbox.component';
-import {
-  ButtonComponent,
-  ButtonConfig,
-} from '../../../shared/ui/button/button.component';
 
 function getRandomLetters() {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -52,17 +53,15 @@ function buildRandomSeed() {
     DropdownComponent,
     DialogComponent,
     ButtonComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: './marker-detail.component.html',
   styleUrl: './marker-detail.component.css',
 })
 export default class MarkerDetailComponent {
   protected deleteDialogConfig: CustomDialogConfig = {
-    data: {
-      confirmButtonText: 'Delete',
-      title: 'Delete image',
-      isDeleteDialog: true,
-    },
+    title: 'Delete image',
+    isDeleteDialog: true,
     primaryActionButtonConfig: {
       text: 'Delete image',
       type: 'delete',
@@ -74,11 +73,8 @@ export default class MarkerDetailComponent {
   };
 
   protected readonly addCaptionDialogConfig: CustomDialogConfig = {
-    data: {
-      confirmButtonText: 'Add',
-      title: 'Add caption for image',
-      isDeleteDialog: false,
-    },
+    title: 'Add caption for image',
+    isDeleteDialog: false,
     primaryActionButtonConfig: {
       text: 'Add marker',
       type: 'add',
@@ -89,12 +85,22 @@ export default class MarkerDetailComponent {
     },
   };
 
-  protected readonly displayCaptionDialogConfig: CustomDialogConfig = {
-    data: {
-      confirmButtonText: 'Add',
-      title: 'Caption',
-      isDeleteDialog: false,
+  protected readonly addJournalEntryDialogConfig: CustomDialogConfig = {
+    title: 'Add journal entry',
+    isDeleteDialog: false,
+    primaryActionButtonConfig: {
+      text: 'Save journal',
+      type: 'add',
     },
+    secondaryActionButtonConfig: {
+      text: 'Cancel',
+      type: 'secondary_action',
+    },
+  };
+
+  protected readonly displayCaptionDialogConfig: CustomDialogConfig = {
+    title: 'Caption',
+    isDeleteDialog: false,
     secondaryActionButtonConfig: {
       text: 'Cancel',
       type: 'secondary_action',
@@ -125,6 +131,8 @@ export default class MarkerDetailComponent {
   protected isDeleteDialogOpen = signal(false);
   protected isAddCaptionDialogOpen = signal(false);
   protected isDisplayCaptionDialogOpen = signal(false);
+  protected isJournalEntryDialogOpen = signal(false);
+  protected = signal(false);
   protected deleteDialogRef =
     viewChild.required<DialogComponent>('deleteImageDialog');
   protected addCaptionDialogRef =
@@ -132,21 +140,25 @@ export default class MarkerDetailComponent {
   protected displayCaptionDialogRef = viewChild.required<DialogComponent>(
     'displayCaptionDialog'
   );
+  protected addJournalEntryDialogRef = viewChild.required<DialogComponent>(
+    'addJournalEntryDialog'
+  );
   protected dropdowns = viewChildren(DropdownComponent);
   destroyRef = inject(DestroyRef);
-
-  protected test = 'apples';
+  protected addJournalEntryFormControl = new FormControl<string>('', {
+    nonNullable: true,
+  });
 
   handleClick(imgIndex: number) {
     this.isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen());
-
-    this.test = 'pears' + imgIndex;
   }
 
   ngOnInit() {
     this.fakeImgArray = Array(20)
       .fill('')
       .map(() => buildRandomSeed());
+
+    this.addJournalEntryFormControl.valueChanges.subscribe(console.log);
   }
 
   ngAfterViewInit() {
@@ -174,6 +186,9 @@ export default class MarkerDetailComponent {
     );
     const displayCaptionDialogClosed$ = outputToObservable(
       this.displayCaptionDialogRef().dialogClosed
+    );
+    const addJournalEntryDialogClosed$ = outputToObservable(
+      this.addJournalEntryDialogRef().dialogClosed
     );
 
     //replace with proper htpp method
@@ -211,10 +226,19 @@ export default class MarkerDetailComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap(() => {
-          this.test = '';
           this.isDisplayCaptionDialogOpen.set(
             !this.isDisplayCaptionDialogOpen()
           );
+        })
+      )
+      .subscribe();
+
+    //journal entry flow
+    addJournalEntryDialogClosed$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap(() => {
+          this.isJournalEntryDialogOpen.set(!this.isJournalEntryDialogOpen());
         })
       )
       .subscribe();

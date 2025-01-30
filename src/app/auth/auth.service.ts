@@ -11,11 +11,11 @@ export class AuthService {
 
   private _idToken: string = '';
 
-  public get token(): string {
+  public get idToken(): string {
     return this._idToken;
   }
 
-  private set token(value: string) {
+  private set idToken(value: string) {
     this._idToken = value;
   }
 
@@ -30,15 +30,22 @@ export class AuthService {
   }
 
   // whether the user is authenticated
-  checkAuth() {
-    return firstValueFrom(this.oidcSecurityService.checkAuth());
+  checkIfUserIsAuthenticated() {
+    return this.oidcSecurityService
+      .checkAuth()
+      .pipe(tap((lg) => (this.idToken = lg.idToken)));
   }
 
   exchangeCodeForToken() {
-    return this.oidcSecurityService.getIdToken().pipe(
-      tap((token) => (this._idToken = token)),
-      switchMap(() => this.oidcSecurityService.checkAuth())
-    );
+    return this.oidcSecurityService
+      .getIdToken()
+      .pipe(
+        switchMap(() =>
+          this.oidcSecurityService
+            .checkAuth()
+            .pipe(tap((lg) => (this.idToken = lg.idToken)))
+        )
+      );
   }
 
   login(): void {

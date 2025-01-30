@@ -20,23 +20,27 @@
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-4"
     >
-      @for (item of [1,2,3,4]; track $index) {
+      @for (item of maps(); track $index) {
       <app-card
         [cardConfig]="{
-          title: '❤ Mountain Exploration',
-          subtitle: 'Last updated: Jan 10, 2025'
+          title: item.title,
+          subtitle: item.createdAt
         }"
+        (click)="navigateToMarkers(item.mapId)"
       ></app-card>
+      } @empty {
+      <h1>No maps yet 🤷‍♂️</h1>
       }
     </div>
   </div>
   <app-dialog
     [dialogConfig]="addMapDialogConfig"
     [open]="isAddDialogOpen()"
-    (dialogClosed)="isAddDialogOpen.set(false)"
+    (dialogClosed)="onAddDialogClose($event)"
   >
     <input
       type="text"
+      [formControl]="addMapFormControl"
       name=""
       id=""
       placeholder="Fiji 2020"
@@ -47,8 +51,11 @@
   <app-dialog
     [dialogConfig]="deleteMapDialogConfig"
     [open]="isDeleteDialogOpen()"
-    (dialogClosed)="isDeleteDialogOpen.set(false)"
+    (dialogClosed)="onDeleteDialogClose($event)"
   >
-    <app-select></app-select>
+    <app-select
+      [formControl]="deleteMapFormControl"
+      [options]="fetchSelectOptions()"
+    ></app-select>
   </app-dialog>
 </section>

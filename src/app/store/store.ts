@@ -1,4 +1,4 @@
-import { computed, effect, inject } from '@angular/core';
+import { computed, effect, inject, Signal } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import {
   getState,
@@ -40,7 +40,7 @@ export const AppStore = signalStore(
     onInit(store) {
       effect(() => {
         const state = getState(store);
-        // console.log('mapsState', state);k
+        console.log('mapsState', state);
       });
     },
   }),
@@ -143,6 +143,9 @@ export const AppStore = signalStore(
       //even if its null we still want to return
       return store.maps()[mapId];
     },
+    getMaps(): Signal<SnappinMap[]> {
+      return computed(() => Object.values(store.maps()));
+    },
     //MARKERS
     createMarkers: rxMethod<{ mapId: string; data: Partial<Marker>[] }>(
       pipe(
@@ -189,7 +192,6 @@ export const AppStore = signalStore(
                   } else loadedMarkers = [];
 
                   updatedState[params.mapId].markers = [
-                    ...updatedState[params.mapId].markers,
                     ...loadedMarkers.map((marker) => {
                       marker.images = [];
                       return marker;
@@ -262,8 +264,8 @@ export const AppStore = signalStore(
         })
       )
     ),
-    getMarkersForMap(mapId: string): Marker[] {
-      return store.maps()[mapId].markers;
+    getMarkersForMap(mapId: string): Signal<Marker[]> {
+      return computed(() => store.maps()[mapId].markers);
     },
     // IMAGES
     getImagesForMarker: rxMethod<{ mapId: string; markerId: string }>(

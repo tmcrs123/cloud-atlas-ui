@@ -4,16 +4,16 @@ import { Component, input, output } from '@angular/core';
 import { ButtonConfig, ButtonComponent } from '../button/button.component';
 
 export type DialogData = {
-  title: string;
-  confirmButtonText: string;
-  isDeleteDialog: boolean;
+  data: unknown;
 };
 
 // my modals always have data
 export interface CustomDialogConfig extends Omit<DialogConfig, 'data'> {
-  data: DialogData;
+  data?: unknown;
   primaryActionButtonConfig?: ButtonConfig;
   secondaryActionButtonConfig: ButtonConfig;
+  title: string;
+  isDeleteDialog: boolean;
 }
 
 @Component({

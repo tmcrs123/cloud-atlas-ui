@@ -31,35 +31,32 @@ export class AppComponent {
   }
 
   deleteMarkers() {
-    const ids = this.appStore
-      .getMarkersForMap(this.appStore.mapsIterable()[0].mapId)
-      .map((m) => m.markerId);
-
-    this.appStore.deleteMarkers({
-      mapId: this.appStore.mapsIterable()[0].mapId,
-      markerIds: [
-        this.appStore.mapsIterable()[0].markers[0].markerId,
-        this.appStore.mapsIterable()[0].markers[1].markerId,
-      ],
-    });
+    // const ids = this.appStore
+    //   .getMarkersForMap(this.appStore.mapsIterable()[0].mapId)
+    //   .map((m) => m.markerId);
+    // this.appStore.deleteMarkers({
+    //   mapId: this.appStore.mapsIterable()[0].mapId,
+    //   markerIds: [
+    //     this.appStore.mapsIterable()[0].markers[0].markerId,
+    //     this.appStore.mapsIterable()[0].markers[1].markerId,
+    //   ],
+    // });
   }
 
   updateMarker() {
-    const mapId = this.appStore.mapsIterable()[0].mapId;
-
-    const markerId = this.appStore
-      .getMarkersForMap(this.appStore.mapsIterable()[0].mapId)
-      .map((m) => m.markerId)[0];
-
-    this.appStore.updateMarker({
-      mapId,
-      markerId,
-      data: {
-        journal: 'Updated journal',
-        title: 'Updated title',
-        coordinates: { lat: 0, lng: 0 },
-      },
-    });
+    // const mapId = this.appStore.mapsIterable()[0].mapId;
+    // const markerId = this.appStore
+    //   .getMarkersForMap(this.appStore.mapsIterable()[0].mapId)
+    //   .map((m) => m.markerId)[0];
+    // this.appStore.updateMarker({
+    //   mapId,
+    //   markerId,
+    //   data: {
+    //     journal: 'Updated journal',
+    //     title: 'Updated title',
+    //     coordinates: { lat: 0, lng: 0 },
+    //   },
+    // });
   }
 
   getImagesForMarker() {
