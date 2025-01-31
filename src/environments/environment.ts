@@ -10,4 +10,5 @@ export const environment = {
   renewTimeBeforeTokenExpiresInSeconds: 30,
   region: 'us-east-1',
   userPoolId: 'us-east-1_szwZtfXgl',
+  maxImageFileSizeInBytes: 15728640,
 };

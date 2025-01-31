@@ -1,6 +1,6 @@
 <section class="max-w-6xl mx-auto p-6">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-6xl font-bold">RTW - Fiji</h1>
+    <h1 class="text-6xl font-bold">{{ map?.title || "Untitled map 🤦‍♂️" }}</h1>
     <div class="flex gap-2">
       <app-button
         [config]="goToMapButtonConfig"
@@ -13,7 +13,7 @@
       <app-button
         [config]="addMarkerButtonConfig"
         (btnClick)="
-          router.navigate(['atlas', this.mapId], {
+          router.navigate(['atlas', mapId], {
             queryParams: { mapMode: 'add' }
           })
         "
@@ -30,7 +30,9 @@
           title: item.title,
           subtitle: item.startDate ?? item.endDate ?? item.createdAt
         }"
-        (click)="router.navigate(['markers', item.markerId, 'detail'])"
+        (click)="
+          router.navigate(['markers', mapId, 'marker', item.markerId, 'detail'])
+        "
       ></app-card>
       } @empty {
       <h1>No markers yet 🤷‍♂️</h1>

@@ -1,10 +1,12 @@
 import {
   Component,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   input,
   output,
+  Signal,
   signal,
   viewChild,
 } from '@angular/core';
@@ -12,12 +14,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, fromEvent, tap } from 'rxjs';
 import { Image } from '../../models';
 export interface LightboxConfig {
-  displayCount: boolean;
-  displayControls: boolean;
-  slideshowMode: boolean;
   openAtIndex: number;
   isVisible: boolean;
-  images: Image[];
 }
 
 const handledKeyboardEvents = ['Escape', 'ArrowRight', 'ArrowLeft'];
@@ -31,22 +29,26 @@ const handledKeyboardEvents = ['Escape', 'ArrowRight', 'ArrowLeft'];
 export class LightboxComponent {
   destroyRef = inject(DestroyRef);
   lightboxConfig = input.required<LightboxConfig>();
+  images = input.required<Image[]>();
   close = output<void>();
   currentIndex = signal<number>(0);
   lightboxContainer = viewChild.required('lightboxContainer', {
     read: ElementRef,
   });
 
+  /**
+   *
+   */
+  constructor() {}
+
   ngAfterViewInit() {
     fromEvent<KeyboardEvent>(document, 'keydown')
       .pipe(
-        tap(() => console.log('evemt')),
         takeUntilDestroyed(this.destroyRef),
         tap(() => {
           event?.preventDefault();
           event?.stopPropagation();
         }),
-        filter(() => !this.lightboxConfig().slideshowMode),
         filter((event) => handledKeyboardEvents.includes(event.code)),
         tap((event) => {
           switch (event.code) {
@@ -67,21 +69,17 @@ export class LightboxComponent {
       .subscribe();
   }
 
-  closeLb() {
-    this.close.emit();
-  }
-
-  protected onPrev() {
+  private onPrev() {
     let newIndex =
       this.currentIndex() - 1 >= 0
         ? this.currentIndex() - 1
-        : this.lightboxConfig().images.length - 1;
+        : this.images().length - 1;
     this.currentIndex.set(newIndex);
   }
 
-  protected onNext() {
+  private onNext() {
     let newIndex =
-      this.currentIndex() + 1 >= this.lightboxConfig().images.length
+      this.currentIndex() + 1 >= this.images().length
         ? 0
         : this.currentIndex() + 1;
     this.currentIndex.set(newIndex);

@@ -10,10 +10,12 @@ import {
 import {
   ARROW_BACK_SVG,
   ARROW_DOWN_SVG,
+  ARROW_ON_SQUARE_UP,
   GLOBE_SVG,
   LIST_SVG,
   PLUS_SVG,
   SPEECH_BUBBLE_SVG,
+  WARNING_SVG,
 } from './button.svg';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -26,6 +28,8 @@ export type ButtonConfig = {
     | 'list'
     | 'arrow_back'
     | 'speech_bubble'
+    | 'warning'
+    | 'arrow_on_square_up'
     | null;
   text: string;
   customCss?: string;
@@ -79,6 +83,10 @@ export class ButtonComponent {
         return this.sanitizer.bypassSecurityTrustHtml(LIST_SVG);
       case 'speech_bubble':
         return this.sanitizer.bypassSecurityTrustHtml(SPEECH_BUBBLE_SVG);
+      case 'warning':
+        return this.sanitizer.bypassSecurityTrustHtml(WARNING_SVG);
+      case 'arrow_on_square_up':
+        return this.sanitizer.bypassSecurityTrustHtml(ARROW_ON_SQUARE_UP);
       default:
         return null;
     }

@@ -6,7 +6,7 @@
   @if (config().svg) {
   <div [innerHTML]="svgIcon()"></div>
   }
-  <div>
+  <div [ngClass]="config().svg ? 'ml-2' : ''">
     {{ config().text }}
   </div>
 </button>

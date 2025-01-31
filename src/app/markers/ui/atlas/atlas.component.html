@@ -53,7 +53,7 @@
     </app-dialog>
   </div>
   <div class="flex-1 bg-zinc-100 flex flex-col justify-around p-4">
-    <h1 class="text-3xl text-smnter">RTW Fiji</h1>
+    <h1 class="text-3xl text-center">{{ map?.title || "Untitled map 🤦‍♂️" }}</h1>
 
     <div class="overflow-y-auto max-h-6/10">
       @for (item of markers(); track $index) {

@@ -13,7 +13,7 @@
       <ul class="py-2 text-gray-700">
         @for (option of config().options; track $index) {
         <li
-          (click)="selectedOption.emit(option.index)"
+          (click)="optionSelected.emit(option.index)"
           class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
         >
           {{ option.label }}

@@ -74,3 +74,21 @@ export const SPEECH_BUBBLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="
   <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
 </svg>
 `;
+
+export const WARNING_SVG = `<svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-5 w-5 text-yellow-500 mr-3"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8.257 3.099c.366-.756 1.377-.756 1.743 0l6.518 13.51A1 1 0 0115.518 18H4.482a1 1 0 01-.897-1.391L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-2a1 1 0 01-.993-.883L9 11V7a1 1 0 011.993-.117L11 7v4a1 1 0 01-1 1z"
+        clip-rule="evenodd"
+      />
+    </svg>`;
+
+export const ARROW_ON_SQUARE_UP = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
+</svg>
+`;

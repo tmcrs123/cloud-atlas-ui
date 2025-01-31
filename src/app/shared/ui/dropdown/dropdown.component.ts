@@ -35,13 +35,13 @@ export default class DropdownComponent {
   isDropdownOpen = signal(false);
   destroyRef = inject(DestroyRef);
   config = input.required<DropdownConfig>();
-  selectedOption = output<number>();
+  optionSelected = output<number>();
   dropdownButton = viewChild.required(ButtonComponent);
 
   ngAfterContentInit() {
     merge(
       outputToObservable(this.dropdownButton().btnClick),
-      outputToObservable(this.selectedOption)
+      outputToObservable(this.optionSelected)
     )
       .pipe(
         tap(() => this.isDropdownOpen.set(!this.isDropdownOpen())),

@@ -21,13 +21,33 @@ export class ImagesService {
     );
   }
 
-  public updateImageForMarker(
-    mapId: string,
-    data: Partial<Image>
-  ): Observable<Image> {
+  public updateImageForMarker(data: Partial<Image>): Observable<Image> {
     return this.http.post<Image>(
-      buildApiEndpoint(`images/${mapId}/${data.imageId}`),
+      buildApiEndpoint(`images/${data.mapId}/${data.imageId}`),
       data
     );
+  }
+
+  public deleteImageFromMarker(
+    mapId: string,
+    markerId: string,
+    imageId: string
+  ): Observable<void> {
+    return this.http.delete<void>(
+      buildApiEndpoint(`images/${mapId}/${markerId}/${imageId}`)
+    );
+  }
+
+  public createPresignedURL(
+    mapId: string,
+    markerId: string
+  ): Observable<{ url: string; fields: { [field: string]: string } }> {
+    return this.http.get<{ url: string; fields: { [field: string]: string } }>(
+      buildApiEndpoint(`images/${mapId}/${markerId}`)
+    );
+  }
+
+  public pushToS3Bucket(presignedUrl: string, formData: FormData) {
+    return this.http.post(presignedUrl, formData);
   }
 }

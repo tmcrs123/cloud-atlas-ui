@@ -21,7 +21,7 @@ export const routes: Routes = [
     loadComponent: () => import('./markers/ui/atlas/atlas.component'),
   },
   {
-    path: 'markers/:markerId/detail',
+    path: 'markers/:mapId/marker/:markerId/detail',
     canActivate: [AuthGuard],
     loadComponent: () =>
       import('./markers/ui/marker-detail/marker-detail.component'),

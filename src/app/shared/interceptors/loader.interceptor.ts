@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { LoaderService } from '../services/loader.service';
 import { inject } from '@angular/core';
 import { finalize } from 'rxjs';
-import { COGNITO_URLS } from './cognito-urls';
+import { COGNITO_URLS, S3_URLS } from './external-urls';
 
 export const LoaderInterceptor: HttpInterceptorFn = (req, next) => {
   const loaderService = inject(LoaderService);

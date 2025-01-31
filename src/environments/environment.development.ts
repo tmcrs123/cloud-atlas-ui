@@ -1,6 +1,6 @@
 export const environment = {
-  api_endpoint: 'http://localhost:3000',
-  // api_endpoint: 'https://uhkjuwv5j1.execute-api.us-east-1.amazonaws.com/test',
+  // api_endpoint: 'http://localhost:3000',
+  api_endpoint: 'https://uhkjuwv5j1.execute-api.us-east-1.amazonaws.com/test',
   authority: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_szwZtfXgl',
   authWellknownEndpointUrl:
     'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_szwZtfXgl',
@@ -10,4 +10,5 @@ export const environment = {
   renewTimeBeforeTokenExpiresInSeconds: 30,
   region: 'us-east-1',
   userPoolId: 'us-east-1_szwZtfXgl',
+  maxImageFileSizeInBytes: 15728640,
 };

@@ -1,0 +1,13 @@
+<app-button
+  [config]="addNewImageButtonConfig"
+  (btnClick)="fileInput.click()"
+  class="p2 flex flex-row-reverse"
+></app-button>
+<input
+  #fileInput
+  hidden
+  type="file"
+  max="10"
+  multiple
+  (change)="handleFileUpload($event)"
+/>

@@ -7,7 +7,7 @@ import {
 } from '../shared/ui/button/button.component';
 import { CardComponent } from '../shared/ui/card/card.component';
 import { AppStore } from '../store/store';
-import { Marker } from '../shared/models';
+import { Marker, SnappinMap } from '../shared/models';
 
 @Component({
   selector: 'app-marker',
@@ -21,10 +21,13 @@ export default class MarkerComponent {
   router = inject(Router);
   store = inject(AppStore);
   markers: Signal<Marker[]> = signal([]);
+  map: SnappinMap | undefined;
 
   ngOnInit() {
     this.mapId = this.route.snapshot.paramMap.get('mapId');
     if (!this.mapId) throw new Error('map id not found');
+
+    this.map = this.store.getMapById(this.mapId);
 
     //try to fetch from store first. If no markers there ask API
     this.markers = this.store.getMarkersForMap(this.mapId);
@@ -58,6 +61,8 @@ export default class MarkerComponent {
   };
 
   protected goToMap(mapMode: string) {
-    this.router.navigate(['atlas', this.mapId], { queryParams: { mapMode } });
+    this.router.navigate(['atlas', this.mapId], {
+      queryParams: { mapMode },
+    });
   }
 }

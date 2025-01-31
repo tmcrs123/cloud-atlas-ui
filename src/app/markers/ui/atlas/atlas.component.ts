@@ -29,6 +29,7 @@ import {
   DialogComponent,
 } from '../../../shared/ui/dialog/dialog.component';
 import { AppStore } from '../../../store/store';
+import { SnappinMap } from '../../../shared/models';
 
 const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
   draggableCursor: 'grab',
@@ -165,6 +166,7 @@ export default class AtlasComponent {
     nonNullable: true,
   });
   protected isDialogOpen = false;
+  protected map: SnappinMap | undefined = undefined;
 
   readonly atlasMarkers = computed(() =>
     this.markers().map(
@@ -227,6 +229,7 @@ export default class AtlasComponent {
   ngOnInit() {
     // this.existingMarkers.set(this.store.getMarkersForMap(this.mapId));
     this.clearFormControlOnDialogClose$.subscribe();
+    this.map = this.store.getMapById(this.mapId);
   }
 
   onCardClick(index: number) {

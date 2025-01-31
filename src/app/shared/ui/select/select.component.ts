@@ -5,6 +5,7 @@ import {
   FormsModule,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+import { WarningBannerComponent } from '../warning-banner/warning-banner.component';
 
 export type SelectOption<T> = {
   title: string;
@@ -13,7 +14,7 @@ export type SelectOption<T> = {
 
 @Component({
   selector: 'app-select',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, WarningBannerComponent],
   templateUrl: './select.component.html',
   providers: [
     {

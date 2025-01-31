@@ -8,7 +8,7 @@
     <app-dropdown
       class="grow-0"
       [config]="dropdownConfig"
-      (selectedOption)="
+      (optionSelected)="
         $event
           ? this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())
           : this.isAddDialogOpen.set(!this.isAddDialogOpen())
@@ -41,8 +41,6 @@
     <input
       type="text"
       [formControl]="addMapFormControl"
-      name=""
-      id=""
       placeholder="Fiji 2020"
       class="w-100 p-4 border border-zinc-300"
     />
