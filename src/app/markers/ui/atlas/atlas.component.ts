@@ -10,6 +10,7 @@ import {
 import {
   outputToObservable,
   takeUntilDestroyed,
+  toSignal,
 } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -18,7 +19,7 @@ import {
   MapInfoWindow,
 } from '@angular/google-maps';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { defer, map, tap } from 'rxjs';
+import { defer, map, startWith, tap } from 'rxjs';
 import {
   ButtonComponent,
   ButtonConfig,
@@ -96,19 +97,6 @@ export default class AtlasComponent {
     svg: 'arrow_back',
   };
 
-  protected dialogConfig: CustomDialogConfig = {
-    isDeleteDialog: false,
-    title: 'What is the name of the new marker?',
-    primaryActionButtonConfig: {
-      text: 'Add marker',
-      type: 'add',
-    },
-    secondaryActionButtonConfig: {
-      text: 'Cancel',
-      type: 'secondary_action',
-    },
-  };
-
   //#endregion
 
   protected infoWindowOptions = INFO_WINDOW_OPTIONS;
@@ -162,9 +150,12 @@ export default class AtlasComponent {
   ) as string;
   protected markers = this.store.getMarkersForMap(this.mapId);
   protected newMarkerNameFormControl = new FormControl('', {
-    validators: Validators.minLength(5),
+    validators: [Validators.required, Validators.minLength(3)],
     nonNullable: true,
   });
+  protected newMarkerNameFormControlStatusChangesSignal = toSignal(
+    this.newMarkerNameFormControl.statusChanges.pipe(startWith('INVALID'))
+  );
   protected isDialogOpen = false;
   protected map: SnappinMap | undefined = undefined;
 
@@ -180,6 +171,22 @@ export default class AtlasComponent {
         } as google.maps.marker.AdvancedMarkerElementOptions)
     )
   );
+
+  protected dialogConfig = computed<CustomDialogConfig>(() => {
+    return {
+      title: 'What is the name of the new marker?',
+      primaryActionButtonConfig: {
+        text: 'Add marker',
+        type: 'add',
+        disabled:
+          this.newMarkerNameFormControlStatusChangesSignal() === 'INVALID',
+      },
+      secondaryActionButtonConfig: {
+        text: 'Cancel',
+        type: 'secondary_action',
+      },
+    };
+  });
 
   lastLatLngClicked = signal<google.maps.LatLng | null>(null);
   lastLatLngClicked$ = defer(() =>
@@ -227,7 +234,6 @@ export default class AtlasComponent {
   };
 
   ngOnInit() {
-    // this.existingMarkers.set(this.store.getMarkersForMap(this.mapId));
     this.clearFormControlOnDialogClose$.subscribe();
     this.map = this.store.getMapById(this.mapId);
   }
@@ -239,5 +245,15 @@ export default class AtlasComponent {
       lat: Number(m.position.lat),
       lng: Number(m.position.lng),
     });
+  }
+
+  protected navigateToMarkerDetail(markerIndex: number) {
+    this.router.navigate([
+      'markers',
+      this.mapId,
+      'marker',
+      this.markers()[markerIndex].markerId,
+      'detail',
+    ]);
   }
 }

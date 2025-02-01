@@ -1,14 +1,30 @@
 <div class="max-w-7xl mx-auto p-4">
   <!-- Title and Journal Entry -->
-  <div class="mb-6 relative">
-    <h1 class="text-4xl font-semibold text-gray-800">{{ marker().title }}</h1>
+  <div class="flex items-baseline p-4">
+    <a
+      class="text-xs font-light text-blue-600 underline hover:text-blue-800 cursor-pointer"
+      [routerLink]="['/maps']"
+      >Yours maps >
+    </a>
+    <a
+      class="text-xs font-light text-blue-600 underline hover:text-blue-800 cursor-pointer"
+      [routerLink]="['/markers', mapId]"
+      >{{ mapTitle }} >
+    </a>
+    <h1 class="text-6xl font-bold p-2">
+      {{ marker().title }}
+    </h1>
   </div>
-  <p>
+  <!-- <div class="mb-6 relative">
+    <h1 class="text-4xl font-semibold text-gray-800">{{ marker().title }}</h1>
+  </div> -->
+  <p class="break-words">
     @if (marker().journal) {
     {{ marker().journal }}
-    } @else { No journal entry 🤷‍♂️ }
+    }
   </p>
   <button
+    *ngIf="marker().journal"
     (click)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
     class="text-sm text-blue-600 underline hover:text-blue-800 cursor-pointer"
   >
@@ -45,6 +61,8 @@
         class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
       />
     </div>
+    } @empty {
+    <p>🗺 Click to add image 👈</p>
     }
   </div>
 </div>

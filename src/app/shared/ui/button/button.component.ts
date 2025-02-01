@@ -33,6 +33,7 @@ export type ButtonConfig = {
     | null;
   text: string;
   customCss?: string;
+  disabled?: boolean;
 };
 
 @Component({

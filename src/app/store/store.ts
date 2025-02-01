@@ -11,7 +11,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap } from 'rxjs';
+import { of, pipe, switchMap } from 'rxjs';
 import { Marker, SnappinMap, Image } from '../shared/models';
 import { MarkersService } from '../markers/data-access/markers.service';
 import { ImagesService } from '../images/data-access/images-service';
@@ -19,14 +19,12 @@ import { MapsService } from '../maps/data-access/services/maps.service';
 
 type AppState = {
   maps: { [mapId: string]: SnappinMap };
-  isLoading: boolean;
-  loadingError: Error | null;
+  filter: { query: string; order: 'asc' | 'desc' };
 };
 
 const initialState: AppState = {
   maps: {},
-  isLoading: false,
-  loadingError: null,
+  filter: { query: '', order: 'asc' },
 };
 
 export const AppStore = signalStore(
@@ -35,7 +33,13 @@ export const AppStore = signalStore(
   withComputed((state) => ({
     mapsCount: computed(() => Object.values(state.maps()).length),
     mapsIterable: computed(() => Object.values(state.maps())),
+    filteredMaps: computed(() => {
+      return Object.values(state.maps()).filter((item) =>
+        item.title.includes(state.filter().query)
+      );
+    }),
   })),
+
   withHooks({
     onInit(store) {
       effect(() => {
@@ -50,6 +54,14 @@ export const AppStore = signalStore(
     imagesService: inject(ImagesService),
   })),
   withMethods(({ mapsService, markersService, imagesService, ...store }) => ({
+    //filter
+    updateQuery: (query: string) => {
+      patchState(store, (state) => {
+        let newFilter = structuredClone(state.filter);
+        newFilter.query = query;
+        return { ...state, filter: newFilter };
+      });
+    },
     //MAPS
     createMap: rxMethod<Partial<SnappinMap>>(
       pipe(

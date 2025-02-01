@@ -6,7 +6,7 @@
     <!-- Menu items for large screens -->
     <div class="hidden md:flex space-x-6">
       @if(auth.isAuthenticated()){
-      <a routerLink="maps" [class]="navItemCss">Maps</a>
+      <a routerLink="maps" [class]="navItemCss">Your maps</a>
       <a (click)="auth.logout()" [class]="navItemCss">Logout</a>
 
       }@else {

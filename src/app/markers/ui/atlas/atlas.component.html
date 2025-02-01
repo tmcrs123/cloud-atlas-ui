@@ -7,19 +7,19 @@
       (mapClick)="canOpenDialog() && (isDialogOpen = true)"
       class="cursor-pointer relative"
     >
-      @for (existingMarker of atlasMarkers(); track $index) {
+      @for (atlasMarker of atlasMarkers(); track $index) {
       <map-advanced-marker
         #thisMarker="mapAdvancedMarker"
-        [options]="existingMarker"
+        [options]="atlasMarker"
         (mapClick)="thisInfoWindow.open(thisMarker)"
       ></map-advanced-marker>
       <map-info-window
         [options]="infoWindowOptions"
         #thisInfoWindow="mapInfoWindow"
       >
-        <div class="flex flex-col items-center">
-          <p class="text-lg m-2 font-bold">
-            {{ existingMarker.title }}
+        <div class="flex flex-col items-start">
+          <p class="text-xl m-2 font-bold">
+            {{ atlasMarker.title }}
           </p>
           <div class="flex flex-row">
             <button
@@ -29,6 +29,7 @@
               Close
             </button>
             <button
+              (click)="navigateToMarkerDetail($index)"
               class="bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer text-xs flex flex-row items-center content-center justify-center mx-2 p-2"
             >
               Go to marker
@@ -39,21 +40,22 @@
       }
     </google-map>
     <app-dialog
-      [dialogConfig]="dialogConfig"
+      [dialogConfig]="dialogConfig()"
       [open]="isDialogOpen"
       (dialogClosed)="userCompletesAddDialog($event)"
     >
       <input
         type="text"
-        name=""
-        id=""
-        placeholder="name of marker"
         [formControl]="newMarkerNameFormControl"
+        placeholder="The name of your new marker"
+        class="w-100 p-4 border border-zinc-300"
       />
     </app-dialog>
   </div>
   <div class="flex-1 bg-zinc-100 flex flex-col justify-around p-4">
-    <h1 class="text-3xl text-center">{{ map?.title || "Untitled map 🤦‍♂️" }}</h1>
+    <h1 class="text-4xl font-bold text-center">
+      {{ map?.title || "Untitled map 🤦‍♂️" }}
+    </h1>
 
     <div class="overflow-y-auto max-h-6/10">
       @for (item of markers(); track $index) {

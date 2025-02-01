@@ -1,20 +1,25 @@
 <section class="max-w-6xl mx-auto p-6">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-6xl font-bold">{{ map?.title || "Untitled map 🤦‍♂️" }}</h1>
+  <div class="flex items-baseline">
+    <a
+      class="text-sm font-medium p-2 text-blue-600 underline hover:text-blue-800 cursor-pointer"
+      [routerLink]="['/maps']"
+      >Yours maps >
+    </a>
+    <h1 class="text-6xl font-bold p-2">
+      {{ map?.title }}
+    </h1>
+  </div>
+  <div class="flex justify-end items-center mb-6">
     <div class="flex gap-2">
+      <app-dropdown
+        [config]="dropdownConfig()"
+        (optionSelected)="onDropdownOptionSelected($event)"
+      ></app-dropdown>
       <app-button
         [config]="goToMapButtonConfig"
         (btnClick)="
           router.navigate(['atlas', this.mapId], {
             queryParams: { mapMode: 'move' }
-          })
-        "
-      ></app-button>
-      <app-button
-        [config]="addMarkerButtonConfig"
-        (btnClick)="
-          router.navigate(['atlas', mapId], {
-            queryParams: { mapMode: 'add' }
           })
         "
       ></app-button>
@@ -40,3 +45,14 @@
     </div>
   </div>
 </section>
+
+<app-dialog
+  [dialogConfig]="deleteMarkerDialogConfig()"
+  [open]="isDeleteMarkerDialogOpen()"
+  (dialogClosed)="onDeleteMarkerDialogClosed($event)"
+>
+  <app-select
+    [formControl]="deleteMarkerFormControl"
+    [options]="fetchSelectOptions()"
+  ></app-select>
+</app-dialog>

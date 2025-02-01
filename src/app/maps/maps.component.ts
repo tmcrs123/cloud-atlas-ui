@@ -1,4 +1,11 @@
-import { Component, effect, inject, Signal, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  Signal,
+  signal,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
 import { CardComponent } from '../shared/ui/card/card.component';
@@ -13,6 +20,8 @@ import SelectComponent from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store';
 import { Router } from '@angular/router';
 import { SnappinMap } from '../shared/models';
+import { debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-maps',
@@ -26,25 +35,105 @@ import { SnappinMap } from '../shared/models';
   templateUrl: './maps.component.html',
 })
 export default class MapsComponent {
-  public isDeleteDialogOpen = signal(false);
-  public isAddDialogOpen = signal(false);
-  public store = inject(AppStore);
-  public auth = inject(AuthService);
-  public router = inject(Router);
-  public addMapFormControl = new FormControl<string>('', {
+  protected isDeleteDialogOpen = signal(false);
+  protected isAddDialogOpen = signal(false);
+  protected store = inject(AppStore);
+  protected auth = inject(AuthService);
+  protected router = inject(Router);
+  protected searchFormControl = new FormControl<string>('');
+  protected addMapFormControl = new FormControl<string>('', {
     nonNullable: true,
-    validators: Validators.minLength(3),
+    validators: [Validators.required, Validators.minLength(3)],
   });
-  public deleteMapFormControl = new FormControl<string>('', {
+  protected addMapFormControlStatusChangesSignal = toSignal(
+    this.addMapFormControl.statusChanges.pipe(startWith('INVALID'))
+  );
+  protected deleteMapFormControl = new FormControl<string>('', {
     nonNullable: true,
+    validators: [Validators.required],
   });
-  public maps: Signal<SnappinMap[]> = signal([]);
+  protected deleteMapFormControlStatusChangesSignal = toSignal(
+    this.deleteMapFormControl.statusChanges.pipe(startWith('INVALID'))
+  );
+
+  protected maps: Signal<SnappinMap[]> = signal([]);
+
+  protected dropdownConfig = computed(() => {
+    const baseConfig: DropdownConfig = {
+      options: [
+        { label: 'Delete Map', index: 0 },
+        { label: 'Add Map', index: 1 },
+      ],
+      buttonConfig: {
+        text: 'Add Or Delete',
+        type: 'primary_action',
+        svg: 'arrow_down',
+        disabled: false,
+      },
+    };
+
+    if (this.maps().length > 0) {
+      return baseConfig;
+    } else {
+      baseConfig.options.splice(1);
+      return baseConfig;
+    }
+  });
+
+  protected addMapDialogConfig = computed<CustomDialogConfig>(() => {
+    return {
+      title: 'What is the name of your new map?',
+      primaryActionButtonConfig: {
+        text: 'Add map',
+        type: 'add',
+        disabled: this.addMapFormControlStatusChangesSignal() === 'INVALID',
+      },
+      secondaryActionButtonConfig: {
+        text: 'Cancel',
+        type: 'secondary_action',
+      },
+    };
+  });
+
+  protected deleteMapDialogConfig = computed<CustomDialogConfig>(() => {
+    return {
+      data: this.store.maps(),
+      title: 'Select a map for deletion',
+      primaryActionButtonConfig: {
+        text: 'Delete map',
+        type: 'delete',
+        disabled: this.deleteMapFormControlStatusChangesSignal() === 'INVALID',
+      },
+      secondaryActionButtonConfig: {
+        text: 'Cancel',
+        type: 'secondary_action',
+      },
+    };
+  });
+
+  protected handleSearchControlChanges$ =
+    this.searchFormControl.valueChanges.pipe(
+      takeUntilDestroyed(),
+      distinctUntilChanged(),
+      startWith(''),
+      filter((t) => t !== null),
+      debounceTime(500)
+    );
+
+  constructor() {
+    this.handleSearchControlChanges$.subscribe((v) =>
+      this.store.updateQuery(v)
+    );
+  }
 
   ngOnInit() {
-    this.maps = this.store.getMaps();
+    this.maps = this.store.filteredMaps;
     if (!this.maps() || this.maps().length === 0) {
       this.store.loadMaps();
     }
+
+    this.addMapFormControl.statusChanges.subscribe(console.log);
+    console.log(this.addMapFormControl);
   }
 
   fetchSelectOptions() {
@@ -55,56 +144,18 @@ export default class MapsComponent {
     this.router.navigateByUrl(`markers/${mapId}`);
   }
 
-  public onAddDialogClose(hasMapToAdd: boolean) {
+  protected onAddDialogClose(hasMapToAdd: boolean) {
     this.isAddDialogOpen.set(false);
     if (!hasMapToAdd) return;
     this.store.createMap({ title: this.addMapFormControl.value });
     this.addMapFormControl.setValue('');
+    this.searchFormControl.setValue('');
   }
 
-  public onDeleteDialogClose(hasMapToDelete: boolean) {
+  protected onDeleteDialogClose(hasMapToDelete: boolean) {
     this.isDeleteDialogOpen.set(false);
     if (!hasMapToDelete) return;
     this.store.deleteMap({ mapId: this.deleteMapFormControl.value });
     this.deleteMapFormControl.setValue('');
   }
-
-  protected dropdownConfig: DropdownConfig = {
-    options: [
-      { label: 'Add Map', index: 0 },
-      { label: 'Delete Map', index: 1 },
-    ],
-    buttonConfig: {
-      text: 'Add Or Delete',
-      type: 'primary_action',
-      svg: 'arrow_down',
-    },
-  };
-
-  protected addMapDialogConfig: CustomDialogConfig = {
-    title: 'What is the name of your new map?',
-    isDeleteDialog: false,
-    primaryActionButtonConfig: {
-      text: 'Add map',
-      type: 'add',
-    },
-    secondaryActionButtonConfig: {
-      text: 'Cancel',
-      type: 'secondary_action',
-    },
-  };
-
-  protected deleteMapDialogConfig: CustomDialogConfig = {
-    data: this.store.maps(),
-    title: 'Select a map for deletion',
-    isDeleteDialog: true,
-    primaryActionButtonConfig: {
-      text: 'Delete map',
-      type: 'delete',
-    },
-    secondaryActionButtonConfig: {
-      text: 'Cancel',
-      type: 'secondary_action',
-    },
-  };
 }

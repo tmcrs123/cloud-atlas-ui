@@ -2,6 +2,7 @@
   tabindex="0"
   [ngClass]="config()?.customCss || buttonType()"
   (click)="btnClick.emit()"
+  [disabled]="config().disabled"
 >
   @if (config().svg) {
   <div [innerHTML]="svgIcon()"></div>

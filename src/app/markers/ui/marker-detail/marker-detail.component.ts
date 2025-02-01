@@ -36,11 +36,12 @@ import {
   LightboxConfig,
 } from '../../../shared/ui/lightbox/lightbox.component';
 import { AppStore } from '../../../store/store';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Image } from '../../../shared/models/image';
 import { Marker } from '../../../shared/models';
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-marker-detail',
@@ -52,13 +53,14 @@ import { ImageUploadComponent } from '../image-upload/image-upload.component';
     ReactiveFormsModule,
     WarningBannerComponent,
     ImageUploadComponent,
+    RouterLink,
+    CommonModule,
   ],
   templateUrl: './marker-detail.component.html',
 })
 export default class MarkerDetailComponent {
   protected deleteDialogConfig: CustomDialogConfig = {
     title: 'Delete image',
-    isDeleteDialog: true,
     primaryActionButtonConfig: {
       text: 'Delete image',
       type: 'delete',
@@ -71,7 +73,6 @@ export default class MarkerDetailComponent {
 
   protected readonly addCaptionDialogConfig: CustomDialogConfig = {
     title: 'Add or update caption for image',
-    isDeleteDialog: false,
     primaryActionButtonConfig: {
       text: 'Save',
       type: 'add',
@@ -84,7 +85,6 @@ export default class MarkerDetailComponent {
 
   protected readonly addJournalEntryDialogConfig: CustomDialogConfig = {
     title: 'Manage journal entry',
-    isDeleteDialog: false,
     primaryActionButtonConfig: {
       text: 'Save journal',
       type: 'add',
@@ -97,7 +97,6 @@ export default class MarkerDetailComponent {
 
   protected readonly displayCaptionDialogConfig: CustomDialogConfig = {
     title: 'Caption',
-    isDeleteDialog: false,
     secondaryActionButtonConfig: {
       text: 'Cancel',
       type: 'secondary_action',
@@ -153,6 +152,7 @@ export default class MarkerDetailComponent {
   store = inject(AppStore);
   route = inject(ActivatedRoute);
   protected mapId: string = '';
+  protected mapTitle: string;
   protected markerId: string = '';
   protected images: Signal<Image[]> = signal([]);
   protected addCaptionFormControl = new FormControl<string>('', {
@@ -181,6 +181,7 @@ export default class MarkerDetailComponent {
     this.mapId = this.route.snapshot.paramMap.get('mapId')!;
     this.markerId = this.route.snapshot.paramMap.get('markerId')!;
     this.marker = this.store.getMarkerById(this.mapId, this.markerId);
+    this.mapTitle = this.store.getMapById(this.mapId).title;
 
     // caching needs to be included here
     this.store.loadImagesForMarker({

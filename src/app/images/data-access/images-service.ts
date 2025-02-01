@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { buildApiEndpoint } from '../../shared/utils';
 import { Image } from '../../shared/models/index.js';
 import { map, Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -48,6 +49,10 @@ export class ImagesService {
   }
 
   public pushToS3Bucket(presignedUrl: string, formData: FormData) {
-    return this.http.post(presignedUrl, formData);
+    if (environment.name === 'development') {
+      return this.http.post<Image>(presignedUrl, null);
+    } else {
+      return this.http.post(presignedUrl, formData);
+    }
   }
 }

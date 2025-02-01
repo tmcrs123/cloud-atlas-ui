@@ -1,17 +1,18 @@
 <section class="max-w-6xl mx-auto p-6">
   <div class="flex flex-row justify-around m-6">
     <input
+      [formControl]="searchFormControl"
       type="text"
       placeholder="Search maps..."
       class="basis-2/4 p-4 border border-zinc-300"
     />
     <app-dropdown
       class="grow-0"
-      [config]="dropdownConfig"
+      [config]="dropdownConfig()"
       (optionSelected)="
         $event
-          ? this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())
-          : this.isAddDialogOpen.set(!this.isAddDialogOpen())
+          ? this.isAddDialogOpen.set(!this.isAddDialogOpen())
+          : this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())
       "
     >
     </app-dropdown>
@@ -29,25 +30,25 @@
         (click)="navigateToMarkers(item.mapId)"
       ></app-card>
       } @empty {
-      <h1>No maps yet 🤷‍♂️</h1>
+      <h1>No maps found 🤷‍♂️</h1>
       }
     </div>
   </div>
   <app-dialog
-    [dialogConfig]="addMapDialogConfig"
+    [dialogConfig]="addMapDialogConfig()"
     [open]="isAddDialogOpen()"
     (dialogClosed)="onAddDialogClose($event)"
   >
     <input
       type="text"
       [formControl]="addMapFormControl"
-      placeholder="Fiji 2020"
+      placeholder="The name of your new map"
       class="w-100 p-4 border border-zinc-300"
     />
   </app-dialog>
 
   <app-dialog
-    [dialogConfig]="deleteMapDialogConfig"
+    [dialogConfig]="deleteMapDialogConfig()"
     [open]="isDeleteDialogOpen()"
     (dialogClosed)="onDeleteDialogClose($event)"
   >

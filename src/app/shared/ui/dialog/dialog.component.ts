@@ -13,14 +13,12 @@ export interface CustomDialogConfig extends Omit<DialogConfig, 'data'> {
   primaryActionButtonConfig?: ButtonConfig;
   secondaryActionButtonConfig: ButtonConfig;
   title: string;
-  isDeleteDialog: boolean;
 }
 
 @Component({
   selector: 'app-dialog',
   imports: [CommonModule, ButtonComponent],
   templateUrl: './dialog.component.html',
-  styleUrl: './dialog.component.css',
 })
 export class DialogComponent {
   dialogConfig = input.required<CustomDialogConfig>();
