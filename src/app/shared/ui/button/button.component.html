@@ -1,6 +1,7 @@
 <button
   tabindex="0"
-  [ngClass]="config()?.customCss || buttonType()"
+  [ngClass]="config().customCss || buttonType()"
+  [class.btn-disabled]="config().disabled"
   (click)="btnClick.emit()"
   [disabled]="config().disabled"
 >

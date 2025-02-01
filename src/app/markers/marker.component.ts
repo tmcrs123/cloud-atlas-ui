@@ -18,6 +18,7 @@ import { AppStore } from '../store/store';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { startWith } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-marker',
@@ -30,6 +31,7 @@ import { startWith } from 'rxjs';
     ReactiveFormsModule,
     RouterLink,
   ],
+  providers: [DatePipe],
   templateUrl: './marker.component.html',
 })
 export default class MarkerComponent {
@@ -38,6 +40,7 @@ export default class MarkerComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   store = inject(AppStore);
+  datePipe = inject(DatePipe);
   markers: Signal<Marker[]> = signal([]);
   map: SnappinMap | undefined;
   isDeleteMarkerDialogOpen = signal(false);

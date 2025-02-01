@@ -22,6 +22,7 @@ import { Router } from '@angular/router';
 import { SnappinMap } from '../shared/models';
 import { debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-maps',
@@ -32,6 +33,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
     CardComponent,
     ReactiveFormsModule,
   ],
+  providers: [DatePipe],
   templateUrl: './maps.component.html',
 })
 export default class MapsComponent {
@@ -40,6 +42,7 @@ export default class MapsComponent {
   protected store = inject(AppStore);
   protected auth = inject(AuthService);
   protected router = inject(Router);
+  protected datePipe = inject(DatePipe);
   protected searchFormControl = new FormControl<string>('');
   protected addMapFormControl = new FormControl<string>('', {
     nonNullable: true,

@@ -10,9 +10,10 @@ import {
 import {
   ARROW_BACK_SVG,
   ARROW_DOWN_SVG,
-  ARROW_ON_SQUARE_UP,
+  ARROW_ON_SQUARE_UP_SVG,
   GLOBE_SVG,
   LIST_SVG,
+  PENCIL_SVG,
   PLUS_SVG,
   SPEECH_BUBBLE_SVG,
   WARNING_SVG,
@@ -30,6 +31,7 @@ export type ButtonConfig = {
     | 'speech_bubble'
     | 'warning'
     | 'arrow_on_square_up'
+    | 'pencil'
     | null;
   text: string;
   customCss?: string;
@@ -45,13 +47,15 @@ export type ButtonConfig = {
 export class ButtonComponent {
   private readonly sanitizer = inject(DomSanitizer);
   readonly deleteButtonCss =
-    'bg-red-600 text-white hover:bg-red-700 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4';
+    'bg-red-600 text-white hover:bg-red-700 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4 disabled:opacity-50 disabled:cursor-not-allowed';
   readonly primaryActionButtonCss =
-    'bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4';
+    'bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4 disabled:opacity-50 disabled:cursor-not-allowed';
   readonly secondaryActionButtonCss =
-    'bg-gray-400 text-white hover:bg-gray-500 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4';
+    'bg-gray-400 text-white hover:bg-gray-500 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4 disabled:opacity-50 disabled:cursor-not-allowed';
   readonly addButtonCss =
-    'bg-yellow-500 text-white hover:bg-yellow-600 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4';
+    'bg-yellow-500 text-white hover:bg-yellow-600 focus:outline-none shadow-md cursor-pointer font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4 disabled:opacity-50 disabled:cursor-not-allowed';
+  readonly disabledButtonCss =
+    'bg-yellow-500 text-white hover:bg-yellow-600 focus:outline-none shadow-md font-bold text-lg flex flex-row items-center content-center justify-center mx-2 p-4 disabled:opacity-50 disabled:cursor-not-allowed';
 
   config = input.required<ButtonConfig>();
   btnClick = output<void>();
@@ -87,7 +91,9 @@ export class ButtonComponent {
       case 'warning':
         return this.sanitizer.bypassSecurityTrustHtml(WARNING_SVG);
       case 'arrow_on_square_up':
-        return this.sanitizer.bypassSecurityTrustHtml(ARROW_ON_SQUARE_UP);
+        return this.sanitizer.bypassSecurityTrustHtml(ARROW_ON_SQUARE_UP_SVG);
+      case 'pencil':
+        return this.sanitizer.bypassSecurityTrustHtml(PENCIL_SVG);
       default:
         return null;
     }

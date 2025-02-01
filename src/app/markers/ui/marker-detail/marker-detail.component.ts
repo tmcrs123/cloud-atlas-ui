@@ -42,6 +42,7 @@ import { Marker } from '../../../shared/models';
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
 import { CommonModule } from '@angular/common';
+import { AddMapDialog } from '../../../maps/ui/add-map-dialog.component';
 
 @Component({
   selector: 'app-marker-detail',
@@ -55,6 +56,7 @@ import { CommonModule } from '@angular/common';
     ImageUploadComponent,
     RouterLink,
     CommonModule,
+    AddMapDialog,
   ],
   templateUrl: './marker-detail.component.html',
 })
@@ -122,6 +124,12 @@ export default class MarkerDetailComponent {
     svg: 'speech_bubble',
     customCss:
       'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-1',
+  };
+
+  protected addJournalEntryButtonConfig: ButtonConfig = {
+    text: 'Add journal',
+    type: 'add',
+    svg: 'pencil',
   };
 
   protected isDeleteDialogOpen = signal(false);
@@ -231,64 +239,9 @@ export default class MarkerDetailComponent {
   }
 
   ngAfterViewInit() {
-    let optionSelectedObservables = this.dropdowns().map((dd) =>
-      outputToObservable(dd.optionSelected)
-    );
-
-    const optionSelected$ = merge(...optionSelectedObservables);
-
-    // const deleteOptionSelected$ = optionSelected$.pipe(
-    //   filter((v) => v === 1),
-    //   tap(() => this.isDeleteDialogOpen.set(true))
-    // );
-
-    const captionOptionSelected$ = optionSelected$.pipe(
-      filter((v) => v === 0),
-      tap(() => this.isAddCaptionDialogOpen.set(true))
-    );
-
-    const deleteDialogClosed$ = outputToObservable(
-      this.deleteDialogRef().dialogClosed
-    );
-    const addCaptionDialogClosed$ = outputToObservable(
-      this.addCaptionDialogRef().dialogClosed
-    );
     const displayCaptionDialogClosed$ = outputToObservable(
       this.displayCaptionDialogRef().dialogClosed
     );
-    const addJournalEntryDialogClosed$ = outputToObservable(
-      this.addJournalEntryDialogRef().dialogClosed
-    );
-
-    //replace with proper htpp method
-    const deleteImage$ = of(true);
-    // const saveCaption$ = this.store.updateImageForMarker({mapId: this.mapId, markerId: this.markerId, imageId:});
-
-    //add caption flow
-    // captionOptionSelected$
-    //   .pipe(
-    //     takeUntilDestroyed(this.destroyRef),
-    //     switchMap(() => addCaptionDialogClosed$),
-    //     switchMap((complete) =>
-    //       iif(() => complete, saveCaption$, of(null)).pipe(
-    //         tap(() => this.isAddCaptionDialogOpen.set(false))
-    //       )
-    //     )
-    //   )
-    //   .subscribe();
-
-    //delete flow
-    // deleteOptionSelected$
-    //   .pipe(
-    //     takeUntilDestroyed(this.destroyRef),
-    //     switchMap(() => deleteDialogClosed$),
-    //     switchMap((complete) =>
-    //       iif(() => complete, deleteImage$, of(null)).pipe(
-    //         tap(() => this.isDeleteDialogOpen.set(false))
-    //       )
-    //     )
-    //   )
-    //   .subscribe();
 
     //display caption flow
     displayCaptionDialogClosed$
@@ -301,16 +254,6 @@ export default class MarkerDetailComponent {
         })
       )
       .subscribe();
-
-    // //journal entry flow
-    // addJournalEntryDialogClosed$
-    //   .pipe(
-    //     takeUntilDestroyed(this.destroyRef),
-    //     tap(() => {
-    //       this.isJournalEntryDialogOpen.set(!this.isJournalEntryDialogOpen());
-    //     })
-    //   )
-    //   .subscribe();
   }
 
   addJournalEntry(hasJournalToAdd: boolean) {
