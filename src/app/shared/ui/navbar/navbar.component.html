@@ -1,19 +1,19 @@
 <nav class="bg-white font-semibold p-4 navbar">
   <div class="container mx-auto flex items-center justify-between">
     <!-- Logo -->
-    <div class="text-4xl font-semibold">
-      <img src="/assets/logo.png" alt="logo" />
-    </div>
+    <a routerLink="/">
+      <img class="w-24 md:w-32 lg:w-34" src="/assets/logo.svg" alt="logo" />
+    </a>
 
     <!-- Menu items for large screens -->
-    <div class="hidden md:flex space-x-6">
+    <div class="space-x-6">
       @if(auth.isAuthenticated()){
       <a routerLink="maps" [class]="navItemCss">Your maps</a>
       <a (click)="auth.logout()" [class]="navItemCss">Logout</a>
 
       }@else {
       <a (click)="auth.login()" [class]="navItemCss">Login</a>
-      <a [class]="navItemCss">About</a>
+      <a routerLink="about" [class]="navItemCss">About</a>
       }
     </div>
   </div>

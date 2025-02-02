@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './landing.component.html',
   styles: [
     `
@@ -16,9 +16,17 @@ import { RouterLink } from '@angular/router';
   ],
 })
 export class LandingComponent {
-  private auth = inject(AuthService);
+  protected auth = inject(AuthService);
+  private router = inject(Router);
 
   ngOnInit() {
-    this.auth.checkIfUserIsAuthenticated().subscribe();
+    // this.auth
+    //   .checkIfUserIsAuthenticated()
+    //   .subscribe(console.log);
+  }
+
+  navigate() {
+    if (this.auth.isAuthenticated()) this.router.navigate(['maps']);
+    else this.auth.login();
   }
 }

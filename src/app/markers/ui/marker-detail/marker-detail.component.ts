@@ -181,6 +181,7 @@ export default class MarkerDetailComponent {
   constructor() {
     effect(() => {
       this.addJournalEntryFormControl.setValue(this.marker().journal);
+      console.log('images', this.images());
     });
   }
 

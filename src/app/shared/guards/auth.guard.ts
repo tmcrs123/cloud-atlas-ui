@@ -8,6 +8,7 @@ export const AuthGuard: CanActivateFn = (route, state) => {
   const canNavigate = !!auth.isAuthenticated();
 
   if (!canNavigate) {
+    console.log('auth guard CANNOT navigate');
     router.navigateByUrl('home');
     return false;
   }

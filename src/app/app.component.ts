@@ -5,6 +5,7 @@ import { LoaderService } from './shared/services/loader.service';
 import { BannerComponent } from './shared/ui/error-banner/notification-banner.component';
 import { NavbarComponent } from './shared/ui/navbar/navbar.component';
 import { AppStore } from './store/store';
+import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-root',

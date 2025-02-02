@@ -122,6 +122,7 @@
     @for (image of images(); track $index) {
 
     <div class="relative">
+      @if(images().length > 0){
       <app-dropdown
         [config]="dropdownConfig"
         class="absolute right-1 top-1"
@@ -143,6 +144,7 @@
         [alt]="image.legend"
         class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
       />
+      }
     </div>
     }
   </div>

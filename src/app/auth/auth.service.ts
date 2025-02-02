@@ -1,7 +1,7 @@
 import { effect, inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { firstValueFrom, map, switchMap, tap } from 'rxjs';
+import { filter, firstValueFrom, map, switchMap, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -25,27 +25,12 @@ export class AuthService {
     )
   );
 
-  constructor() {
-    effect(() => console.log('authenticated', this.isAuthenticated()));
-  }
-
-  // whether the user is authenticated
-  checkIfUserIsAuthenticated() {
-    return this.oidcSecurityService
-      .checkAuth()
-      .pipe(tap((lg) => (this.idToken = lg.idToken)));
-  }
-
   exchangeCodeForToken() {
-    return this.oidcSecurityService
-      .getIdToken()
-      .pipe(
-        switchMap(() =>
-          this.oidcSecurityService
-            .checkAuth()
-            .pipe(tap((lg) => (this.idToken = lg.idToken)))
-        )
-      );
+    return this.oidcSecurityService.checkAuth().pipe(
+      tap((loginResponse) => (this.idToken = loginResponse.idToken)),
+      filter((loginResponse) => loginResponse.isAuthenticated),
+      switchMap(() => this.oidcSecurityService.getRefreshToken())
+    );
   }
 
   login(): void {

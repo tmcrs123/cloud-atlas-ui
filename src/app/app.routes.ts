@@ -27,6 +27,10 @@ export const routes: Routes = [
       import('./markers/ui/marker-detail/marker-detail.component'),
   },
   {
+    path: 'about',
+    loadComponent: () => import('./about/about.component'),
+  },
+  {
     path: '**',
     pathMatch: 'full',
     redirectTo: '',
