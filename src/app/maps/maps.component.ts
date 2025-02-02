@@ -1,13 +1,11 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  Signal,
-  signal,
-} from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { Component, computed, inject, Signal, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { SnappinMap } from '../shared/models';
 import { CardComponent } from '../shared/ui/card/card.component';
 import {
   CustomDialogConfig,
@@ -18,11 +16,6 @@ import DropdownComponent, {
 } from '../shared/ui/dropdown/dropdown.component';
 import SelectComponent from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store';
-import { Router } from '@angular/router';
-import { SnappinMap } from '../shared/models';
-import { debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-maps',
@@ -32,6 +25,7 @@ import { DatePipe } from '@angular/common';
     SelectComponent,
     CardComponent,
     ReactiveFormsModule,
+    CommonModule,
   ],
   providers: [DatePipe],
   templateUrl: './maps.component.html',
@@ -46,7 +40,7 @@ export default class MapsComponent {
   protected searchFormControl = new FormControl<string>('');
   protected addMapFormControl = new FormControl<string>('', {
     nonNullable: true,
-    validators: [Validators.required, Validators.minLength(3)],
+    validators: [Validators.required],
   });
   protected addMapFormControlStatusChangesSignal = toSignal(
     this.addMapFormControl.statusChanges.pipe(startWith('INVALID'))
@@ -136,7 +130,6 @@ export default class MapsComponent {
     }
 
     this.addMapFormControl.statusChanges.subscribe(console.log);
-    console.log(this.addMapFormControl);
   }
 
   fetchSelectOptions() {

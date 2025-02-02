@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
@@ -18,8 +19,9 @@ import {
   GoogleMapsModule,
   MapInfoWindow,
 } from '@angular/google-maps';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { defer, map, startWith, tap } from 'rxjs';
+import { SnappinMap } from '../../../shared/models';
 import {
   ButtonComponent,
   ButtonConfig,
@@ -30,7 +32,7 @@ import {
   DialogComponent,
 } from '../../../shared/ui/dialog/dialog.component';
 import { AppStore } from '../../../store/store';
-import { SnappinMap } from '../../../shared/models';
+import { environment } from '../../../../environments/environment';
 
 const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
   draggableCursor: 'grab',
@@ -39,7 +41,9 @@ const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
   disableDefaultUI: true,
   scrollwheel: true,
   zoom: 5,
-  mapId: '6b0e9677f8a58360',
+  fullscreenControl: true,
+  minZoom: 3,
+  mapId: environment.googleMapId,
 };
 
 const MOVE_MODE_MAP_OPTIONS: google.maps.MapOptions = {
@@ -61,11 +65,11 @@ const INFO_WINDOW_OPTIONS: google.maps.InfoWindowOptions = {
   imports: [
     GoogleMapsModule,
     MapInfoWindow,
-    RouterLink,
     DialogComponent,
     ReactiveFormsModule,
     CardComponent,
     ButtonComponent,
+    CommonModule,
   ],
   templateUrl: './atlas.component.html',
   styles: [
@@ -115,14 +119,18 @@ export default class AtlasComponent {
         return {
           ...DEFAULT_MAP_OPTIONS,
           ...MOVE_MODE_MAP_OPTIONS,
-          zoom: this.googleMapRef().zoom || DEFAULT_MAP_OPTIONS['zoom'],
+          zoom: this.googleMapRef().googleMap?.getZoom()
+            ? this.googleMapRef().googleMap?.getZoom()
+            : DEFAULT_MAP_OPTIONS['zoom'],
           center: this.googleMapRef().getCenter(),
         };
       case 'add':
         return {
           ...DEFAULT_MAP_OPTIONS,
           ...ADD_MODE_MAP_OPTIONS,
-          zoom: this.googleMapRef().zoom || DEFAULT_MAP_OPTIONS['zoom'],
+          zoom: this.googleMapRef().googleMap?.getZoom()
+            ? this.googleMapRef().googleMap?.getZoom()
+            : DEFAULT_MAP_OPTIONS['zoom'],
           center: this.googleMapRef().getCenter(),
         };
       default:

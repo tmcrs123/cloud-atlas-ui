@@ -1,7 +1,16 @@
 import { Component, inject, input } from '@angular/core';
-import { catchError, from, mergeMap, Observable, of, timer } from 'rxjs';
+import {
+  bufferCount,
+  catchError,
+  from,
+  mergeMap,
+  Observable,
+  throwError,
+  timer,
+} from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ImagesService } from '../../../images/data-access/images-service';
+import { BannerService } from '../../../shared/services/banner-service';
 import {
   ButtonComponent,
   ButtonConfig,
@@ -24,28 +33,38 @@ export class ImageUploadComponent {
   markerId = input('');
   imagesService = inject(ImagesService);
   store = inject(AppStore);
+  bannerService = inject(BannerService);
 
   handleFileUpload(event: Event) {
-    console.log(event);
-
     const inputElement = event.target as HTMLInputElement;
     const files = inputElement.files;
 
     if (!files || files.length > 10) {
       inputElement.value = '';
-      throw new Error('max 10 files allowed');
+      throw new Error('Max 10 files allowed per upload.');
     }
     from(files)
       .pipe(
         mergeMap((file) =>
           this.fileValidations$(file).pipe(
             mergeMap((file) => this.pushFileToS3(file)),
-            catchError((error) => of(`Error processing ${file.name}: ${error}`))
+            catchError((error: string) => {
+              return throwError(() => new Error(error));
+            })
           )
-        )
+        ),
+        bufferCount(files.length)
       )
       .subscribe({
-        next: console.log,
+        next: () =>
+          this.bannerService.setMessage(
+            {
+              message:
+                'Your images are being saved and will be displayed here when ready',
+              type: 'info',
+            },
+            10000
+          ),
         complete: () =>
           timer(10000).subscribe({
             next: () => {
@@ -72,7 +91,9 @@ export class ImageUploadComponent {
           formData.append('file', file);
           return this.imagesService.pushToS3Bucket(res.url, formData);
         }),
-        catchError((error) => of(`Error sending ${file.name} to S3: ${error}`))
+        catchError((error) =>
+          throwError(() => `Error sending ${file.name} to images repository`)
+        )
       );
   }
 
@@ -80,17 +101,11 @@ export class ImageUploadComponent {
     const fileReader = new FileReader();
     return new Observable<File>((subscriber) => {
       if (!this.validFileSize(file)) {
-        subscriber.error({
-          file: null,
-          error: { errorMessage: `File ${file.name} exceeds limit of 10mb` },
-        });
+        subscriber.error(`File ${file.name} exceeds limit of 10mb`);
       }
 
       if (!this.validFileType(file)) {
-        subscriber.error({
-          file: null,
-          error: { errorMessage: `File ${file.name} is not an image` },
-        });
+        subscriber.error(`File ${file.name} is not an image`);
       }
 
       fileReader.readAsDataURL(file);
@@ -101,10 +116,7 @@ export class ImageUploadComponent {
       };
 
       fileReader.onerror = (err) => {
-        subscriber.error({
-          file: null,
-          error: { errorMessage: 'There was an error reading this file.' },
-        });
+        subscriber.error(`There was an error reading file ${file.name}`);
         //clear listeners just in case
         fileReader.onload = null;
         fileReader.onerror = null;

@@ -1,3 +1,3 @@
 export * from './snappin-map.model';
 export * from './marker';
-export * from './image';
+export * from './marker-image';

@@ -12,7 +12,7 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { of, pipe, switchMap } from 'rxjs';
-import { Marker, SnappinMap, Image } from '../shared/models';
+import { Marker, SnappinMap, MarkerImage } from '../shared/models';
 import { MarkersService } from '../markers/data-access/markers.service';
 import { ImagesService } from '../images/data-access/images-service';
 import { MapsService } from '../maps/data-access/services/maps.service';
@@ -29,6 +29,15 @@ const initialState: AppState = {
 
 export const AppStore = signalStore(
   { providedIn: 'root' },
+
+  withHooks({
+    onInit(store) {
+      effect(() => {
+        const state = getState(store);
+        console.log('mapsState', state);
+      });
+    },
+  }),
   withState(initialState),
   withComputed((state) => ({
     mapsCount: computed(() => Object.values(state.maps()).length),
@@ -39,15 +48,6 @@ export const AppStore = signalStore(
       );
     }),
   })),
-
-  withHooks({
-    onInit(store) {
-      effect(() => {
-        const state = getState(store);
-        console.log('mapsState', state);
-      });
-    },
-  }),
   withProps(() => ({
     mapsService: inject(MapsService),
     markersService: inject(MarkersService),
@@ -320,7 +320,7 @@ export const AppStore = signalStore(
       )
     ),
     updateImageForMarker: rxMethod<{
-      data: Partial<Image>;
+      data: Partial<MarkerImage>;
     }>(
       pipe(
         switchMap((params) => {

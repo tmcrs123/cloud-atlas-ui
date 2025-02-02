@@ -4,7 +4,7 @@
       <a
         class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer"
         [routerLink]="['/maps']"
-        >Yours maps >
+        >Your maps >
       </a>
       <h1 class="text-6xl font-bold">
         {{ map?.title }}
@@ -39,10 +39,14 @@
           router.navigate(['markers', mapId, 'marker', item.markerId, 'detail'])
         "
       ></app-card>
-      } @empty {
-      <h1>No markers yet 🤷‍♂️</h1>
       }
     </div>
+    @if (markers().length === 0) {
+    <div class="flex-col justify-center text-center">
+      <p class="text-6xl m-10">¯\_(ツ)_/¯</p>
+      <p class="text-zinc-800 text-xl m-6">No markers found</p>
+    </div>
+    }
   </div>
 </section>
 

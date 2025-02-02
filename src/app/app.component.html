@@ -1,8 +1,9 @@
-<section class="grid-layout">
+<section class="grid-layout text=lg">
   <app-navbar></app-navbar>
 
   <!-- Content Container -->
   <div class="app">
+    <app-notification-banner></app-notification-banner>
     @if (loaderService.isLoaderVisible()) {
     <div
       class="fixed top-0 left-0 w-full h-full bg-black opacity-75 flex items-center justify-center z-1"
@@ -12,14 +13,4 @@
     }
     <router-outlet />
   </div>
-
-  <!-- Footer -->
-  <!-- <footer class="footer bottom-0 border-t-2 p-2 border-zinc-200 w-full">
-    <div
-      class="container mx-auto font-semibold flex flex-row justify-between items-center"
-    >
-      <span class="text-sm right-100">Made with ❤ by me</span>
-      <span class="text-sm"> © 2025 CloudAtlas. All rights reserved. </span>
-    </div>
-  </footer> -->
 </section>

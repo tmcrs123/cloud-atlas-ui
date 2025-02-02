@@ -12,4 +12,5 @@ export const environment = {
   region: 'us-east-1',
   userPoolId: 'us-east-1_szwZtfXgl',
   maxImageFileSizeInBytes: 15728640,
+  googleMapId: '6b0e9677f8a58360',
 };

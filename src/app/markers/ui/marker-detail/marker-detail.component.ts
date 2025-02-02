@@ -1,6 +1,7 @@
+import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
-  computed,
   DestroyRef,
   effect,
   inject,
@@ -12,14 +13,22 @@ import {
 import {
   outputToObservable,
   takeUntilDestroyed,
+  toSignal,
 } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
-  FormControl,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { filter, iif, merge, of, switchMap, tap } from 'rxjs';
+  bufferCount,
+  filter,
+  from,
+  fromEvent,
+  map,
+  mergeMap,
+  Observable,
+  scan,
+  tap,
+} from 'rxjs';
+import { Marker, MarkerImage } from '../../../shared/models';
 import {
   ButtonComponent,
   ButtonConfig,
@@ -35,14 +44,9 @@ import {
   LightboxComponent,
   LightboxConfig,
 } from '../../../shared/ui/lightbox/lightbox.component';
-import { AppStore } from '../../../store/store';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Image } from '../../../shared/models/image';
-import { Marker } from '../../../shared/models';
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component';
+import { AppStore } from '../../../store/store';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
-import { CommonModule } from '@angular/common';
-import { AddMapDialog } from '../../../maps/ui/add-map-dialog.component';
 
 @Component({
   selector: 'app-marker-detail',
@@ -56,7 +60,6 @@ import { AddMapDialog } from '../../../maps/ui/add-map-dialog.component';
     ImageUploadComponent,
     RouterLink,
     CommonModule,
-    AddMapDialog,
   ],
   templateUrl: './marker-detail.component.html',
 })
@@ -162,7 +165,7 @@ export default class MarkerDetailComponent {
   protected mapId: string = '';
   protected mapTitle: string;
   protected markerId: string = '';
-  protected images: Signal<Image[]> = signal([]);
+  protected images: Signal<MarkerImage[]> = signal([]);
   protected addCaptionFormControl = new FormControl<string>('', {
     validators: [Validators.required],
     nonNullable: true,
@@ -178,10 +181,6 @@ export default class MarkerDetailComponent {
   constructor() {
     effect(() => {
       this.addJournalEntryFormControl.setValue(this.marker().journal);
-    });
-
-    effect(() => {
-      console.log('this.focusedImagedIndex', this.focusedImagedIndex());
     });
   }
 

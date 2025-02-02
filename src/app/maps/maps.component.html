@@ -33,7 +33,7 @@
     </div>
     @if (maps().length === 0) {
     <div class="flex-col justify-center text-center">
-      <p class="text-6xl m-6">¯\_(ツ)_/¯</p>
+      <p class="text-6xl m-10">¯\_(ツ)_/¯</p>
       <p class="text-zinc-800 text-xl m-6">No maps found</p>
     </div>
     }
@@ -47,8 +47,15 @@
       type="text"
       [formControl]="addMapFormControl"
       placeholder="The name of your new map"
-      class="w-100 p-4 border border-zinc-300"
+      class="w-100 p-4 border"
+      [ngClass]="{
+        'border-red-700': addMapFormControl.dirty && !addMapFormControl.valid,
+        'border-zinc-300': addMapFormControl.valid
+      }"
     />
+    @if (addMapFormControl.dirty && addMapFormControl.hasError('required')) {
+    <div class="text-red-700 font-medium mt-2">A name is required</div>
+    }
   </app-dialog>
 
   <app-dialog

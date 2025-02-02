@@ -73,7 +73,7 @@ export default class MarkerComponent {
     const baseConfig: DropdownConfig = {
       options: [{ label: 'Add marker', index: 1 }],
       buttonConfig: {
-        text: 'Add Or Delete',
+        text: 'Add or delete markers',
         type: 'primary_action',
         svg: 'arrow_down',
       },
@@ -99,7 +99,7 @@ export default class MarkerComponent {
   }
 
   protected goToMapButtonConfig: ButtonConfig = {
-    text: 'Show on map',
+    text: 'Show markers on map',
     type: 'add',
     svg: 'globe',
   };

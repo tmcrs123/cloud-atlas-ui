@@ -1,9 +1,14 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { buildApiEndpoint } from '../../shared/utils';
-import { Image } from '../../shared/models/index.js';
-import { map, Observable } from 'rxjs';
+import {
+  HttpClient,
+  HttpContext,
+  HttpContextToken,
+} from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { MarkerImage } from '../../shared/models/index.js';
+import { buildApiEndpoint } from '../../shared/utils';
+import { ERROR_MESSAGE } from '../../shared/tokens';
 
 @Injectable({
   providedIn: 'root',
@@ -16,14 +21,16 @@ export class ImagesService {
   public getImagesForMarker(
     mapId: string,
     markerId: string
-  ): Observable<Image[]> {
-    return this.http.get<Image[]>(
+  ): Observable<MarkerImage[]> {
+    return this.http.get<MarkerImage[]>(
       buildApiEndpoint(`images/${mapId}/${markerId}/markers`)
     );
   }
 
-  public updateImageForMarker(data: Partial<Image>): Observable<Image> {
-    return this.http.post<Image>(
+  public updateImageForMarker(
+    data: Partial<MarkerImage>
+  ): Observable<MarkerImage> {
+    return this.http.post<MarkerImage>(
       buildApiEndpoint(`images/${data.mapId}/${data.imageId}`),
       data
     );
@@ -49,10 +56,15 @@ export class ImagesService {
   }
 
   public pushToS3Bucket(presignedUrl: string, formData: FormData) {
+    let context = new HttpContext().set(
+      ERROR_MESSAGE,
+      'Failed to save images 🔥'
+    );
+
     if (environment.name === 'development') {
-      return this.http.post<Image>(presignedUrl, null);
+      return this.http.post<MarkerImage>(presignedUrl, null, { context });
     } else {
-      return this.http.post(presignedUrl, formData);
+      return this.http.post(presignedUrl, formData, { context });
     }
   }
 }

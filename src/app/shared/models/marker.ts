@@ -1,4 +1,4 @@
-import { Image } from './image';
+import { MarkerImage } from './marker-image';
 
 export type Marker = {
   markerId: string;
@@ -14,5 +14,5 @@ export type Marker = {
     lng: number;
     lat: number;
   };
-  images: Image[];
+  images: MarkerImage[];
 };

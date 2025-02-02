@@ -21,7 +21,7 @@
     <ng-content
       *ngTemplateOutlet="
         missingThingsEmoji;
-        context: { text: 'You don\'t any images yet or journal entry yet.' }
+        context: { text: 'You don\'t have any images or journal entry yet.' }
       "
     ></ng-content>
   </ng-template>
@@ -83,7 +83,7 @@
     <a
       class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer"
       [routerLink]="['/maps']"
-      >Yours maps >
+      >Your maps >
     </a>
     <a
       class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer"
@@ -116,7 +116,9 @@
 
 <!-- Image Grid Section -->
 <ng-template #imageGrid>
-  <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+  <div
+    class="mt-10 pt-3 mb-10 pb-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+  >
     @for (image of images(); track $index) {
 
     <div class="relative">
@@ -176,8 +178,17 @@
     [formControl]="addCaptionFormControl"
     type="text"
     placeholder="Say something about this image..."
-    class="w-100 p-4 border border-zinc-300"
+    class="w-100 p-4 border"
+    [ngClass]="{
+      'border-red-700':
+        addCaptionFormControl.dirty && !addCaptionFormControl.valid,
+      'border-zinc-300': addCaptionFormControl.valid
+    }"
   />
+  @if (addCaptionFormControl.dirty &&
+  addCaptionFormControl.hasError('required')) {
+  <div class="text-red-700 font-medium mt-2">A name is required</div>
+  }
 </app-dialog>
 
 <app-dialog

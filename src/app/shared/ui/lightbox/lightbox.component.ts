@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, fromEvent, tap } from 'rxjs';
-import { Image } from '../../models';
+import { MarkerImage } from '../../models';
 export interface LightboxConfig {
   openAtIndex: number;
   isVisible: boolean;
@@ -29,7 +29,7 @@ const handledKeyboardEvents = ['Escape', 'ArrowRight', 'ArrowLeft'];
 export class LightboxComponent {
   destroyRef = inject(DestroyRef);
   lightboxConfig = input.required<LightboxConfig>();
-  images = input.required<Image[]>();
+  images = input.required<MarkerImage[]>();
   close = output<void>();
   currentIndex = signal<number>(0);
   lightboxContainer = viewChild.required('lightboxContainer', {

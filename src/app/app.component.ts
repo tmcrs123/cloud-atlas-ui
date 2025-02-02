@@ -1,15 +1,19 @@
-import { Component, inject, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { AppStore } from './store/store';
-import { AuthService } from './auth/auth.service';
+import { RouterOutlet } from '@angular/router';
 import { LoaderService } from './shared/services/loader.service';
+import { BannerComponent } from './shared/ui/error-banner/notification-banner.component';
 import { NavbarComponent } from './shared/ui/navbar/navbar.component';
-import { from } from 'rxjs';
+import { AppStore } from './store/store';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ReactiveFormsModule, RouterLink, NavbarComponent],
+  imports: [
+    RouterOutlet,
+    ReactiveFormsModule,
+    NavbarComponent,
+    BannerComponent,
+  ],
   providers: [AppStore],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
