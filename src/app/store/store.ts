@@ -1,21 +1,13 @@
 import { computed, effect, inject, Signal } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
-import {
-  getState,
-  patchState,
-  signalStore,
-  withComputed,
-  withHooks,
-  withMethods,
-  withProps,
-  withState,
-} from '@ngrx/signals';
+import { getState, patchState, signalStore, withComputed, withHooks, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { of, pipe, switchMap } from 'rxjs';
 import { Marker, SnappinMap, MarkerImage } from '../shared/models';
 import { MarkersService } from '../markers/data-access/markers.service';
 import { ImagesService } from '../images/data-access/images-service';
 import { MapsService } from '../maps/data-access/services/maps.service';
+import { environment } from '../../environments/environment';
 
 type AppState = {
   maps: { [mapId: string]: SnappinMap };
@@ -34,7 +26,6 @@ export const AppStore = signalStore(
     onInit(store) {
       effect(() => {
         const state = getState(store);
-        console.log('mapsState', state);
       });
     },
   }),
@@ -43,10 +34,9 @@ export const AppStore = signalStore(
     mapsCount: computed(() => Object.values(state.maps()).length),
     mapsIterable: computed(() => Object.values(state.maps())),
     filteredMaps: computed(() => {
-      return Object.values(state.maps()).filter((item) =>
-        item.title.includes(state.filter().query)
-      );
+      return Object.values(state.maps()).filter((item) => item.title.includes(state.filter().query));
     }),
+    canAddMaps: computed(() => Object.values(state.maps()).length < environment.mapsLimit),
   })),
   withProps(() => ({
     mapsService: inject(MapsService),
@@ -173,10 +163,7 @@ export const AppStore = signalStore(
                   });
 
                   const updatedState = structuredClone(state.maps);
-                  updatedState[params.mapId].markers = [
-                    ...updatedState[params.mapId].markers,
-                    ...newMarkers,
-                  ];
+                  updatedState[params.mapId].markers = [...updatedState[params.mapId].markers, ...newMarkers];
                   return { ...state, maps: updatedState };
                 });
               },
@@ -225,57 +212,46 @@ export const AppStore = signalStore(
     }>(
       pipe(
         switchMap((params) => {
-          return markersService
-            .updateMarker(params.mapId, params.markerId, params.data)
-            .pipe(
-              tapResponse({
-                next: (updatedMarker) => {
-                  patchState(store, (state) => {
-                    const updatedState = structuredClone(state.maps);
-                    const oldMarkerIndex = findMarkerIndex(
-                      state,
-                      params.mapId,
-                      params.markerId
-                    );
+          return markersService.updateMarker(params.mapId, params.markerId, params.data).pipe(
+            tapResponse({
+              next: (updatedMarker) => {
+                patchState(store, (state) => {
+                  const updatedState = structuredClone(state.maps);
+                  const oldMarkerIndex = findMarkerIndex(state, params.mapId, params.markerId);
 
-                    updatedState[params.mapId].markers[oldMarkerIndex] = {
-                      ...updatedMarker,
-                      images:
-                        state.maps[params.mapId].markers[oldMarkerIndex].images,
-                    };
-                    return { ...state, maps: updatedState };
-                  });
-                },
-                error: console.error,
-              })
-            );
+                  updatedState[params.mapId].markers[oldMarkerIndex] = {
+                    ...updatedMarker,
+                    images: state.maps[params.mapId].markers[oldMarkerIndex].images,
+                  };
+                  return { ...state, maps: updatedState };
+                });
+              },
+              error: console.error,
+            })
+          );
         })
       )
     ),
     deleteMarkers: rxMethod<{ mapId: string; markerIds: string[] }>(
       pipe(
         switchMap((params) => {
-          return markersService
-            .deleteMarkers(params.mapId, params.markerIds)
-            .pipe(
-              tapResponse({
-                next: () => {
-                  patchState(store, (state) => {
-                    const updatedState = structuredClone(state.maps);
+          return markersService.deleteMarkers(params.mapId, params.markerIds).pipe(
+            tapResponse({
+              next: () => {
+                patchState(store, (state) => {
+                  const updatedState = structuredClone(state.maps);
 
-                    const oldMarkers = updatedState[params.mapId].markers;
-                    const filteredMarkers = oldMarkers.filter(
-                      (marker) => !params.markerIds.includes(marker.markerId)
-                    );
+                  const oldMarkers = updatedState[params.mapId].markers;
+                  const filteredMarkers = oldMarkers.filter((marker) => !params.markerIds.includes(marker.markerId));
 
-                    updatedState[params.mapId].markers = filteredMarkers;
+                  updatedState[params.mapId].markers = filteredMarkers;
 
-                    return { ...state, maps: updatedState };
-                  });
-                },
-                error: console.error,
-              })
-            );
+                  return { ...state, maps: updatedState };
+                });
+              },
+              error: console.error,
+            })
+          );
         })
       )
     ),
@@ -290,32 +266,25 @@ export const AppStore = signalStore(
     loadImagesForMarker: rxMethod<{ mapId: string; markerId: string }>(
       pipe(
         switchMap((params) => {
-          return imagesService
-            .getImagesForMarker(params.mapId, params.markerId)
-            .pipe(
-              tapResponse({
-                next: (images) => {
-                  patchState(store, (state) => {
-                    const updatedState = structuredClone(state.maps);
+          return imagesService.getImagesForMarker(params.mapId, params.markerId).pipe(
+            tapResponse({
+              next: (images) => {
+                patchState(store, (state) => {
+                  const updatedState = structuredClone(state.maps);
 
-                    const markerIndex = findMarkerIndex(
-                      state,
-                      params.mapId,
-                      params.markerId
-                    );
+                  const markerIndex = findMarkerIndex(state, params.mapId, params.markerId);
 
-                    updatedState[params.mapId].markers[markerIndex].images =
-                      images;
+                  updatedState[params.mapId].markers[markerIndex].images = images;
 
-                    return {
-                      ...state,
-                      maps: updatedState,
-                    };
-                  });
-                },
-                error: console.error,
-              })
-            );
+                  return {
+                    ...state,
+                    maps: updatedState,
+                  };
+                });
+              },
+              error: console.error,
+            })
+          );
         })
       )
     ),
@@ -330,25 +299,12 @@ export const AppStore = signalStore(
                 patchState(store, (state) => {
                   const updatedState = structuredClone(state.maps);
 
-                  const oldMarkerIndex = findMarkerIndex(
-                    state,
-                    params.data.mapId!,
-                    params.data.markerId!
-                  );
-                  const oldImageIndex = findImageIndex(
-                    state,
-                    params.data.mapId!,
-                    params.data.markerId!,
-                    params.data.imageId!
-                  );
+                  const oldMarkerIndex = findMarkerIndex(state, params.data.mapId!, params.data.markerId!);
+                  const oldImageIndex = findImageIndex(state, params.data.mapId!, params.data.markerId!, params.data.imageId!);
 
-                  const oldImage =
-                    store.maps()[params.data.mapId!].markers[oldMarkerIndex]
-                      .images[oldImageIndex];
+                  const oldImage = store.maps()[params.data.mapId!].markers[oldMarkerIndex].images[oldImageIndex];
 
-                  updatedState[params.data.mapId!].markers[
-                    oldMarkerIndex
-                  ].images[oldImageIndex] = {
+                  updatedState[params.data.mapId!].markers[oldMarkerIndex].images[oldImageIndex] = {
                     ...oldImage,
                     legend: params.data.legend,
                   }; //only legend can change
@@ -368,43 +324,26 @@ export const AppStore = signalStore(
     deleteImage: rxMethod<{ mapId: string; markerId: string; imageId: string }>(
       pipe(
         switchMap((params) =>
-          imagesService
-            .deleteImageFromMarker(
-              params.mapId,
-              params.markerId,
-              params.imageId
-            )
-            .pipe(
-              tapResponse({
-                next: () => {
-                  patchState(store, (state) => {
-                    const updatedState = structuredClone(state.maps);
+          imagesService.deleteImageFromMarker(params.mapId, params.markerId, params.imageId).pipe(
+            tapResponse({
+              next: () => {
+                patchState(store, (state) => {
+                  const updatedState = structuredClone(state.maps);
 
-                    const oldMarkerIndex = findMarkerIndex(
-                      state,
-                      params.mapId,
-                      params.markerId
-                    );
-                    const oldImageIndex = findImageIndex(
-                      state,
-                      params.mapId,
-                      params.markerId,
-                      params.imageId
-                    );
+                  const oldMarkerIndex = findMarkerIndex(state, params.mapId, params.markerId);
+                  const oldImageIndex = findImageIndex(state, params.mapId, params.markerId, params.imageId);
 
-                    updatedState[params.mapId].markers[
-                      oldMarkerIndex
-                    ].images.splice(oldImageIndex, 1);
+                  updatedState[params.mapId].markers[oldMarkerIndex].images.splice(oldImageIndex, 1);
 
-                    return {
-                      ...state,
-                      maps: updatedState,
-                    };
-                  });
-                },
-                error: console.error,
-              })
-            )
+                  return {
+                    ...state,
+                    maps: updatedState,
+                  };
+                });
+              },
+              error: console.error,
+            })
+          )
         )
       )
     ),
@@ -416,25 +355,16 @@ export const AppStore = signalStore(
 );
 
 const findMarkerIndex = (state: AppState, mapId: string, markerId: string) => {
-  const markerIndex = state.maps[mapId].markers.findIndex(
-    (marker) => marker.markerId === markerId
-  );
+  const markerIndex = state.maps[mapId].markers.findIndex((marker) => marker.markerId === markerId);
 
   if (markerIndex === -1) throw new Error('Marker not found');
 
   return markerIndex;
 };
 
-const findImageIndex = (
-  state: AppState,
-  mapId: string,
-  markerId: string,
-  imageId: string
-) => {
+const findImageIndex = (state: AppState, mapId: string, markerId: string, imageId: string) => {
   const markerIndex = findMarkerIndex(state, mapId, markerId);
-  const imageIndex = state.maps[mapId].markers[markerIndex].images.findIndex(
-    (img) => img.imageId === imageId
-  );
+  const imageIndex = state.maps[mapId].markers[markerIndex].images.findIndex((img) => img.imageId === imageId);
 
   if (imageIndex === -1) throw new Error('Marker not found');
 

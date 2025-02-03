@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal, signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Marker, SnappinMap } from '../shared/models';
 import { ButtonComponent, ButtonConfig } from '../shared/ui/button/button.component';
@@ -11,6 +11,8 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { startWith } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { environment } from '../../environments/environment';
+import { BannerService } from '../shared/services/banner-service';
 
 @Component({
   selector: 'app-marker',
@@ -31,6 +33,7 @@ export default class MarkerComponent {
   protected route = inject(ActivatedRoute);
   protected router = inject(Router);
   protected store = inject(AppStore);
+  protected banner = inject(BannerService);
 
   //controls
   protected deleteMarkerFormControl = new FormControl<string>('', {
@@ -44,6 +47,9 @@ export default class MarkerComponent {
   protected mapId: string;
   protected markers: Signal<Marker[]> = signal([]);
   protected showMap = signal(false);
+  protected canAddMarkers = computed(() => {
+    return this.markers().length < environment.markersLimit;
+  });
   protected deleteMarkerDialogConfig = computed<CustomDialogConfig>(() => {
     return {
       title: 'Delete marker',
@@ -60,7 +66,7 @@ export default class MarkerComponent {
   });
   protected dropdownConfig = computed<DropdownConfig>(() => {
     const baseConfig: DropdownConfig = {
-      options: [{ label: 'Add marker', index: 1 }],
+      options: [],
       buttonConfig: {
         text: 'Add or delete markers',
         type: 'primary_action',
@@ -72,11 +78,21 @@ export default class MarkerComponent {
       baseConfig.options.push({ label: 'Delete marker', index: 0 });
     }
 
+    if (this.canAddMarkers()) baseConfig.options.push({ label: 'Add marker', index: 1 });
+
     return baseConfig;
   });
 
   //properties
   protected map: SnappinMap | undefined;
+
+  constructor() {
+    effect(() => {
+      if (!this.canAddMarkers()) {
+        this.banner.setMessage({ message: 'You have reached the limit of 25 markers for this map 🗻', type: 'info' });
+      }
+    });
+  }
 
   ngOnInit() {
     this.mapId = this.route.snapshot.paramMap.get('mapId')!;

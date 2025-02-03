@@ -16,4 +16,7 @@ export const environment = {
   googleMapsApiKey: 'AIzaSyCymGXjavlTc6D5maGwEqUXZKYCO6kiGxw',
   idTokenExpirationInMiliseconds: 86400000,
   logoutUri: 'http://localhost:4200',
+  mapsLimit: 25,
+  markersLimit: 25,
+  imagesLimit: 25,
 };

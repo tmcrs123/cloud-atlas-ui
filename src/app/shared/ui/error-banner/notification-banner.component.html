@@ -1,14 +1,9 @@
-@if (bannerService.latestNotification()) {
-@if(bannerService.latestNotification()?.type === 'error') {
-<div
-  class="fixed top-0 left-0 w-full bg-red-500 text-white font-bold text-2xl p-6 text-center z-50 transition-all"
->
+@if (bannerService.latestNotification()) { @if(bannerService.latestNotification()?.type === 'error') {
+<div class="fixed bottom-0 left-0 w-full bg-red-500 text-white font-bold text-2xl p-6 text-center z-50 transition-all">
   <p>{{ bannerService.latestNotification()?.message }}</p>
 </div>
 } @else {
-<div
-  class="fixed top-0 left-0 w-full bg-sky-500 text-white p-6 font-bold text-2xl text-center z-50 transition-all"
->
+<div class="fixed bottom-0 left-0 w-full bg-sky-500 text-white p-6 font-bold text-2xl text-center z-50 transition-all">
   <p>{{ bannerService.latestNotification()?.message }}</p>
 </div>
 } }

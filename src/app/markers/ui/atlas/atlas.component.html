@@ -68,10 +68,9 @@
       <app-button [config]="goBackButtonConfig" (btnClick)="router.navigate(['markers', mapId])" class="m-2"></app-button>
 
       @if (mapMode() === 'add') {
-      <app-button [config]="moveButtonConfig" (btnClick)="mapMode.set('move')" class="m-2"></app-button>
-
-      }@else {
-      <app-button [config]="addButtonConfig" (btnClick)="mapMode.set('add')" class="m-2"></app-button>
+      <app-button [config]="moveButtonConfig()" (btnClick)="mapMode.set('move')" class="m-2"></app-button>
+      } @else {
+      <app-button [config]="addButtonConfig()" (btnClick)="mapMode.set('add')" class="m-2"></app-button>
 
       }
     </div>

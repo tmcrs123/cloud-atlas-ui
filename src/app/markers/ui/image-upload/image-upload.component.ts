@@ -1,14 +1,15 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { bufferCount, catchError, from, mergeMap, Observable, tap, throwError, timer } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ImagesService } from '../../../images/data-access/images-service';
 import { BannerService } from '../../../shared/services/banner-service';
 import { ButtonComponent, ButtonConfig } from '../../../shared/ui/button/button.component';
 import { AppStore } from '../../../store/store';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-image-upload',
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, NgIf],
   templateUrl: './image-upload.component.html',
 })
 export class ImageUploadComponent {
@@ -23,6 +24,9 @@ export class ImageUploadComponent {
   imagesService = inject(ImagesService);
   store = inject(AppStore);
   bannerService = inject(BannerService);
+  canAddImages = computed(() => {
+    return this.store.getImagesForMarker(this.mapId(), this.markerId())().length <= environment.imagesLimit;
+  });
 
   handleFileUpload(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -30,8 +34,13 @@ export class ImageUploadComponent {
 
     if (!files || files.length > 10) {
       inputElement.value = '';
-      throw new Error('Max 10 files allowed per upload.');
+      throw new Error('Only 10 files allowed per upload. ⚠');
     }
+
+    if (this.store.getImagesForMarker(this.mapId(), this.markerId())().length + files.length > environment.imagesLimit) {
+      throw new Error('You have reached the limit of 25 images for this map 🗻');
+    }
+
     from(files)
       .pipe(
         tap(() =>
@@ -40,7 +49,7 @@ export class ImageUploadComponent {
               message: 'Processing your images. Please wait ⌚',
               type: 'info',
             },
-            10000,
+            11000,
             true
           )
         ),
