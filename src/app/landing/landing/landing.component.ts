@@ -4,7 +4,6 @@ import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-landing',
-  imports: [],
   templateUrl: './landing.component.html',
   styles: [
     `
@@ -18,12 +17,6 @@ import { AuthService } from '../../auth/auth.service';
 export class LandingComponent {
   protected auth = inject(AuthService);
   private router = inject(Router);
-
-  ngOnInit() {
-    // this.auth
-    //   .checkIfUserIsAuthenticated()
-    //   .subscribe(console.log);
-  }
 
   navigate() {
     if (this.auth.isAuthenticated()) this.router.navigate(['maps']);

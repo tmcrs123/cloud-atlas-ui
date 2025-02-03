@@ -1,11 +1,7 @@
-import {
-  ApplicationConfig,
-  ErrorHandler,
-  provideZoneChangeDetection,
-} from '@angular/core';
+import { ApplicationConfig, ErrorHandler, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withJsonpSupport } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideAuth } from 'angular-auth-oidc-client';
 import { routes } from './app.routes';
@@ -19,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([AuthInterceptor, LoaderInterceptor])),
+    provideHttpClient(withInterceptors([AuthInterceptor, LoaderInterceptor]), withJsonpSupport()),
     provideAuth(authConfig),
     {
       provide: ErrorHandler,

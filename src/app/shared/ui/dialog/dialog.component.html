@@ -10,23 +10,16 @@
     </div>
 
     <!-- Dialog Body -->
-    <div class="mt-4">
+    <div class="mt-4" #dialogBody tabindex="-1">
       <ng-content></ng-content>
     </div>
 
     <!-- Dialog Footer -->
     <div class="mt-6 flex justify-end space-x-2">
-      <app-button
-        [config]="dialogConfig().secondaryActionButtonConfig"
-        (btnClick)="cancelAction()"
-      ></app-button>
+      <app-button [config]="dialogConfig().secondaryActionButtonConfig" (btnClick)="cancelAction()"></app-button>
 
-      @if (dialogConfig().primaryActionButtonConfig !== null &&
-      dialogConfig().primaryActionButtonConfig !==undefined) {
-      <app-button
-        [config]="fetchPrimaryActionButtonConfig()"
-        (btnClick)="confirmAction()"
-      ></app-button>
+      @if (dialogConfig().primaryActionButtonConfig !== null && dialogConfig().primaryActionButtonConfig !==undefined) {
+      <app-button [config]="fetchPrimaryActionButtonConfig()" (btnClick)="confirmAction()"></app-button>
       }
     </div>
   </div>

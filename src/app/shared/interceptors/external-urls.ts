@@ -7,6 +7,6 @@ export const COGNITO_URLS = [
   `https://snappin-test.auth.${environment.region}.amazoncognito.com/oauth2/userInfo`,
 ];
 
-export const S3_URLS = [
-  `https://snappin-test-dump.s3.${environment.region}.amazonaws.com/`,
-];
+export const S3_URLS = [`https://snappin-test-dump.s3.${environment.region}.amazonaws.com/`];
+
+export const GOOGLE_MAPS_URLS = [`https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}`];

@@ -1,190 +1,87 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  DestroyRef,
-  effect,
-  inject,
-  Signal,
-  signal,
-  viewChild,
-  viewChildren,
-} from '@angular/core';
-import {
-  outputToObservable,
-  takeUntilDestroyed,
-  toSignal,
-} from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, effect, inject, Signal, signal, viewChild, viewChildren } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import {
-  bufferCount,
-  filter,
-  from,
-  fromEvent,
-  map,
-  mergeMap,
-  Observable,
-  scan,
-  tap,
-} from 'rxjs';
 import { Marker, MarkerImage } from '../../../shared/models';
-import {
-  ButtonComponent,
-  ButtonConfig,
-} from '../../../shared/ui/button/button.component';
-import {
-  CustomDialogConfig,
-  DialogComponent,
-} from '../../../shared/ui/dialog/dialog.component';
-import DropdownComponent, {
-  DropdownConfig,
-} from '../../../shared/ui/dropdown/dropdown.component';
-import {
-  LightboxComponent,
-  LightboxConfig,
-} from '../../../shared/ui/lightbox/lightbox.component';
+import { ButtonComponent, ButtonConfig } from '../../../shared/ui/button/button.component';
+import { CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component';
+import DropdownComponent, { DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component';
+import { LightboxComponent, LightboxConfig } from '../../../shared/ui/lightbox/lightbox.component';
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component';
 import { AppStore } from '../../../store/store';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
+import { ADD_CAPTION_DIALOG_CONFIG, ADD_JOURNAL_ENTRY_BUTTON_CONFIG, ADD_JOURNAL_ENTRY_DIALOG_CONFIG, DELETE_DIALOG_CONFIG, DISPLAY_CAPTION_BUTTON_CONFIG, DISPLAY_CAPTION_DIALOG_CONFIG, DROPDOWN_CONFIG, LIGHTBOX_CONFIG } from './marker-detail-config';
 
 @Component({
   selector: 'app-marker-detail',
-  imports: [
-    LightboxComponent,
-    DropdownComponent,
-    DialogComponent,
-    ButtonComponent,
-    ReactiveFormsModule,
-    WarningBannerComponent,
-    ImageUploadComponent,
-    RouterLink,
-    CommonModule,
-  ],
+  imports: [LightboxComponent, DropdownComponent, DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule],
   templateUrl: './marker-detail.component.html',
+  styles: `.images-container {
+    column-count: 3;
+  }
+  
+  @media only screen and (max-width: 500px) {
+    .images-container {
+      column-count: 1;
+    }
+  }
+  `,
 })
 export default class MarkerDetailComponent {
-  protected deleteDialogConfig: CustomDialogConfig = {
-    title: 'Delete image',
-    primaryActionButtonConfig: {
-      text: 'Delete image',
-      type: 'delete',
-    },
-    secondaryActionButtonConfig: {
-      text: 'Cancel',
-      type: 'secondary_action',
-    },
-  };
+  // Configs
+  protected readonly addCaptionDialogConfig = ADD_CAPTION_DIALOG_CONFIG;
+  protected readonly addJournalEntryButtonConfig: ButtonConfig = ADD_JOURNAL_ENTRY_BUTTON_CONFIG;
+  protected readonly addJournalEntryDialogConfig = ADD_JOURNAL_ENTRY_DIALOG_CONFIG;
+  protected readonly deleteDialogConfig = DELETE_DIALOG_CONFIG;
+  protected readonly displayCaptionButtonConfig: ButtonConfig = DISPLAY_CAPTION_BUTTON_CONFIG;
+  protected readonly displayCaptionDialogConfig: CustomDialogConfig = DISPLAY_CAPTION_DIALOG_CONFIG;
+  protected readonly dropdownConfig: DropdownConfig = DROPDOWN_CONFIG;
 
-  protected readonly addCaptionDialogConfig: CustomDialogConfig = {
-    title: 'Add or update caption for image',
-    primaryActionButtonConfig: {
-      text: 'Save',
-      type: 'add',
-    },
-    secondaryActionButtonConfig: {
-      text: 'Cancel',
-      type: 'secondary_action',
-    },
-  };
+  //Inject
+  protected readonly destroyRef = inject(DestroyRef);
+  protected readonly route = inject(ActivatedRoute);
+  protected readonly store = inject(AppStore);
 
-  protected readonly addJournalEntryDialogConfig: CustomDialogConfig = {
-    title: 'Manage journal entry',
-    primaryActionButtonConfig: {
-      text: 'Save journal',
-      type: 'add',
-    },
-    secondaryActionButtonConfig: {
-      text: 'Cancel',
-      type: 'secondary_action',
-    },
-  };
-
-  protected readonly displayCaptionDialogConfig: CustomDialogConfig = {
-    title: 'Caption',
-    secondaryActionButtonConfig: {
-      text: 'Cancel',
-      type: 'secondary_action',
-    },
-  };
-
-  protected dropdownConfig: DropdownConfig = {
-    options: [
-      { label: 'Delete', index: 0 },
-      { label: 'Manage caption', index: 1 },
-    ],
-    buttonConfig: {
-      text: '',
-      type: 'primary_action',
-      svg: 'plus',
-      customCss:
-        'rounded-full bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer p-1',
-    },
-  };
-  protected displayCaptionButtonConfig: ButtonConfig = {
-    text: '',
-    type: 'accent',
-    svg: 'speech_bubble',
-    customCss:
-      'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-1',
-  };
-
-  protected addJournalEntryButtonConfig: ButtonConfig = {
-    text: 'Add journal',
-    type: 'add',
-    svg: 'pencil',
-  };
-
-  protected isDeleteDialogOpen = signal(false);
+  //Signals
+  protected focusedImagedIndex = signal<number | null>(null);
+  protected images: Signal<MarkerImage[]> = signal([]);
   protected isAddCaptionDialogOpen = signal(false);
+  protected isDeleteDialogOpen = signal(false);
   protected isDisplayCaptionDialogOpen = signal(false);
   protected isJournalEntryDialogOpen = signal(false);
   protected isLightboxOpen = signal(false);
-  protected = signal(false);
-  protected deleteDialogRef =
-    viewChild.required<DialogComponent>('deleteImageDialog');
-  protected addCaptionDialogRef =
-    viewChild.required<DialogComponent>('addCaptionDialog');
-  protected displayCaptionDialogRef = viewChild.required<DialogComponent>(
-    'displayCaptionDialog'
-  );
-  protected addJournalEntryDialogRef = viewChild.required<DialogComponent>(
-    'addJournalEntryDialog'
-  );
-  protected dropdowns = viewChildren(DropdownComponent);
-  destroyRef = inject(DestroyRef);
-  protected addJournalEntryFormControl = new FormControl<string | undefined>(
-    '',
-    {
-      nonNullable: true,
-    }
-  );
+  protected lightboxConfig = signal(LIGHTBOX_CONFIG);
+  protected marker!: Signal<Marker>;
 
-  store = inject(AppStore);
-  route = inject(ActivatedRoute);
-  protected mapId: string = '';
-  protected mapTitle: string;
-  protected markerId: string = '';
-  protected images: Signal<MarkerImage[]> = signal([]);
+  //VC-CC
+  protected addCaptionDialogRef = viewChild.required<DialogComponent>('addCaptionDialog');
+  protected addJournalEntryDialogRef = viewChild.required<DialogComponent>('addJournalEntryDialog');
+  protected deleteDialogRef = viewChild.required<DialogComponent>('deleteImageDialog');
+  protected displayCaptionDialogRef = viewChild.required<DialogComponent>('displayCaptionDialog');
+  protected dropdowns = viewChildren(DropdownComponent);
+
+  //Form controls
   protected addCaptionFormControl = new FormControl<string>('', {
     validators: [Validators.required],
     nonNullable: true,
   });
-  protected focusedImagedIndex = signal<number | null>(null);
-  protected marker!: Signal<Marker>;
+  protected addJournalEntryFormControl = new FormControl<string | undefined>('', {
+    nonNullable: true,
+  });
 
-  handleClick(imageIndex: number) {
-    this.focusedImagedIndex.set(imageIndex);
-    this.isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen());
-  }
+  // Properties
+  protected mapId: string = '';
+  protected mapTitle: string;
+  protected markerId: string = '';
+  protected showCaptionDialog = false;
+  protected showDeleteDialog = false;
 
+  // methods
   constructor() {
     effect(() => {
       this.addJournalEntryFormControl.setValue(this.marker().journal);
-      console.log('images', this.images());
     });
   }
-
   ngOnInit() {
     this.mapId = this.route.snapshot.paramMap.get('mapId')!;
     this.markerId = this.route.snapshot.paramMap.get('markerId')!;
@@ -200,6 +97,16 @@ export default class MarkerDetailComponent {
     this.images = this.store.getImagesForMarker(this.mapId, this.markerId);
   }
 
+  onLegendButtonClicked(imageIndex: number) {
+    this.focusedImagedIndex.set(imageIndex);
+    this.isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen());
+  }
+
+  onImageClicked(imageIndex: number) {
+    this.lightboxConfig.update((state) => ({ ...state, openAtIndex: imageIndex }));
+    this.isLightboxOpen.set(true);
+  }
+
   onDropdownOptionSelected(option: number, dropdownIndex: number) {
     this.focusedImagedIndex.set(dropdownIndex);
     if (option) {
@@ -209,20 +116,27 @@ export default class MarkerDetailComponent {
     }
   }
 
-  saveCaption() {
-    const image = this.images()[this.focusedImagedIndex()!];
+  onAddCaptionDialogClose(hasCaptionToAdd: boolean) {
+    if (!hasCaptionToAdd) {
+      this.addCaptionFormControl.reset('');
+      this.isAddCaptionDialogOpen.set(!this.isAddCaptionDialogOpen);
+
+      return;
+    }
+
     this.store.updateImageForMarker({
       data: {
         mapId: this.mapId,
         markerId: this.markerId,
-        imageId: image.imageId,
+        imageId: this.images()[this.focusedImagedIndex()!].imageId,
         legend: this.addCaptionFormControl.value,
       },
     });
     this.isAddCaptionDialogOpen.set(!this.isAddCaptionDialogOpen);
+    this.addCaptionFormControl.reset('');
   }
 
-  onDeleteDialogClosed(hasImageToDelete: boolean) {
+  onDeleteImageDialogClosed(hasImageToDelete: boolean) {
     if (!hasImageToDelete) {
       this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen());
       return;
@@ -238,25 +152,7 @@ export default class MarkerDetailComponent {
     this.focusedImagedIndex.set(null);
   }
 
-  ngAfterViewInit() {
-    const displayCaptionDialogClosed$ = outputToObservable(
-      this.displayCaptionDialogRef().dialogClosed
-    );
-
-    //display caption flow
-    displayCaptionDialogClosed$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap(() => {
-          this.isDisplayCaptionDialogOpen.set(
-            !this.isDisplayCaptionDialogOpen()
-          );
-        })
-      )
-      .subscribe();
-  }
-
-  addJournalEntry(hasJournalToAdd: boolean) {
+  onAddJournalEntryDialogClosed(hasJournalToAdd: boolean) {
     if (!hasJournalToAdd) {
       this.isJournalEntryDialogOpen.set(!this.isJournalEntryDialogOpen());
       return;
@@ -271,13 +167,4 @@ export default class MarkerDetailComponent {
     this.isJournalEntryDialogOpen.set(!this.isJournalEntryDialogOpen());
     // this.addJournalEntryFormControl.setValue('');
   }
-
-  protected fakeImgArray: any[] = [];
-  showDeleteDialog = false;
-  showCaptionDialog = false;
-
-  lightboxConfig: LightboxConfig = {
-    isVisible: false,
-    openAtIndex: 0,
-  };
 }

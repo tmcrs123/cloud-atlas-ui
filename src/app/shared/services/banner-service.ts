@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { BannerNotification } from '../models/banner-notification';
-import { EMPTY, of, switchMap, tap, timer } from 'rxjs';
+import { EMPTY, filter, iif, of, switchMap, take, tap, timer } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,16 +8,21 @@ import { EMPTY, of, switchMap, tap, timer } from 'rxjs';
 export class BannerService {
   public latestNotification = signal<BannerNotification | null>(null);
 
-  public setMessage(notification: BannerNotification, timeout: number = 5000) {
+  public setMessage(notification: BannerNotification, timeout: number = 5000, dismissManually = false) {
     of(null)
       .pipe(
         tap(() => this.latestNotification.set(notification)),
-        switchMap(() => timer(timeout))
+        switchMap(() => {
+          if (dismissManually) {
+            return EMPTY;
+          } else return timer(timeout).pipe(tap(() => this.latestNotification.set(null)));
+        }),
+        take(1)
       )
-      .subscribe({
-        complete: () => {
-          this.latestNotification.set(null);
-        },
-      });
+      .subscribe();
+  }
+
+  public dismissManually() {
+    this.latestNotification.set(null);
   }
 }

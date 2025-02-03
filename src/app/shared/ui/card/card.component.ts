@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, HostBinding, HostListener, input, output } from '@angular/core';
 
 export type CardConfig = {
   title: string;
@@ -12,4 +12,13 @@ export type CardConfig = {
 })
 export class CardComponent {
   cardConfig = input.required<CardConfig>();
+  enterPressed = output<void>();
+
+  @HostBinding('attr.tabindex') get tabindex() {
+    return 0;
+  }
+
+  @HostListener('keydown.enter', ['$event']) handleEnterPress(event: KeyboardEvent) {
+    this.enterPressed.emit();
+  }
 }

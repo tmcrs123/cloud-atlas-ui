@@ -1,20 +1,9 @@
 import { Component, inject, input } from '@angular/core';
-import {
-  bufferCount,
-  catchError,
-  from,
-  mergeMap,
-  Observable,
-  throwError,
-  timer,
-} from 'rxjs';
+import { bufferCount, catchError, from, mergeMap, Observable, tap, throwError, timer } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ImagesService } from '../../../images/data-access/images-service';
 import { BannerService } from '../../../shared/services/banner-service';
-import {
-  ButtonComponent,
-  ButtonConfig,
-} from '../../../shared/ui/button/button.component';
+import { ButtonComponent, ButtonConfig } from '../../../shared/ui/button/button.component';
 import { AppStore } from '../../../store/store';
 
 @Component({
@@ -45,6 +34,16 @@ export class ImageUploadComponent {
     }
     from(files)
       .pipe(
+        tap(() =>
+          this.bannerService.setMessage(
+            {
+              message: 'Processing your images. Please wait ⌚',
+              type: 'info',
+            },
+            10000,
+            true
+          )
+        ),
         mergeMap((file) =>
           this.fileValidations$(file).pipe(
             mergeMap((file) => this.pushFileToS3(file)),
@@ -56,15 +55,6 @@ export class ImageUploadComponent {
         bufferCount(files.length)
       )
       .subscribe({
-        next: () =>
-          this.bannerService.setMessage(
-            {
-              message:
-                'Your images are being saved and will be displayed here when ready',
-              type: 'info',
-            },
-            10000
-          ),
         complete: () =>
           timer(10000).subscribe({
             next: () => {
@@ -72,29 +62,26 @@ export class ImageUploadComponent {
                 mapId: this.mapId(),
                 markerId: this.markerId(),
               });
+              this.bannerService.dismissManually();
             },
           }),
       });
   }
 
   private pushFileToS3(file: File) {
-    return this.imagesService
-      .createPresignedURL(this.mapId(), this.markerId())
-      .pipe(
-        mergeMap((res) => {
-          const formData = new FormData();
+    return this.imagesService.createPresignedURL(this.mapId(), this.markerId()).pipe(
+      mergeMap((res) => {
+        const formData = new FormData();
 
-          Object.keys(res.fields).forEach((key) => {
-            formData.append(key, res.fields[key]);
-          });
+        Object.keys(res.fields).forEach((key) => {
+          formData.append(key, res.fields[key]);
+        });
 
-          formData.append('file', file);
-          return this.imagesService.pushToS3Bucket(res.url, formData);
-        }),
-        catchError((error) =>
-          throwError(() => `Error sending ${file.name} to images repository`)
-        )
-      );
+        formData.append('file', file);
+        return this.imagesService.pushToS3Bucket(res.url, formData);
+      }),
+      catchError((error) => throwError(() => `Error sending ${file.name} to images repository`))
+    );
   }
 
   private fileValidations$ = (file: File) => {

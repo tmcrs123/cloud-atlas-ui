@@ -7,26 +7,14 @@ import { debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { SnappinMap } from '../shared/models';
 import { CardComponent } from '../shared/ui/card/card.component';
-import {
-  CustomDialogConfig,
-  DialogComponent,
-} from '../shared/ui/dialog/dialog.component';
-import DropdownComponent, {
-  DropdownConfig,
-} from '../shared/ui/dropdown/dropdown.component';
+import { CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/dialog.component';
+import DropdownComponent, { DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
 import SelectComponent from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store';
 
 @Component({
   selector: 'app-maps',
-  imports: [
-    DropdownComponent,
-    DialogComponent,
-    SelectComponent,
-    CardComponent,
-    ReactiveFormsModule,
-    CommonModule,
-  ],
+  imports: [DropdownComponent, DialogComponent, SelectComponent, CardComponent, ReactiveFormsModule, CommonModule],
   providers: [DatePipe],
   templateUrl: './maps.component.html',
 })
@@ -42,16 +30,12 @@ export default class MapsComponent {
     nonNullable: true,
     validators: [Validators.required],
   });
-  protected addMapFormControlStatusChangesSignal = toSignal(
-    this.addMapFormControl.statusChanges.pipe(startWith('INVALID'))
-  );
+  protected addMapFormControlStatusChangesSignal = toSignal(this.addMapFormControl.statusChanges.pipe(startWith('INVALID')));
   protected deleteMapFormControl = new FormControl<string>('', {
     nonNullable: true,
     validators: [Validators.required],
   });
-  protected deleteMapFormControlStatusChangesSignal = toSignal(
-    this.deleteMapFormControl.statusChanges.pipe(startWith('INVALID'))
-  );
+  protected deleteMapFormControlStatusChangesSignal = toSignal(this.deleteMapFormControl.statusChanges.pipe(startWith('INVALID')));
 
   protected maps: Signal<SnappinMap[]> = signal([]);
 
@@ -69,10 +53,10 @@ export default class MapsComponent {
       },
     };
 
-    if (this.maps().length > 0) {
+    if (this.maps().length === 0) {
+      baseConfig.options.splice(0, 1);
       return baseConfig;
     } else {
-      baseConfig.options.splice(1);
       return baseConfig;
     }
   });
@@ -108,27 +92,20 @@ export default class MapsComponent {
     };
   });
 
-  protected handleSearchControlChanges$ =
-    this.searchFormControl.valueChanges.pipe(
-      takeUntilDestroyed(),
-      distinctUntilChanged(),
-      startWith(''),
-      filter((t) => t !== null),
-      debounceTime(500)
-    );
+  protected handleSearchControlChanges$ = this.searchFormControl.valueChanges.pipe(
+    takeUntilDestroyed(),
+    distinctUntilChanged(),
+    startWith(''),
+    filter((t) => t !== null),
+    debounceTime(500)
+  );
 
   constructor() {
-    this.handleSearchControlChanges$.subscribe((v) =>
-      this.store.updateQuery(v)
-    );
+    this.handleSearchControlChanges$.subscribe((v) => this.store.updateQuery(v));
   }
 
   ngOnInit() {
     this.maps = this.store.filteredMaps;
-    if (!this.maps() || this.maps().length === 0) {
-      this.store.loadMaps();
-    }
-
     this.addMapFormControl.statusChanges.subscribe(console.log);
   }
 

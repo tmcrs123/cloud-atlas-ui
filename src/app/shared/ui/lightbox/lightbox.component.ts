@@ -1,15 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  effect,
-  ElementRef,
-  inject,
-  input,
-  output,
-  Signal,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, computed, DestroyRef, effect, ElementRef, inject, input, linkedSignal, output, Signal, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, fromEvent, tap } from 'rxjs';
 import { MarkerImage } from '../../models';
@@ -31,7 +20,9 @@ export class LightboxComponent {
   lightboxConfig = input.required<LightboxConfig>();
   images = input.required<MarkerImage[]>();
   close = output<void>();
-  currentIndex = signal<number>(0);
+
+  currentIndex = linkedSignal(() => this.lightboxConfig().openAtIndex);
+  // currentIndex2 = signal<number>(0);
   lightboxContainer = viewChild.required('lightboxContainer', {
     read: ElementRef,
   });
@@ -70,18 +61,12 @@ export class LightboxComponent {
   }
 
   private onPrev() {
-    let newIndex =
-      this.currentIndex() - 1 >= 0
-        ? this.currentIndex() - 1
-        : this.images().length - 1;
+    let newIndex = this.currentIndex() - 1 >= 0 ? this.currentIndex() - 1 : this.images().length - 1;
     this.currentIndex.set(newIndex);
   }
 
   private onNext() {
-    let newIndex =
-      this.currentIndex() + 1 >= this.images().length
-        ? 0
-        : this.currentIndex() + 1;
+    let newIndex = this.currentIndex() + 1 >= this.images().length ? 0 : this.currentIndex() + 1;
     this.currentIndex.set(newIndex);
   }
 }

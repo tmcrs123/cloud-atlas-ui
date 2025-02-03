@@ -1,109 +1,55 @@
-import { CommonModule } from '@angular/common';
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  signal,
-  viewChild,
-  WritableSignal,
-} from '@angular/core';
-import {
-  outputToObservable,
-  takeUntilDestroyed,
-  toSignal,
-} from '@angular/core/rxjs-interop';
+import { CommonModule, DatePipe } from '@angular/common';
+import { Component, computed, DestroyRef, inject, signal, viewChild, WritableSignal } from '@angular/core';
+import { outputToObservable, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  GoogleMap,
-  GoogleMapsModule,
-  MapInfoWindow,
-} from '@angular/google-maps';
+import { GoogleMap, GoogleMapsModule, MapInfoWindow } from '@angular/google-maps';
 import { ActivatedRoute, Router } from '@angular/router';
 import { defer, map, startWith, tap } from 'rxjs';
 import { SnappinMap } from '../../../shared/models';
-import {
-  ButtonComponent,
-  ButtonConfig,
-} from '../../../shared/ui/button/button.component';
+import { ButtonComponent, ButtonConfig } from '../../../shared/ui/button/button.component';
 import { CardComponent } from '../../../shared/ui/card/card.component';
-import {
-  CustomDialogConfig,
-  DialogComponent,
-} from '../../../shared/ui/dialog/dialog.component';
+import { CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component';
 import { AppStore } from '../../../store/store';
-import { environment } from '../../../../environments/environment';
-
-const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
-  draggableCursor: 'grab',
-  draggingCursor: 'grab',
-  scaleControl: false,
-  disableDefaultUI: true,
-  scrollwheel: true,
-  zoom: 5,
-  fullscreenControl: true,
-  minZoom: 3,
-  mapId: environment.googleMapId,
-};
-
-const MOVE_MODE_MAP_OPTIONS: google.maps.MapOptions = {
-  draggableCursor: 'grab',
-  draggingCursor: 'grab',
-};
-const ADD_MODE_MAP_OPTIONS: google.maps.MapOptions = {
-  draggableCursor: 'crosshair',
-  draggingCursor: 'grab',
-};
-
-const INFO_WINDOW_OPTIONS: google.maps.InfoWindowOptions = {
-  headerContent: null,
-  headerDisabled: true,
-};
+import { ADD_BUTTON_CONFIG, ADD_MODE_MAP_OPTIONS, DEFAULT_MAP_OPTIONS, GO_BACK_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG, MOVE_MODE_MAP_OPTIONS } from './atlas.component.config';
 
 @Component({
   selector: 'app-atlas',
-  imports: [
-    GoogleMapsModule,
-    MapInfoWindow,
-    DialogComponent,
-    ReactiveFormsModule,
-    CardComponent,
-    ButtonComponent,
-    CommonModule,
-  ],
+  imports: [GoogleMapsModule, MapInfoWindow, DialogComponent, ReactiveFormsModule, CardComponent, ButtonComponent, CommonModule],
+  providers: [DatePipe],
   templateUrl: './atlas.component.html',
   styles: [
     `
       :host {
         display: block;
-        height: calc(100vh - 100px);
+        height: calc(100vh - 150px);
+        padding: 2rem;
       }
     `,
   ],
 })
 export default class AtlasComponent {
-  //#region  config
-  protected moveButtonConfig: ButtonConfig = {
-    text: 'Move around',
-    type: 'primary_action',
-    svg: 'globe',
-  };
-
-  protected addButtonConfig: ButtonConfig = {
-    text: 'Add marker',
-    type: 'add',
-    svg: 'plus',
-  };
-
-  protected goBackButtonConfig: ButtonConfig = {
-    text: 'Go back',
-    type: 'secondary_action',
-    svg: 'arrow_back',
-  };
-
-  //#endregion
-
+  //config
+  protected moveButtonConfig: ButtonConfig = MOVE_BUTTON_CONFIG;
+  protected addButtonConfig: ButtonConfig = ADD_BUTTON_CONFIG;
+  protected goBackButtonConfig: ButtonConfig = GO_BACK_BUTTON_CONFIG;
   protected infoWindowOptions = INFO_WINDOW_OPTIONS;
+
+  //inject
+  protected activatedRoute = inject(ActivatedRoute);
+  protected datePipe = inject(DatePipe);
+  private destroyRef = inject(DestroyRef);
+  protected router = inject(Router);
+  protected store = inject(AppStore);
+
+  //properties
+  protected mapId: string = this.activatedRoute.snapshot.paramMap.get('mapId') as string;
+  protected mapModeQueryParam: string = this.activatedRoute.snapshot.queryParamMap.get('mapMode') as string;
+
+  protected isDialogOpen = false;
+  protected map: SnappinMap | undefined = undefined;
+
+  //signals
+  protected markers = this.store.getMarkersForMap(this.mapId);
   protected mapMode: WritableSignal<string> = signal('loading');
   protected mapOptions = computed(() => {
     switch (this.mapMode()) {
@@ -119,18 +65,14 @@ export default class AtlasComponent {
         return {
           ...DEFAULT_MAP_OPTIONS,
           ...MOVE_MODE_MAP_OPTIONS,
-          zoom: this.googleMapRef().googleMap?.getZoom()
-            ? this.googleMapRef().googleMap?.getZoom()
-            : DEFAULT_MAP_OPTIONS['zoom'],
+          zoom: this.googleMapRef().googleMap?.getZoom() ? this.googleMapRef().googleMap?.getZoom() : DEFAULT_MAP_OPTIONS['zoom'],
           center: this.googleMapRef().getCenter(),
         };
       case 'add':
         return {
           ...DEFAULT_MAP_OPTIONS,
           ...ADD_MODE_MAP_OPTIONS,
-          zoom: this.googleMapRef().googleMap?.getZoom()
-            ? this.googleMapRef().googleMap?.getZoom()
-            : DEFAULT_MAP_OPTIONS['zoom'],
+          zoom: this.googleMapRef().googleMap?.getZoom() ? this.googleMapRef().googleMap?.getZoom() : DEFAULT_MAP_OPTIONS['zoom'],
           center: this.googleMapRef().getCenter(),
         };
       default:
@@ -143,31 +85,9 @@ export default class AtlasComponent {
         };
     }
   });
-  protected canOpenDialog = computed(() => this.mapMode() === 'add');
-
-  activatedRoute = inject(ActivatedRoute);
-  destroyRef = inject(DestroyRef);
-  router = inject(Router);
-  store = inject(AppStore);
-
-  dialogComponentRef = viewChild.required<DialogComponent>(DialogComponent);
-  googleMapRef = viewChild.required<GoogleMap>(GoogleMap);
-
-  protected mapId: string = this.activatedRoute.snapshot.paramMap.get(
-    'mapId'
-  ) as string;
-  protected markers = this.store.getMarkersForMap(this.mapId);
-  protected newMarkerNameFormControl = new FormControl('', {
-    validators: [Validators.required, Validators.minLength(3)],
-    nonNullable: true,
-  });
-  protected newMarkerNameFormControlStatusChangesSignal = toSignal(
-    this.newMarkerNameFormControl.statusChanges.pipe(startWith('INVALID'))
-  );
-  protected isDialogOpen = false;
-  protected map: SnappinMap | undefined = undefined;
-
-  readonly atlasMarkers = computed(() =>
+  protected canOpenAddMarkerDialog = computed(() => this.mapMode() === 'add');
+  protected lastLatLngClicked = signal<google.maps.LatLng | null>(null);
+  protected atlasMarkers = computed(() =>
     this.markers().map(
       (marker) =>
         ({
@@ -179,15 +99,13 @@ export default class AtlasComponent {
         } as google.maps.marker.AdvancedMarkerElementOptions)
     )
   );
-
   protected dialogConfig = computed<CustomDialogConfig>(() => {
     return {
       title: 'What is the name of the new marker?',
       primaryActionButtonConfig: {
         text: 'Add marker',
         type: 'add',
-        disabled:
-          this.newMarkerNameFormControlStatusChangesSignal() === 'INVALID',
+        disabled: this.newMarkerNameFormControlStatusChangesSignal() === 'INVALID',
       },
       secondaryActionButtonConfig: {
         text: 'Cancel',
@@ -196,8 +114,19 @@ export default class AtlasComponent {
     };
   });
 
-  lastLatLngClicked = signal<google.maps.LatLng | null>(null);
-  lastLatLngClicked$ = defer(() =>
+  //VC / CC
+  protected dialogComponentRef = viewChild.required<DialogComponent>(DialogComponent);
+  protected googleMapRef = viewChild.required<GoogleMap>(GoogleMap);
+
+  //Form controls
+  protected newMarkerNameFormControl = new FormControl('', {
+    validators: [Validators.required, Validators.minLength(3)],
+    nonNullable: true,
+  });
+  protected newMarkerNameFormControlStatusChangesSignal = toSignal(this.newMarkerNameFormControl.statusChanges.pipe(startWith('INVALID')));
+
+  //Effects
+  protected lastLatLngClicked$ = defer(() =>
     this.googleMapRef().mapClick.pipe(
       takeUntilDestroyed(this.destroyRef),
       map((click) => click.latLng),
@@ -205,20 +134,24 @@ export default class AtlasComponent {
     )
   );
 
-  //Effects
-  readonly clearFormControlOnDialogClose$ = defer(() =>
+  protected clearFormControlOnDialogClose$ = defer(() =>
     outputToObservable(this.dialogComponentRef().dialogClosed).pipe(
       takeUntilDestroyed(this.destroyRef),
-      tap(() => this.newMarkerNameFormControl.setValue(''))
+      tap(() => this.newMarkerNameFormControl.reset())
     )
   );
 
-  ngAfterViewInit() {
-    this.lastLatLngClicked$.subscribe();
+  ngOnInit() {
+    this.clearFormControlOnDialogClose$.subscribe();
+    this.map = this.store.getMapById(this.mapId);
   }
 
-  //Actions
-  protected readonly userCompletesAddDialog = (hasMarkerToCreate: boolean) => {
+  ngAfterViewInit() {
+    this.lastLatLngClicked$.subscribe();
+    this.mapMode.set(this.mapModeQueryParam); //allow enough time for google maps api to load
+  }
+
+  protected userCompletesAddDialog = (hasMarkerToCreate: boolean) => {
     if (!hasMarkerToCreate) {
       this.isDialogOpen = false;
       return;
@@ -241,11 +174,6 @@ export default class AtlasComponent {
     this.isDialogOpen = false;
   };
 
-  ngOnInit() {
-    this.clearFormControlOnDialogClose$.subscribe();
-    this.map = this.store.getMapById(this.mapId);
-  }
-
   onCardClick(index: number) {
     const m = this.atlasMarkers()[index];
     if (!m.position?.lat && !m.position?.lng) return;
@@ -256,12 +184,6 @@ export default class AtlasComponent {
   }
 
   protected navigateToMarkerDetail(markerIndex: number) {
-    this.router.navigate([
-      'markers',
-      this.mapId,
-      'marker',
-      this.markers()[markerIndex].markerId,
-      'detail',
-    ]);
+    this.router.navigate(['markers', this.mapId, 'marker', this.markers()[markerIndex].markerId, 'detail']);
   }
 }

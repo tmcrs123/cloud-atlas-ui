@@ -11,9 +11,8 @@ export const authConfig: PassedInitialConfig = {
     clientId: environment.clientId,
     scope: 'openid',
     responseType: 'code',
-    silentRenew: true,
-    useRefreshToken: true,
-    renewTimeBeforeTokenExpiresInSeconds:
-      environment.renewTimeBeforeTokenExpiresInSeconds,
+    silentRenew: false,
+    useRefreshToken: false,
+    renewTimeBeforeTokenExpiresInSeconds: environment.renewTimeBeforeTokenExpiresInSeconds,
   },
 };

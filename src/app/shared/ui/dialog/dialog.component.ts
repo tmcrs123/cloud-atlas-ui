@@ -1,6 +1,6 @@
 import { DialogConfig } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, effect, ElementRef, input, output, viewChild } from '@angular/core';
 import { ButtonConfig, ButtonComponent } from '../button/button.component';
 
 export type DialogData = {
@@ -22,10 +22,18 @@ export interface CustomDialogConfig extends Omit<DialogConfig, 'data'> {
 })
 export class DialogComponent {
   dialogConfig = input.required<CustomDialogConfig>();
-
-  open = input.required<boolean>();
   dialogClosed = output<boolean>();
+  open = input.required<boolean>();
+  dialogBody = viewChild<ElementRef<HTMLDivElement>>('dialogBody');
 
+  /**
+   *
+   */
+  constructor() {
+    effect(() => {
+      if (this.dialogBody()) this.dialogBody()?.nativeElement.focus();
+    });
+  }
   confirmAction() {
     this.dialogClosed.emit(true);
   }
@@ -35,7 +43,6 @@ export class DialogComponent {
   }
 
   protected fetchPrimaryActionButtonConfig(): ButtonConfig {
-    return this.dialogConfig()
-      .primaryActionButtonConfig as unknown as ButtonConfig;
+    return this.dialogConfig().primaryActionButtonConfig as unknown as ButtonConfig;
   }
 }
