@@ -20,7 +20,7 @@ export class RedirectComponent {
   ngOnInit() {
     this.auth.exchangeCodeForToken().subscribe({
       next: () => {
-        this.googleMapsLoader.loadGoogleMapsScript();
+        this.googleMapsLoader.load();
         this.store.loadMaps();
         this.router.navigateByUrl('maps');
       },

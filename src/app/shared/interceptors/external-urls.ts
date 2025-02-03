@@ -8,5 +8,3 @@ export const COGNITO_URLS = [
 ];
 
 export const S3_URLS = [`https://snappin-test-dump.s3.${environment.region}.amazonaws.com/`];
-
-export const GOOGLE_MAPS_URLS = [`https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}`];
