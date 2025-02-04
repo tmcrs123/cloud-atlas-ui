@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, linkedSignal, signal } from '@angular/core';
 import { bufferCount, catchError, from, mergeMap, Observable, tap, throwError, timer } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ImagesService } from '../../../images/data-access/images-service';
@@ -13,20 +13,33 @@ import { NgIf } from '@angular/common';
   templateUrl: './image-upload.component.html',
 })
 export class ImageUploadComponent {
-  protected addNewImageButtonConfig: ButtonConfig = {
-    text: 'Add new image',
-    type: 'primary_action',
-    svg: 'arrow_on_square_up',
-  };
-
-  mapId = input('');
-  markerId = input('');
+  // inject
+  bannerService = inject(BannerService);
   imagesService = inject(ImagesService);
   store = inject(AppStore);
-  bannerService = inject(BannerService);
+
+  // signals
+  mapId = input('');
+  markerId = input('');
   canAddImages = computed(() => {
-    return this.store.getImagesForMarker(this.mapId(), this.markerId())().length <= environment.imagesLimit;
+    return this.store.getImagesForMarker(this.mapId(), this.markerId())().length < environment.imagesLimit;
   });
+  addNewImageButtonConfig = linkedSignal<ButtonConfig>(() => {
+    return {
+      text: 'Add new image',
+      type: 'primary_action',
+      svg: 'arrow_on_square_up',
+      disabled: !this.canAddImages(),
+    };
+  });
+
+  /**
+   *
+   */
+  constructor() {
+    effect(() => console.log(this.addNewImageButtonConfig()));
+    effect(() => console.log(this.canAddImages()));
+  }
 
   handleFileUpload(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -36,14 +49,14 @@ export class ImageUploadComponent {
       inputElement.value = '';
       throw new Error('Only 10 files allowed per upload. ⚠');
     }
-
-    if (this.store.getImagesForMarker(this.mapId(), this.markerId())().length + files.length > environment.imagesLimit) {
-      throw new Error('You have reached the limit of 25 images for this map 🗻');
+    const imageCount = this.store.getImagesForMarker(this.mapId(), this.markerId())().length;
+    if (imageCount + files.length > environment.imagesLimit) {
+      throw new Error(`You are going over the limit of 25 images. You can only upload ${environment.imagesLimit - imageCount} more images🗻`);
     }
 
     from(files)
       .pipe(
-        tap(() =>
+        tap(() => {
           this.bannerService.setMessage(
             {
               message: 'Processing your images. Please wait ⌚',
@@ -51,8 +64,9 @@ export class ImageUploadComponent {
             },
             11000,
             true
-          )
-        ),
+          ),
+            this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: true }));
+        }),
         mergeMap((file) =>
           this.fileValidations$(file).pipe(
             mergeMap((file) => this.pushFileToS3(file)),
@@ -72,6 +86,7 @@ export class ImageUploadComponent {
                 markerId: this.markerId(),
               });
               this.bannerService.dismissManually();
+              this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: false }));
             },
           }),
       });
