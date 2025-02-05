@@ -19,7 +19,7 @@ export const routes: Routes = [
   {
     path: 'world/:atlasId',
     canActivate: [AuthGuard],
-    loadComponent: () => import('./markers/ui/atlas/atlas.component').then((m) => m.AtlasComponent),
+    loadComponent: () => import('./markers/ui/atlas/world-map.component').then((m) => m.WorldMapComponent),
   },
   {
     path: 'markers/:atlasId/marker/:markerId/detail',
