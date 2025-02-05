@@ -1,7 +1,7 @@
-import { ButtonConfig } from '../../../shared/ui/button/button.component';
-import { CustomDialogConfig } from '../../../shared/ui/dialog/dialog.component';
-import { DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component';
-import { LightboxConfig } from '../../../shared/ui/lightbox/lightbox.component';
+import type { ButtonConfig } from '../../../shared/ui/button/button.component';
+import type { CustomDialogConfig } from '../../../shared/ui/dialog/dialog.component';
+import type { DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component';
+import type { LightboxConfig } from '../../../shared/ui/lightbox/lightbox.component';
 
 export const DELETE_DIALOG_CONFIG: CustomDialogConfig = {
   title: 'Delete image',
@@ -56,16 +56,14 @@ export const DROPDOWN_CONFIG: DropdownConfig = {
     text: '',
     type: 'primary_action',
     svg: 'plus',
-    customCss:
-      'rounded-full bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer p-1',
+    customCss: 'rounded-full bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer p-1',
   },
 };
 export const DISPLAY_CAPTION_BUTTON_CONFIG: ButtonConfig = {
   text: '',
   type: 'accent',
   svg: 'speech_bubble',
-  customCss:
-    'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-1',
+  customCss: 'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-1',
 };
 
 export const ADD_JOURNAL_ENTRY_BUTTON_CONFIG: ButtonConfig = {

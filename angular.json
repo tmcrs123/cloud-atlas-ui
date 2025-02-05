@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "snappin-ui": {
+    "cloud-atlas-ui": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/snappin-ui",
+            "outputPath": "dist/cloud-atlas-ui",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -58,6 +58,17 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "test": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -66,10 +77,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "snappin-ui:build:production"
+              "buildTarget": "cloud-atlas-ui:build:production"
             },
             "development": {
-              "buildTarget": "snappin-ui:build:development"
+              "buildTarget": "cloud-atlas-ui:build:development"
             }
           },
           "defaultConfiguration": "development"

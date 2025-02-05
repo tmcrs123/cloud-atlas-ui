@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.js';
 
 @Injectable({ providedIn: 'root' })
 export class GoogleMapsLoaderService {
-  constructor() {}
-
   private loader = new Loader({
     apiKey: `${environment.googleMapsApiKey}`,
   });

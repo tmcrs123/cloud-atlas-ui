@@ -1,7 +1,7 @@
-import { Component, computed, DestroyRef, effect, ElementRef, inject, input, linkedSignal, output, Signal, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, input, linkedSignal, output, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, fromEvent, tap } from 'rxjs';
-import { MarkerImage } from '../../models';
+import type { MarkerImage } from '../../models/marker-image.js';
 export interface LightboxConfig {
   openAtIndex: number;
   isVisible: boolean;
@@ -26,11 +26,6 @@ export class LightboxComponent {
   lightboxContainer = viewChild.required('lightboxContainer', {
     read: ElementRef,
   });
-
-  /**
-   *
-   */
-  constructor() {}
 
   ngAfterViewInit() {
     fromEvent<KeyboardEvent>(document, 'keydown')
@@ -61,12 +56,12 @@ export class LightboxComponent {
   }
 
   private onPrev() {
-    let newIndex = this.currentIndex() - 1 >= 0 ? this.currentIndex() - 1 : this.images().length - 1;
+    const newIndex = this.currentIndex() - 1 >= 0 ? this.currentIndex() - 1 : this.images().length - 1;
     this.currentIndex.set(newIndex);
   }
 
   private onNext() {
-    let newIndex = this.currentIndex() + 1 >= this.images().length ? 0 : this.currentIndex() + 1;
+    const newIndex = this.currentIndex() + 1 >= this.images().length ? 0 : this.currentIndex() + 1;
     this.currentIndex.set(newIndex);
   }
 }

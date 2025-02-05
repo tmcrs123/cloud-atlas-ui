@@ -1,5 +1,5 @@
-import { LogLevel, PassedInitialConfig } from 'angular-auth-oidc-client';
-import { environment } from '../../environments/environment';
+import { LogLevel, type PassedInitialConfig } from 'angular-auth-oidc-client';
+import { environment } from '../../environments/environment.js';
 
 export const authConfig: PassedInitialConfig = {
   config: {

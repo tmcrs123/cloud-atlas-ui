@@ -1,10 +1,10 @@
-import { Component, computed, effect, inject, input, linkedSignal, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, linkedSignal } from '@angular/core';
 import { bufferCount, catchError, from, mergeMap, Observable, tap, throwError, timer } from 'rxjs';
-import { environment } from '../../../../environments/environment';
-import { ImagesService } from '../../../images/data-access/images-service';
-import { BannerService } from '../../../shared/services/banner-service';
-import { ButtonComponent, ButtonConfig } from '../../../shared/ui/button/button.component';
-import { AppStore } from '../../../store/store';
+import { environment } from '../../../../environments/environment.js';
+import { ImagesService } from '../../../images/data-access/images-service.js';
+import { BannerService } from '../../../shared/services/banner-service.js';
+import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component';
+import { AppStore } from '../../../store/store.js';
 import { NgIf } from '@angular/common';
 
 @Component({
@@ -19,10 +19,10 @@ export class ImageUploadComponent {
   store = inject(AppStore);
 
   // signals
-  mapId = input('');
+  atlasId = input('');
   markerId = input('');
   canAddImages = computed(() => {
-    return this.store.getImagesForMarker(this.mapId(), this.markerId())().length < environment.imagesLimit;
+    return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < environment.imagesLimit;
   });
   addNewImageButtonConfig = linkedSignal<ButtonConfig>(() => {
     return {
@@ -49,7 +49,7 @@ export class ImageUploadComponent {
       inputElement.value = '';
       throw new Error('Only 10 files allowed per upload. ⚠');
     }
-    const imageCount = this.store.getImagesForMarker(this.mapId(), this.markerId())().length;
+    const imageCount = this.store.getImagesForMarker(this.atlasId(), this.markerId())().length;
     if (imageCount + files.length > environment.imagesLimit) {
       throw new Error(`You are going over the limit of 25 images. You can only upload ${environment.imagesLimit - imageCount} more images🗻`);
     }
@@ -64,8 +64,8 @@ export class ImageUploadComponent {
             },
             11000,
             true
-          ),
-            this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: true }));
+          );
+          this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: true }));
         }),
         mergeMap((file) =>
           this.fileValidations$(file).pipe(
@@ -82,7 +82,7 @@ export class ImageUploadComponent {
           timer(10000).subscribe({
             next: () => {
               this.store.loadImagesForMarker({
-                mapId: this.mapId(),
+                atlasId: this.atlasId(),
                 markerId: this.markerId(),
               });
               this.bannerService.dismissManually();
@@ -93,18 +93,18 @@ export class ImageUploadComponent {
   }
 
   private pushFileToS3(file: File) {
-    return this.imagesService.createPresignedURL(this.mapId(), this.markerId()).pipe(
+    return this.imagesService.createPresignedURL(this.atlasId(), this.markerId()).pipe(
       mergeMap((res) => {
         const formData = new FormData();
 
-        Object.keys(res.fields).forEach((key) => {
+        for (const key of Object.keys(res.fields)) {
           formData.append(key, res.fields[key]);
-        });
+        }
 
         formData.append('file', file);
         return this.imagesService.pushToS3Bucket(res.url, formData);
       }),
-      catchError((error) => throwError(() => `Error sending ${file.name} to images repository`))
+      catchError((_error) => throwError(() => `Error sending ${file.name} to images repository`))
     );
   }
 
@@ -121,12 +121,12 @@ export class ImageUploadComponent {
 
       fileReader.readAsDataURL(file);
 
-      fileReader.onload = (event: ProgressEvent) => {
+      fileReader.onload = (_event: ProgressEvent) => {
         subscriber.next(file);
         subscriber.complete();
       };
 
-      fileReader.onerror = (err) => {
+      fileReader.onerror = (_err) => {
         subscriber.error(`There was an error reading file ${file.name}`);
         //clear listeners just in case
         fileReader.onload = null;

@@ -1,18 +1,18 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, DestroyRef, effect, inject, Injector, Signal, signal, viewChild, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, Injector, type WritableSignal, computed, inject, signal, viewChild } from '@angular/core';
 import { outputToObservable, takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GoogleMap, GoogleMapsModule, MapInfoWindow } from '@angular/google-maps';
 import { ActivatedRoute, Router } from '@angular/router';
 import { defer, filter, map, startWith, switchMap, take, tap } from 'rxjs';
-import { SnappinMap } from '../../../shared/models';
-import { ButtonComponent, ButtonConfig } from '../../../shared/ui/button/button.component';
+import { environment } from '../../../../environments/environment.js';
+import type { Atlas } from '../../../shared/models/atlas.model';
+import { BannerService } from '../../../shared/services/banner-service.js';
+import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component';
 import { CardComponent } from '../../../shared/ui/card/card.component';
-import { CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component';
-import { AppStore } from '../../../store/store';
+import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component';
+import { AppStore } from '../../../store/store.js';
 import { ADD_BUTTON_CONFIG, ADD_MODE_MAP_OPTIONS, DEFAULT_MAP_OPTIONS, GO_BACK_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG, MOVE_MODE_MAP_OPTIONS } from './atlas.component.config';
-import { environment } from '../../../../environments/environment';
-import { BannerService } from '../../../shared/services/banner-service';
 
 @Component({
   selector: 'app-atlas',
@@ -29,7 +29,7 @@ import { BannerService } from '../../../shared/services/banner-service';
     `,
   ],
 })
-export default class AtlasComponent {
+export class AtlasComponent {
   //config
   protected goBackButtonConfig: ButtonConfig = GO_BACK_BUTTON_CONFIG;
   protected infoWindowOptions = INFO_WINDOW_OPTIONS;
@@ -44,14 +44,14 @@ export default class AtlasComponent {
   protected injector = inject(Injector);
 
   //properties
-  protected mapId: string = this.activatedRoute.snapshot.paramMap.get('mapId') as string;
+  protected atlasId: string = this.activatedRoute.snapshot.paramMap.get('atlasId') as string;
   protected mapModeQueryParam: string = this.activatedRoute.snapshot.queryParamMap.get('mapMode') as string;
 
   protected isDialogOpen = false;
-  protected map: SnappinMap | undefined = undefined;
+  protected atlas: Atlas | undefined = undefined;
 
   //signals
-  protected markers = this.store.getMarkersForMap(this.mapId);
+  protected markers = this.store.getMarkersForAtlas(this.atlasId);
   protected mapMode: WritableSignal<string> = signal('loading');
   protected addButtonConfig = signal(ADD_BUTTON_CONFIG);
   protected moveButtonConfig = signal(MOVE_BUTTON_CONFIG);
@@ -69,14 +69,14 @@ export default class AtlasComponent {
         return {
           ...DEFAULT_MAP_OPTIONS,
           ...MOVE_MODE_MAP_OPTIONS,
-          zoom: this.googleMapRef().googleMap?.getZoom() ? this.googleMapRef().googleMap?.getZoom() : DEFAULT_MAP_OPTIONS['zoom'],
+          zoom: this.googleMapRef().googleMap?.getZoom() ? this.googleMapRef().googleMap?.getZoom() : DEFAULT_MAP_OPTIONS.zoom,
           center: this.googleMapRef().getCenter(),
         };
       case 'add':
         return {
           ...DEFAULT_MAP_OPTIONS,
           ...ADD_MODE_MAP_OPTIONS,
-          zoom: this.googleMapRef().googleMap?.getZoom() ? this.googleMapRef().googleMap?.getZoom() : DEFAULT_MAP_OPTIONS['zoom'],
+          zoom: this.googleMapRef().googleMap?.getZoom() ? this.googleMapRef().googleMap?.getZoom() : DEFAULT_MAP_OPTIONS.zoom,
           center: this.googleMapRef().getCenter(),
         };
       default:
@@ -90,6 +90,7 @@ export default class AtlasComponent {
     }
   });
   protected canOpenAddMarkerDialog = computed(() => this.mapMode() === 'add');
+  // biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
   protected lastLatLngClicked = signal<google.maps.LatLng | null>(null);
   protected atlasMarkers = computed(() =>
     this.markers().map(
@@ -100,6 +101,7 @@ export default class AtlasComponent {
             lat: marker.coordinates.lat,
             lng: marker.coordinates.lng,
           },
+          // biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
         } as google.maps.marker.AdvancedMarkerElementOptions)
     )
   );
@@ -163,7 +165,7 @@ export default class AtlasComponent {
 
   ngOnInit() {
     this.clearFormControlOnDialogClose$.subscribe();
-    this.map = this.store.getMapById(this.mapId);
+    this.atlas = this.store.getAtlasById(this.atlasId);
   }
 
   ngAfterViewInit() {
@@ -179,10 +181,10 @@ export default class AtlasComponent {
     }
 
     this.store.createMarkers({
-      mapId: this.mapId,
+      atlasId: this.atlasId,
       data: [
         {
-          mapId: this.mapId,
+          atlasId: this.atlasId,
           title: this.newMarkerNameFormControl.value,
           coordinates: {
             lat: this.lastLatLngClicked()?.lat() as number,
@@ -205,6 +207,6 @@ export default class AtlasComponent {
   }
 
   protected navigateToMarkerDetail(markerIndex: number) {
-    this.router.navigate(['markers', this.mapId, 'marker', this.markers()[markerIndex].markerId, 'detail']);
+    this.router.navigate(['markers', this.atlasId, 'marker', this.markers()[markerIndex].markerId, 'detail']);
   }
 }

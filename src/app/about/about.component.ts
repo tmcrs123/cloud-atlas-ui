@@ -4,4 +4,4 @@ import { Component } from '@angular/core';
   selector: 'app-about',
   templateUrl: 'about.component.html',
 })
-export default class AboutComponent {}
+export class AboutComponent {}

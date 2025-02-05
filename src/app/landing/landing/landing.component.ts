@@ -19,7 +19,7 @@ export class LandingComponent {
   private router = inject(Router);
 
   navigate() {
-    if (this.auth.isAuthenticated()) this.router.navigate(['maps']);
+    if (this.auth.isAuthenticated()) this.router.navigate(['list']);
     else this.auth.login();
   }
 }

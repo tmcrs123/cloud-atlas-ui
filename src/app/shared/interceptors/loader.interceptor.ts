@@ -1,10 +1,10 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import type { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, EMPTY, finalize, tap } from 'rxjs';
+import { EMPTY, catchError, finalize, tap } from 'rxjs';
+import { BannerService } from '../services/banner-service.js';
 import { LoaderService } from '../services/loader.service';
-import { COGNITO_URLS } from './external-urls';
-import { ERROR_MESSAGE, INFO_MESSAGE } from '../tokens';
-import { BannerService } from '../services/banner-service';
+import { COGNITO_URLS } from './external-urls.js';
+import { ERROR_MESSAGE, INFO_MESSAGE } from '../tokens/tokens.js';
 
 export const LoaderInterceptor: HttpInterceptorFn = (request, next) => {
   const loaderService = inject(LoaderService);
@@ -14,11 +14,9 @@ export const LoaderInterceptor: HttpInterceptorFn = (request, next) => {
 
   loaderService.isLoading.set(true);
   return next(request).pipe(
-    catchError((err: HttpErrorResponse) => {
+    catchError((_err: HttpErrorResponse) => {
       bannerService.setMessage({
-        message: request.context.has(ERROR_MESSAGE)
-          ? request.context.get(ERROR_MESSAGE)
-          : 'An error has occurred 💩',
+        message: request.context.has(ERROR_MESSAGE) ? request.context.get(ERROR_MESSAGE) : 'An error has occurred 💩',
         type: 'error',
       });
 

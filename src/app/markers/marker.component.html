@@ -1,7 +1,7 @@
 <section class="max-w-6xl mx-auto p-6 h-full">
   <div class="flex items-end justify-between mt-6 mb-6">
     <div id="breadcrumbs" class="m-4">
-      <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/maps']">Your maps > </a>
+      <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps > </a>
       <h1 class="text-6xl font-bold">
         {{ map?.title }}
       </h1>
@@ -11,7 +11,7 @@
       <app-button
         [config]="goToMapButtonConfig"
         (btnClick)="
-          router.navigate(['atlas', this.mapId], {
+          router.navigate(['world', this.atlasId], {
             queryParams: { mapMode: 'move' }
           })
         "
@@ -26,8 +26,8 @@
           title: item.title,
           subtitle: datePipe.transform(item.createdAt, 'EEEE, MMMM d, y') || ''
         }"
-        (enterPressed)="router.navigate(['markers', mapId, 'marker', item.markerId, 'detail'])"
-        (click)="router.navigate(['markers', mapId, 'marker', item.markerId, 'detail'])"
+        (enterPressed)="router.navigate(['markers', atlasId, 'marker', item.markerId, 'detail'])"
+        (click)="router.navigate(['markers', atlasId, 'marker', item.markerId, 'detail'])"
       ></app-card>
       }
     </div>

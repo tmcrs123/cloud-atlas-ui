@@ -1,7 +1,7 @@
 export interface MarkerImage {
   url: string;
   legend?: string;
-  mapId: string;
+  atlasId: string;
   markerId: string;
   imageId: string;
 }

@@ -1,72 +1,67 @@
-import { computed, effect, inject, Signal } from '@angular/core';
+import { type Signal, computed, inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
-import { getState, patchState, signalStore, withComputed, withHooks, withMethods, withProps, withState } from '@ngrx/signals';
+import { getState, patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { of, pipe, switchMap } from 'rxjs';
-import { Marker, SnappinMap, MarkerImage } from '../shared/models';
+import { pipe, switchMap } from 'rxjs';
+import { environment } from '../../environments/environment.js';
+import { ImagesService } from '../images/data-access/images-service.js';
 import { MarkersService } from '../markers/data-access/markers.service';
-import { ImagesService } from '../images/data-access/images-service';
-import { MapsService } from '../maps/data-access/services/maps.service';
-import { environment } from '../../environments/environment';
+import type { Atlas } from '../shared/models/atlas.model.js';
+import type { MarkerImage } from '../shared/models/marker-image.js';
+import type { Marker } from '../shared/models/marker.js';
+import { AtlasService } from '../atlas/data-access/services/atlas.service.js';
 
 type AppState = {
-  maps: { [mapId: string]: SnappinMap };
+  atlasList: { [atlasId: string]: Atlas };
   filter: { query: string; order: 'asc' | 'desc' };
 };
 
 const initialState: AppState = {
-  maps: {},
+  atlasList: {},
   filter: { query: '', order: 'asc' },
 };
 
 export const AppStore = signalStore(
   { providedIn: 'root' },
 
-  withHooks({
-    onInit(store) {
-      effect(() => {
-        const state = getState(store);
-      });
-    },
-  }),
   withState(initialState),
   withComputed((state) => ({
-    mapsCount: computed(() => Object.values(state.maps()).length),
-    mapsIterable: computed(() => Object.values(state.maps())),
+    mapsCount: computed(() => Object.values(state.atlasList()).length),
+    mapsIterable: computed(() => Object.values(state.atlasList())),
     filteredMaps: computed(() => {
-      return Object.values(state.maps()).filter((item) => item.title.includes(state.filter().query));
+      return Object.values(state.atlasList()).filter((item) => item.title.includes(state.filter().query));
     }),
-    canAddMaps: computed(() => Object.values(state.maps()).length < environment.mapsLimit),
+    canAddMaps: computed(() => Object.values(state.atlasList()).length < environment.mapsLimit),
   })),
   withProps(() => ({
-    mapsService: inject(MapsService),
+    atlasService: inject(AtlasService),
     markersService: inject(MarkersService),
     imagesService: inject(ImagesService),
   })),
-  withMethods(({ mapsService, markersService, imagesService, ...store }) => ({
+  withMethods(({ atlasService, markersService, imagesService, ...store }) => ({
     //filter
     updateQuery: (query: string) => {
       patchState(store, (state) => {
-        let newFilter = structuredClone(state.filter);
+        const newFilter = structuredClone(state.filter);
         newFilter.query = query;
         return { ...state, filter: newFilter };
       });
     },
-    //MAPS
-    createMap: rxMethod<Partial<SnappinMap>>(
+    //ATLAS
+    createAtlas: rxMethod<Partial<Atlas>>(
       pipe(
         switchMap((data) => {
-          return mapsService.createMap(data).pipe(
+          return atlasService.createAtlas(data).pipe(
             tapResponse({
-              next: (newMap) => {
+              next: (newAtlas) => {
                 patchState(store, (state) => {
-                  let currentMaps = structuredClone(state.maps);
-                  newMap.markers = [];
-                  currentMaps[newMap.mapId] = newMap;
+                  const currentAtlasList = structuredClone(state.atlasList);
+                  newAtlas.markers = [];
+                  currentAtlasList[newAtlas.atlasId] = newAtlas;
 
                   return {
                     ...state,
-                    maps: { ...currentMaps },
+                    atlasList: { ...currentAtlasList },
                   };
                 });
               },
@@ -76,20 +71,20 @@ export const AppStore = signalStore(
         })
       )
     ),
-    loadMaps: rxMethod<void>(
+    loadAtlasList: rxMethod<void>(
       pipe(
         switchMap(() => {
-          return mapsService.loadMaps().pipe(
+          return atlasService.loadAtlasList().pipe(
             tapResponse({
-              next: (loadedMaps) => {
+              next: (loadedAtlasList) => {
                 patchState(store, (state) => {
-                  let updatedMaps: { [mapId: string]: SnappinMap } = {};
+                  const updatedAtlasList: { [atlasId: string]: Atlas } = {};
 
-                  loadedMaps.forEach((loadedMap) => {
+                  for (const loadedMap of loadedAtlasList) {
                     loadedMap.markers = [];
-                    updatedMaps[loadedMap.mapId] = loadedMap;
-                  });
-                  return { ...state, maps: updatedMaps };
+                    updatedAtlasList[loadedMap.atlasId] = loadedMap;
+                  }
+                  return { ...state, atlasList: updatedAtlasList };
                 });
               },
               error: console.error,
@@ -98,18 +93,18 @@ export const AppStore = signalStore(
         })
       )
     ),
-    deleteMap: rxMethod<{ mapId: string }>(
+    deleteAtlas: rxMethod<{ atlasId: string }>(
       pipe(
         switchMap((val) => {
-          return mapsService.deleteMap(val.mapId).pipe(
+          return atlasService.deleteAtlas(val.atlasId).pipe(
             tapResponse({
               next: () => {
                 patchState(store, (state) => {
-                  let updatedState = structuredClone(state.maps);
-                  delete updatedState[val.mapId];
+                  const updatedState = structuredClone(state.atlasList);
+                  delete updatedState[val.atlasId];
                   return {
                     ...state,
-                    maps: { ...updatedState },
+                    atlasList: { ...updatedState },
                   };
                 });
               },
@@ -119,19 +114,19 @@ export const AppStore = signalStore(
         })
       )
     ),
-    updateMap: rxMethod<{ mapId: string; data: Partial<SnappinMap> }>(
+    updateAtlas: rxMethod<{ atlasId: string; data: Partial<Atlas> }>(
       pipe(
         switchMap((input) => {
-          return mapsService.updateMap(input.mapId, input.data).pipe(
+          return atlasService.updateAtlas(input.atlasId, input.data).pipe(
             tapResponse({
-              next: (updatedMap) => {
+              next: (updatedAtlas) => {
                 patchState(store, (state) => {
-                  let currentMaps = structuredClone(state.maps);
-                  currentMaps[updatedMap.mapId] = updatedMap;
+                  const currentAtlasList = structuredClone(state.atlasList);
+                  currentAtlasList[updatedAtlas.atlasId] = updatedAtlas;
 
                   return {
                     ...state,
-                    maps: { ...currentMaps },
+                    atlasList: { ...currentAtlasList },
                   };
                 });
               },
@@ -141,30 +136,30 @@ export const AppStore = signalStore(
         })
       )
     ),
-    getMapById(mapId: string): SnappinMap {
+    getAtlasById(atlasId: string): Atlas {
       //even if its null we still want to return
-      return store.maps()[mapId];
+      return store.atlasList()[atlasId];
     },
-    getMaps(): Signal<SnappinMap[]> {
-      return computed(() => Object.values(store.maps()));
+    getAtlasList(): Signal<Atlas[]> {
+      return computed(() => Object.values(store.atlasList()));
     },
     //MARKERS
-    createMarkers: rxMethod<{ mapId: string; data: Partial<Marker>[] }>(
+    createMarkers: rxMethod<{ atlasId: string; data: Partial<Marker>[] }>(
       pipe(
         switchMap((params) => {
-          return markersService.createMarkers(params.mapId, params.data).pipe(
+          return markersService.createMarkers(params.atlasId, params.data).pipe(
             tapResponse({
               next: (newMarkers) => {
                 patchState(store, (state) => {
                   //populate images
-                  newMarkers = newMarkers.map((marker) => {
+                  const newMarkersWithImages = newMarkers.map((marker) => {
                     marker.images = [];
                     return marker;
                   });
 
-                  const updatedState = structuredClone(state.maps);
-                  updatedState[params.mapId].markers = [...updatedState[params.mapId].markers, ...newMarkers];
-                  return { ...state, maps: updatedState };
+                  const updatedState = structuredClone(state.atlasList);
+                  updatedState[params.atlasId].markers = [...updatedState[params.atlasId].markers, ...newMarkersWithImages];
+                  return { ...state, atlasList: updatedState };
                 });
               },
               error: console.error,
@@ -173,14 +168,14 @@ export const AppStore = signalStore(
         })
       )
     ),
-    loadMarkers: rxMethod<{ mapId: string }>(
+    loadMarkers: rxMethod<{ atlasId: string }>(
       pipe(
         switchMap((params) => {
-          return markersService.getMarkersForMap(params.mapId).pipe(
+          return markersService.getMarkersForAtlas(params.atlasId).pipe(
             tapResponse({
               next: (loadedMarkers) => {
                 patchState(store, (state) => {
-                  const updatedState = structuredClone(state.maps);
+                  const updatedState = structuredClone(state.atlasList);
 
                   //a map may have no markers so I need to check that first
                   if (loadedMarkers) {
@@ -190,13 +185,13 @@ export const AppStore = signalStore(
                     });
                   } else loadedMarkers = [];
 
-                  updatedState[params.mapId].markers = [
+                  updatedState[params.atlasId].markers = [
                     ...loadedMarkers.map((marker) => {
                       marker.images = [];
                       return marker;
                     }),
                   ];
-                  return { ...state, maps: updatedState };
+                  return { ...state, atlasList: updatedState };
                 });
               },
               error: console.error,
@@ -206,24 +201,24 @@ export const AppStore = signalStore(
       )
     ),
     updateMarker: rxMethod<{
-      mapId: string;
+      atlasId: string;
       markerId: string;
       data: Partial<Marker>;
     }>(
       pipe(
         switchMap((params) => {
-          return markersService.updateMarker(params.mapId, params.markerId, params.data).pipe(
+          return markersService.updateMarker(params.atlasId, params.markerId, params.data).pipe(
             tapResponse({
               next: (updatedMarker) => {
                 patchState(store, (state) => {
-                  const updatedState = structuredClone(state.maps);
-                  const oldMarkerIndex = findMarkerIndex(state, params.mapId, params.markerId);
+                  const updatedState = structuredClone(state.atlasList);
+                  const oldMarkerIndex = findMarkerIndex(state, params.atlasId, params.markerId);
 
-                  updatedState[params.mapId].markers[oldMarkerIndex] = {
+                  updatedState[params.atlasId].markers[oldMarkerIndex] = {
                     ...updatedMarker,
-                    images: state.maps[params.mapId].markers[oldMarkerIndex].images,
+                    images: state.atlasList[params.atlasId].markers[oldMarkerIndex].images,
                   };
-                  return { ...state, maps: updatedState };
+                  return { ...state, atlasList: updatedState };
                 });
               },
               error: console.error,
@@ -232,21 +227,21 @@ export const AppStore = signalStore(
         })
       )
     ),
-    deleteMarkers: rxMethod<{ mapId: string; markerIds: string[] }>(
+    deleteMarkers: rxMethod<{ atlasId: string; markerIds: string[] }>(
       pipe(
         switchMap((params) => {
-          return markersService.deleteMarkers(params.mapId, params.markerIds).pipe(
+          return markersService.deleteMarkers(params.atlasId, params.markerIds).pipe(
             tapResponse({
               next: () => {
                 patchState(store, (state) => {
-                  const updatedState = structuredClone(state.maps);
+                  const updatedState = structuredClone(state.atlasList);
 
-                  const oldMarkers = updatedState[params.mapId].markers;
+                  const oldMarkers = updatedState[params.atlasId].markers;
                   const filteredMarkers = oldMarkers.filter((marker) => !params.markerIds.includes(marker.markerId));
 
-                  updatedState[params.mapId].markers = filteredMarkers;
+                  updatedState[params.atlasId].markers = filteredMarkers;
 
-                  return { ...state, maps: updatedState };
+                  return { ...state, atlasList: updatedState };
                 });
               },
               error: console.error,
@@ -255,30 +250,30 @@ export const AppStore = signalStore(
         })
       )
     ),
-    getMarkersForMap(mapId: string): Signal<Marker[]> {
-      return computed(() => store.maps()[mapId].markers);
+    getMarkersForAtlas(atlasId: string): Signal<Marker[]> {
+      return computed(() => store.atlasList()[atlasId].markers);
     },
-    getMarkerById: (mapId: string, markerId: string) => {
-      const markerIndex = findMarkerIndex(getState(store), mapId, markerId);
-      return computed(() => store.maps()[mapId].markers[markerIndex]);
+    getMarkerById: (atlasId: string, markerId: string) => {
+      const markerIndex = findMarkerIndex(getState(store), atlasId, markerId);
+      return computed(() => store.atlasList()[atlasId].markers[markerIndex]);
     },
     // IMAGES
-    loadImagesForMarker: rxMethod<{ mapId: string; markerId: string }>(
+    loadImagesForMarker: rxMethod<{ atlasId: string; markerId: string }>(
       pipe(
         switchMap((params) => {
-          return imagesService.getImagesForMarker(params.mapId, params.markerId).pipe(
+          return imagesService.getImagesForMarker(params.atlasId, params.markerId).pipe(
             tapResponse({
               next: (images) => {
                 patchState(store, (state) => {
-                  const updatedState = structuredClone(state.maps);
+                  const updatedState = structuredClone(state.atlasList);
 
-                  const markerIndex = findMarkerIndex(state, params.mapId, params.markerId);
+                  const markerIndex = findMarkerIndex(state, params.atlasId, params.markerId);
 
-                  updatedState[params.mapId].markers[markerIndex].images = images;
+                  updatedState[params.atlasId].markers[markerIndex].images = images;
 
                   return {
                     ...state,
-                    maps: updatedState,
+                    atlasList: updatedState,
                   };
                 });
               },
@@ -297,21 +292,21 @@ export const AppStore = signalStore(
             tapResponse({
               next: () => {
                 patchState(store, (state) => {
-                  const updatedState = structuredClone(state.maps);
+                  const updatedState = structuredClone(state.atlasList);
 
-                  const oldMarkerIndex = findMarkerIndex(state, params.data.mapId!, params.data.markerId!);
-                  const oldImageIndex = findImageIndex(state, params.data.mapId!, params.data.markerId!, params.data.imageId!);
+                  const oldMarkerIndex = findMarkerIndex(state, params.data.atlasId!, params.data.markerId!);
+                  const oldImageIndex = findImageIndex(state, params.data.atlasId!, params.data.markerId!, params.data.imageId!);
 
-                  const oldImage = store.maps()[params.data.mapId!].markers[oldMarkerIndex].images[oldImageIndex];
+                  const oldImage = store.atlasList()[params.data.atlasId!].markers[oldMarkerIndex].images[oldImageIndex];
 
-                  updatedState[params.data.mapId!].markers[oldMarkerIndex].images[oldImageIndex] = {
+                  updatedState[params.data.atlasId!].markers[oldMarkerIndex].images[oldImageIndex] = {
                     ...oldImage,
                     legend: params.data.legend,
                   }; //only legend can change
 
                   return {
                     ...state,
-                    maps: updatedState,
+                    atlasList: updatedState,
                   };
                 });
               },
@@ -321,23 +316,23 @@ export const AppStore = signalStore(
         })
       )
     ),
-    deleteImage: rxMethod<{ mapId: string; markerId: string; imageId: string }>(
+    deleteImage: rxMethod<{ atlasId: string; markerId: string; imageId: string }>(
       pipe(
         switchMap((params) =>
-          imagesService.deleteImageFromMarker(params.mapId, params.markerId, params.imageId).pipe(
+          imagesService.deleteImageFromMarker(params.atlasId, params.markerId, params.imageId).pipe(
             tapResponse({
               next: () => {
                 patchState(store, (state) => {
-                  const updatedState = structuredClone(state.maps);
+                  const updatedState = structuredClone(state.atlasList);
 
-                  const oldMarkerIndex = findMarkerIndex(state, params.mapId, params.markerId);
-                  const oldImageIndex = findImageIndex(state, params.mapId, params.markerId, params.imageId);
+                  const oldMarkerIndex = findMarkerIndex(state, params.atlasId, params.markerId);
+                  const oldImageIndex = findImageIndex(state, params.atlasId, params.markerId, params.imageId);
 
-                  updatedState[params.mapId].markers[oldMarkerIndex].images.splice(oldImageIndex, 1);
+                  updatedState[params.atlasId].markers[oldMarkerIndex].images.splice(oldImageIndex, 1);
 
                   return {
                     ...state,
-                    maps: updatedState,
+                    atlasList: updatedState,
                   };
                 });
               },
@@ -347,24 +342,24 @@ export const AppStore = signalStore(
         )
       )
     ),
-    getImagesForMarker: (mapId: string, markerId: string) => {
-      const index = findMarkerIndex(getState(store), mapId, markerId);
-      return computed(() => store.maps()[mapId].markers[index].images);
+    getImagesForMarker: (atlasId: string, markerId: string) => {
+      const index = findMarkerIndex(getState(store), atlasId, markerId);
+      return computed(() => store.atlasList()[atlasId].markers[index].images);
     },
   }))
 );
 
-const findMarkerIndex = (state: AppState, mapId: string, markerId: string) => {
-  const markerIndex = state.maps[mapId].markers.findIndex((marker) => marker.markerId === markerId);
+const findMarkerIndex = (state: AppState, atlasId: string, markerId: string) => {
+  const markerIndex = state.atlasList[atlasId].markers.findIndex((marker) => marker.markerId === markerId);
 
   if (markerIndex === -1) throw new Error('Marker not found');
 
   return markerIndex;
 };
 
-const findImageIndex = (state: AppState, mapId: string, markerId: string, imageId: string) => {
-  const markerIndex = findMarkerIndex(state, mapId, markerId);
-  const imageIndex = state.maps[mapId].markers[markerIndex].images.findIndex((img) => img.imageId === imageId);
+const findImageIndex = (state: AppState, atlasId: string, markerId: string, imageId: string) => {
+  const markerIndex = findMarkerIndex(state, atlasId, markerId);
+  const imageIndex = state.atlasList[atlasId].markers[markerIndex].images.findIndex((img) => img.imageId === imageId);
 
   if (imageIndex === -1) throw new Error('Marker not found');
 

@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, effect, inject, Signal, signal, viewChild, viewChildren } from '@angular/core';
+import { Component, DestroyRef, type Signal, effect, inject, signal, viewChild, viewChildren } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Marker, MarkerImage } from '../../../shared/models';
-import { ButtonComponent, ButtonConfig } from '../../../shared/ui/button/button.component';
-import { CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component';
-import DropdownComponent, { DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component';
-import { LightboxComponent, LightboxConfig } from '../../../shared/ui/lightbox/lightbox.component';
+import type { Marker } from '../../../shared/models/marker.js';
+import type { MarkerImage } from '../../../shared/models/marker-image.js';
+import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component';
+import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component';
+import { DropdownComponent, type DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component';
+import { LightboxComponent } from '../../../shared/ui/lightbox/lightbox.component';
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component';
-import { AppStore } from '../../../store/store';
+import { AppStore } from '../../../store/store.js';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
-import { ADD_CAPTION_DIALOG_CONFIG, ADD_JOURNAL_ENTRY_BUTTON_CONFIG, ADD_JOURNAL_ENTRY_DIALOG_CONFIG, DELETE_DIALOG_CONFIG, DISPLAY_CAPTION_BUTTON_CONFIG, DISPLAY_CAPTION_DIALOG_CONFIG, DROPDOWN_CONFIG, LIGHTBOX_CONFIG } from './marker-detail-config';
+import { ADD_CAPTION_DIALOG_CONFIG, ADD_JOURNAL_ENTRY_BUTTON_CONFIG, ADD_JOURNAL_ENTRY_DIALOG_CONFIG, DELETE_DIALOG_CONFIG, DISPLAY_CAPTION_BUTTON_CONFIG, DISPLAY_CAPTION_DIALOG_CONFIG, DROPDOWN_CONFIG, LIGHTBOX_CONFIG } from './marker-detail-config.js';
 
 @Component({
   selector: 'app-marker-detail',
@@ -27,7 +28,7 @@ import { ADD_CAPTION_DIALOG_CONFIG, ADD_JOURNAL_ENTRY_BUTTON_CONFIG, ADD_JOURNAL
   }
   `,
 })
-export default class MarkerDetailComponent {
+export class MarkerDetailComponent {
   // Configs
   protected readonly addCaptionDialogConfig = ADD_CAPTION_DIALOG_CONFIG;
   protected readonly addJournalEntryButtonConfig: ButtonConfig = ADD_JOURNAL_ENTRY_BUTTON_CONFIG;
@@ -70,9 +71,9 @@ export default class MarkerDetailComponent {
   });
 
   // Properties
-  protected mapId: string = '';
-  protected mapTitle: string;
-  protected markerId: string = '';
+  protected atlasId = '';
+  protected atlasTitle = '';
+  protected markerId = '';
   protected showCaptionDialog = false;
   protected showDeleteDialog = false;
 
@@ -83,18 +84,18 @@ export default class MarkerDetailComponent {
     });
   }
   ngOnInit() {
-    this.mapId = this.route.snapshot.paramMap.get('mapId')!;
+    this.atlasId = this.route.snapshot.paramMap.get('atlasId')!;
     this.markerId = this.route.snapshot.paramMap.get('markerId')!;
-    this.marker = this.store.getMarkerById(this.mapId, this.markerId);
-    this.mapTitle = this.store.getMapById(this.mapId).title;
+    this.marker = this.store.getMarkerById(this.atlasId, this.markerId);
+    this.atlasTitle = this.store.getAtlasById(this.atlasId).title;
 
     // caching needs to be included here
     this.store.loadImagesForMarker({
-      mapId: this.mapId,
+      atlasId: this.atlasId,
       markerId: this.markerId,
     });
 
-    this.images = this.store.getImagesForMarker(this.mapId, this.markerId);
+    this.images = this.store.getImagesForMarker(this.atlasId, this.markerId);
   }
 
   onLegendButtonClicked(imageIndex: number) {
@@ -126,7 +127,7 @@ export default class MarkerDetailComponent {
 
     this.store.updateImageForMarker({
       data: {
-        mapId: this.mapId,
+        atlasId: this.atlasId,
         markerId: this.markerId,
         imageId: this.images()[this.focusedImagedIndex()!].imageId,
         legend: this.addCaptionFormControl.value,
@@ -143,7 +144,7 @@ export default class MarkerDetailComponent {
     }
 
     this.store.deleteImage({
-      mapId: this.mapId,
+      atlasId: this.atlasId,
       markerId: this.markerId,
       imageId: this.images()[this.focusedImagedIndex()!].imageId,
     });
@@ -159,12 +160,11 @@ export default class MarkerDetailComponent {
     }
 
     this.store.updateMarker({
-      mapId: this.mapId,
+      atlasId: this.atlasId,
       markerId: this.markerId,
       data: { journal: this.addJournalEntryFormControl.value },
     });
 
     this.isJournalEntryDialogOpen.set(!this.isJournalEntryDialogOpen());
-    // this.addJournalEntryFormControl.setValue('');
   }
 }

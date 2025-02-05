@@ -9,7 +9,7 @@
       <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
       <div class="flex">
         <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
-        <app-image-upload [mapId]="mapId" [markerId]="markerId" class="ml-2"></app-image-upload>
+        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
       </div>
     </div>
     <ng-content *ngTemplateOutlet="missingThingsEmoji; context: { text: 'You don\'t have any images or journal entry yet.' }"></ng-content>
@@ -21,7 +21,7 @@
       <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
       <div class="flex">
         <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
-        <app-image-upload [mapId]="mapId" [markerId]="markerId" class="ml-2"></app-image-upload>
+        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
       </div>
     </div>
     <ng-content *ngTemplateOutlet="onlyImages"> </ng-content>
@@ -58,8 +58,8 @@
 
 <ng-template #breadcrumbs>
   <div id="breadcrumbs" class="mt-6 mb-6">
-    <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/maps']">Your maps > </a>
-    <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/markers', mapId]">{{ mapTitle }} > </a>
+    <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps > </a>
+    <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/markers', atlasId]">{{ atlasTitle }} > </a>
     <h1 class="text-6xl font-bold">
       {{ marker().title }}
     </h1>
@@ -77,7 +77,7 @@
       Manage journal entry
     </button>
   </div>
-  <app-image-upload [mapId]="mapId" [markerId]="markerId"></app-image-upload>
+  <app-image-upload [atlasId]="atlasId" [markerId]="markerId"></app-image-upload>
 </ng-template>
 
 <!-- Image Grid Section -->

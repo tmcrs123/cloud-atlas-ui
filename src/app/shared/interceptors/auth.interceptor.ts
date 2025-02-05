@@ -1,7 +1,7 @@
-import { HttpHandlerFn, HttpRequest } from '@angular/common/http';
+import type { HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../../auth/auth.service';
-import { COGNITO_URLS, S3_URLS } from './external-urls';
+import { COGNITO_URLS, S3_URLS } from './external-urls.js';
 
 export function AuthInterceptor(request: HttpRequest<unknown>, next: HttpHandlerFn) {
   const authService = inject(AuthService);

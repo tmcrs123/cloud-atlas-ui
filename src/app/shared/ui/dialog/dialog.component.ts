@@ -1,7 +1,7 @@
-import { DialogConfig } from '@angular/cdk/dialog';
+import type { DialogConfig } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, effect, ElementRef, input, output, viewChild } from '@angular/core';
-import { ButtonConfig, ButtonComponent } from '../button/button.component';
+import { Component, type ElementRef, effect, input, output, viewChild } from '@angular/core';
+import { ButtonComponent, type ButtonConfig } from '../button/button.component';
 
 export type DialogData = {
   data: unknown;
@@ -26,9 +26,6 @@ export class DialogComponent {
   open = input.required<boolean>();
   dialogBody = viewChild<ElementRef<HTMLDivElement>>('dialogBody');
 
-  /**
-   *
-   */
   constructor() {
     effect(() => {
       if (this.dialogBody()) this.dialogBody()?.nativeElement.focus();

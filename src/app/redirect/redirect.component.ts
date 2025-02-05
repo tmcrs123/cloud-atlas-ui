@@ -1,15 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
-import { AppStore } from '../store/store';
-import { timer } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 import { GoogleMapsLoaderService } from '../shared/services/google-maps-api.service';
+import { AppStore } from '../store/store.js';
 
 @Component({
   selector: 'app-redirect',
   imports: [],
   templateUrl: './redirect.component.html',
-  styleUrl: './redirect.component.css',
 })
 export class RedirectComponent {
   private auth = inject(AuthService);
@@ -21,8 +19,8 @@ export class RedirectComponent {
     this.auth.exchangeCodeForToken().subscribe({
       next: () => {
         this.googleMapsLoader.load();
-        this.store.loadMaps();
-        this.router.navigateByUrl('maps');
+        this.store.loadAtlasList();
+        this.router.navigateByUrl('list');
       },
     });
   }

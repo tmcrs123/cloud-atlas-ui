@@ -1,6 +1,7 @@
-import { environment } from '../../../../environments/environment';
-import { ButtonConfig } from '../../../shared/ui/button/button.component';
+import { environment } from '../../../../environments/environment.js';
+import type { ButtonConfig } from '../../../shared/ui/button/button.component';
 
+// biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
 export const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
   draggableCursor: 'grab',
   draggingCursor: 'grab',
@@ -13,15 +14,18 @@ export const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
   mapId: environment.googleMapId,
 };
 
+// biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
 export const MOVE_MODE_MAP_OPTIONS: google.maps.MapOptions = {
   draggableCursor: 'grab',
   draggingCursor: 'grab',
 };
+// biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
 export const ADD_MODE_MAP_OPTIONS: google.maps.MapOptions = {
   draggableCursor: 'crosshair',
   draggingCursor: 'grab',
 };
 
+// biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
 export const INFO_WINDOW_OPTIONS: google.maps.InfoWindowOptions = {
   headerContent: null,
   headerDisabled: true,

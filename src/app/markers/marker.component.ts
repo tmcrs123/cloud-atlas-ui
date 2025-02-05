@@ -1,18 +1,19 @@
-import { Component, computed, effect, inject, Signal, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Marker, SnappinMap } from '../shared/models';
-import { ButtonComponent, ButtonConfig } from '../shared/ui/button/button.component';
-import { CardComponent } from '../shared/ui/card/card.component';
-import { CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/dialog.component';
-import DropdownComponent, { DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
-import SelectComponent from '../shared/ui/select/select.component';
-import { AppStore } from '../store/store';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { startWith } from 'rxjs';
 import { DatePipe } from '@angular/common';
-import { environment } from '../../environments/environment';
-import { BannerService } from '../shared/services/banner-service';
+import { Component, type Signal, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { startWith } from 'rxjs';
+import { environment } from '../../environments/environment.js';
+import type { Atlas } from '../shared/models/atlas.model';
+import type { Marker } from '../shared/models/marker.js';
+import { BannerService } from '../shared/services/banner-service.js';
+import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
+import { CardComponent } from '../shared/ui/card/card.component';
+import { type CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/dialog.component';
+import { DropdownComponent, type DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
+import { SelectComponent } from '../shared/ui/select/select.component';
+import { AppStore } from '../store/store.js';
 
 @Component({
   selector: 'app-marker',
@@ -20,7 +21,7 @@ import { BannerService } from '../shared/services/banner-service';
   providers: [DatePipe],
   templateUrl: './marker.component.html',
 })
-export default class MarkerComponent {
+export class MarkerComponent {
   //configs
   protected goToMapButtonConfig: ButtonConfig = {
     text: 'Show markers on map',
@@ -44,9 +45,9 @@ export default class MarkerComponent {
   //signals
   protected deleteMarkerFormControlStatusChangesSignal = toSignal(this.deleteMarkerFormControl.statusChanges.pipe(startWith('INVALID')));
   protected isDeleteMarkerDialogOpen = signal(false);
-  protected mapId: string;
+  protected atlasId: string;
   protected markers: Signal<Marker[]> = signal([]);
-  protected showMap = signal(false);
+  protected showAtlas = signal(false);
   protected canAddMarkers = computed(() => {
     return this.markers().length < environment.markersLimit;
   });
@@ -84,7 +85,7 @@ export default class MarkerComponent {
   });
 
   //properties
-  protected map: SnappinMap | undefined;
+  protected map: Atlas | undefined;
 
   constructor() {
     effect(() => {
@@ -95,14 +96,14 @@ export default class MarkerComponent {
   }
 
   ngOnInit() {
-    this.mapId = this.route.snapshot.paramMap.get('mapId')!;
-    if (!this.mapId) throw new Error('map id not found');
+    this.atlasId = this.route.snapshot.paramMap.get('atlasId')!;
+    if (!this.atlasId) throw new Error('map id not found');
 
-    this.map = this.store.getMapById(this.mapId);
+    this.map = this.store.getAtlasById(this.atlasId);
 
     //try to fetch from store first. If no markers there ask API
-    this.markers = this.store.getMarkersForMap(this.mapId);
-    if (!this.markers() || this.markers().length === 0) this.store.loadMarkers({ mapId: this.mapId });
+    this.markers = this.store.getMarkersForAtlas(this.atlasId);
+    if (!this.markers() || this.markers().length === 0) this.store.loadMarkers({ atlasId: this.atlasId });
   }
 
   protected fetchSelectOptions() {
@@ -111,7 +112,7 @@ export default class MarkerComponent {
 
   protected onDropdownOptionSelected(optionIndex: number) {
     if (optionIndex) {
-      this.goToMap('add');
+      this.goToAtlasView('add');
       return;
     }
     this.isDeleteMarkerDialogOpen.set(true);
@@ -125,14 +126,14 @@ export default class MarkerComponent {
     }
 
     this.store.deleteMarkers({
-      mapId: this.mapId,
+      atlasId: this.atlasId,
       markerIds: [this.deleteMarkerFormControl.value],
     });
     this.isDeleteMarkerDialogOpen.set(false);
   }
 
-  protected goToMap(mapMode: string) {
-    this.router.navigate(['atlas', this.mapId], {
+  protected goToAtlasView(mapMode: string) {
+    this.router.navigate(['world', this.atlasId], {
       queryParams: { mapMode },
     });
   }

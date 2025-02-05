@@ -6,8 +6,6 @@ import { computed, Injectable, signal } from '@angular/core';
 export class LoaderService {
   isLoading = signal(false);
   isLoaderVisible = computed(() => {
-    return this.isLoading() ? true : false;
+    return !!this.isLoading();
   });
-
-  constructor() {}
 }

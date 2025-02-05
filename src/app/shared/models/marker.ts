@@ -1,8 +1,8 @@
-import { MarkerImage } from './marker-image';
+import type { MarkerImage } from './marker-image.js';
 
 export type Marker = {
   markerId: string;
-  mapId: string;
+  atlasId: string;
   startDate?: string;
   endDate?: string;
   createdAt: string;

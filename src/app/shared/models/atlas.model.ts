@@ -1,7 +1,7 @@
-import { Marker } from './marker';
+import type { Marker } from './marker.js';
 
-export type SnappinMap = {
-  mapId: string;
+export type Atlas = {
+  atlasId: string;
   owner?: string;
   coverPhoto?: string;
   createdAt: string;

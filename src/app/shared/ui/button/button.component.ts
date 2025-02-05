@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, HostBinding, HostListener, inject, input, output } from '@angular/core';
-import { ARROW_BACK_SVG, ARROW_DOWN_SVG, ARROW_ON_SQUARE_UP_SVG, GLOBE_SVG, LIST_SVG, PENCIL_SVG, PLUS_SVG, SPEECH_BUBBLE_SVG, WARNING_SVG } from './button.svg';
+import { Component, HostBinding, HostListener, computed, inject, input, output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ARROW_BACK_SVG, ARROW_DOWN_SVG, ARROW_ON_SQUARE_UP_SVG, GLOBE_SVG, LIST_SVG, PENCIL_SVG, PLUS_SVG, SPEECH_BUBBLE_SVG, WARNING_SVG } from './button.svg';
 
 export type ButtonConfig = {
   type: 'add' | 'delete' | 'secondary_action' | 'primary_action' | 'accent';
@@ -15,7 +15,6 @@ export type ButtonConfig = {
   selector: 'app-button',
   imports: [CommonModule],
   templateUrl: './button.component.html',
-  styleUrl: './button.component.css',
 })
 export class ButtonComponent {
   private readonly sanitizer = inject(DomSanitizer);
@@ -35,7 +34,6 @@ export class ButtonComponent {
         return this.deleteButtonCss;
       case 'secondary_action':
         return this.secondaryActionButtonCss;
-      case 'primary_action':
       default:
         return this.primaryActionButtonCss;
     }
@@ -71,7 +69,7 @@ export class ButtonComponent {
     return 0;
   }
 
-  @HostListener('keydown.enter', ['$event']) handleEnterPress(event: KeyboardEvent) {
+  @HostListener('keydown.enter', ['$event']) handleEnterPress(_event: KeyboardEvent) {
     this.btnClick.emit();
   }
 }

@@ -1,9 +1,9 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { EMPTY, filter, map, Subject, switchMap, take, tap, timer } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { BannerService } from '../shared/services/banner-service';
+import { EMPTY, Subject, map, switchMap, take, tap, timer } from 'rxjs';
+import { environment } from '../../environments/environment.js';
+import { BannerService } from '../shared/services/banner-service.js';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class AuthService {
   private readonly oidcSecurityService = inject(OidcSecurityService);
   private readonly bannerService = inject(BannerService);
 
-  private _idToken: string = '';
+  private _idToken = '';
 
   public get idToken(): string {
     return this._idToken;
@@ -46,8 +46,6 @@ export class AuthService {
         this.idToken = loginResponse.idToken;
         this.tokenExpirationTimer.next();
       })
-      // filter((loginResponse) => loginResponse.isAuthenticated),
-      // switchMap(() => this.oidcSecurityService.getRefreshToken())
     );
   }
 

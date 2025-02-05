@@ -1,10 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, forwardRef, input } from '@angular/core';
-import {
-  ControlValueAccessor,
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-} from '@angular/forms';
+import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { WarningBannerComponent } from '../warning-banner/warning-banner.component';
 
 export type SelectOption<T> = {
@@ -24,7 +20,7 @@ export type SelectOption<T> = {
     },
   ],
 })
-export default class SelectComponent<T> implements ControlValueAccessor {
+export class SelectComponent<T> implements ControlValueAccessor {
   public options = input.required<SelectOption<T>[]>();
   public selectedOption!: T;
 

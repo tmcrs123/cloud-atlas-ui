@@ -18,7 +18,7 @@ export class CardComponent {
     return 0;
   }
 
-  @HostListener('keydown.enter', ['$event']) handleEnterPress(event: KeyboardEvent) {
+  @HostListener('keydown.enter', ['$event']) handleEnterPress(_event: KeyboardEvent) {
     this.enterPressed.emit();
   }
 }
