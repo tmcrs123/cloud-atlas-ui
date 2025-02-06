@@ -1,10 +1,10 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment.js';
 import { ERROR_MESSAGE } from '../../shared/tokens/tokens.js';
 import { buildApiEndpoint } from '../../shared/utils/api-endpoint.js';
 import type { MarkerImage } from '../../shared/models/marker-image.js';
+import { isEnvironment } from '../../shared/utils/is-env.js';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +31,6 @@ export class ImagesService {
   public pushToS3Bucket(presignedUrl: string, formData: FormData) {
     const context = new HttpContext().set(ERROR_MESSAGE, 'Failed to save images 🔥');
 
-    return this.http.post<MarkerImage>(presignedUrl, environment.name === 'development' ? null : formData, { context });
+    return this.http.post<MarkerImage>(presignedUrl, isEnvironment('local') ? null : formData, { context });
   }
 }

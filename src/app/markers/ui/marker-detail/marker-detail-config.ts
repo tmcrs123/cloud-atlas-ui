@@ -72,6 +72,11 @@ export const ADD_JOURNAL_ENTRY_BUTTON_CONFIG: ButtonConfig = {
   svg: 'pencil',
 };
 
+export const ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG: ButtonConfig = {
+  text: 'Add journal',
+  type: 'add',
+};
+
 export const LIGHTBOX_CONFIG: LightboxConfig = {
   isVisible: false,
   openAtIndex: 0,

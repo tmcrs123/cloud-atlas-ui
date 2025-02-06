@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
 import { GoogleMapsLoaderService } from '../shared/services/google-maps-api.service';
 import { AppStore } from '../store/store.js';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-redirect',

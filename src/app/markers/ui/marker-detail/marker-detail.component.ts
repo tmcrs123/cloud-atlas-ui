@@ -11,7 +11,7 @@ import { LightboxComponent } from '../../../shared/ui/lightbox/lightbox.componen
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component';
 import { AppStore } from '../../../store/store.js';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
-import { ADD_CAPTION_DIALOG_CONFIG, ADD_JOURNAL_ENTRY_BUTTON_CONFIG, ADD_JOURNAL_ENTRY_DIALOG_CONFIG, DELETE_DIALOG_CONFIG, DISPLAY_CAPTION_BUTTON_CONFIG, DISPLAY_CAPTION_DIALOG_CONFIG, DROPDOWN_CONFIG, LIGHTBOX_CONFIG } from './marker-detail-config.js';
+import { ADD_CAPTION_DIALOG_CONFIG, ADD_JOURNAL_ENTRY_BUTTON_CONFIG, ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG, ADD_JOURNAL_ENTRY_DIALOG_CONFIG, DELETE_DIALOG_CONFIG, DISPLAY_CAPTION_BUTTON_CONFIG, DISPLAY_CAPTION_DIALOG_CONFIG, DROPDOWN_CONFIG, LIGHTBOX_CONFIG } from './marker-detail-config.js';
 
 @Component({
   selector: 'app-marker-detail',
@@ -26,12 +26,17 @@ import { ADD_CAPTION_DIALOG_CONFIG, ADD_JOURNAL_ENTRY_BUTTON_CONFIG, ADD_JOURNAL
       column-count: 1;
     }
   }
+
+  .break-anywhere {
+    overflow-wrap: anywhere;
+  }
   `,
 })
 export class MarkerDetailComponent {
   // Configs
   protected readonly addCaptionDialogConfig = ADD_CAPTION_DIALOG_CONFIG;
   protected readonly addJournalEntryButtonConfig: ButtonConfig = ADD_JOURNAL_ENTRY_BUTTON_CONFIG;
+  protected readonly addJournalEntryMobileButtonConfig: ButtonConfig = ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG;
   protected readonly addJournalEntryDialogConfig = ADD_JOURNAL_ENTRY_DIALOG_CONFIG;
   protected readonly deleteDialogConfig = DELETE_DIALOG_CONFIG;
   protected readonly displayCaptionButtonConfig: ButtonConfig = DISPLAY_CAPTION_BUTTON_CONFIG;

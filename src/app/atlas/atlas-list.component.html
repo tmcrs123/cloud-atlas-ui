@@ -1,8 +1,8 @@
-<section class="max-w-6xl mx-auto p-6 h-full flex flex-col">
-  <div class="flex flex-row justify-around m-6">
+<section class="flex flex-col h-full">
+  <div class="flex flex-col md:flex-row justify-around m-6">
     <input [formControl]="searchAtlasFormControl" type="text" placeholder="Search maps..." class="basis-2/4 p-4 border border-zinc-300" />
     <app-dropdown
-      class="grow-0"
+      class="grow-0 hidden md:block"
       [config]="dropdownConfig()"
       (optionSelected)="$event ? this.isAddDialogOpen.set(!this.isAddDialogOpen()) : this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())"
     >
@@ -33,7 +33,7 @@
       type="text"
       [formControl]="addAtlasFormControl"
       placeholder="The name of your new map"
-      class="w-100 p-4 border"
+      class="w-full p-4 border"
       [ngClass]="{
         'border-red-700': addAtlasFormControl.dirty && !addAtlasFormControl.valid,
         'border-zinc-300': addAtlasFormControl.valid
@@ -43,6 +43,13 @@
     <div class="text-red-700 font-medium mt-2">A name is required</div>
     }
   </app-dialog>
+
+  <app-button class="flex fixed z-1 bottom-10 right-10 md:hidden" [config]="addAtlasMobileBtnConfig" (btnClick)="this.isAddDialogOpen.set(!this.isAddDialogOpen())"></app-button>
+  <app-button
+    class="flex fixed z-1 bottom-30 right-10 md:hidden"
+    [config]="deleteAtlasMobileBtnConfig"
+    (btnClick)="this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())"
+  ></app-button>
 
   <app-dialog [dialogConfig]="deleteAtlasDialogConfig()" [open]="isDeleteDialogOpen()" (dialogClosed)="onDeleteDialogClose($event)">
     <app-select [formControl]="deleteAtlasFormControl" [options]="fetchSelectOptions()"></app-select>

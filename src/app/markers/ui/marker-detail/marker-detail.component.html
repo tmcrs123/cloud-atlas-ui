@@ -1,14 +1,20 @@
-<div class="max-w-6xl mx-auto p-6 h-full flex flex-col">
+<section class="flex flex-col h-full p-2">
   <!-- no journal and no images -->
   <ng-content *ngIf="!marker().journal && images().length === 0">
     <ng-content *ngTemplateOutlet="noJournalOrImages"></ng-content>
   </ng-content>
 
   <ng-template #noJournalOrImages>
-    <div class="flex items-end justify-between">
+    <div class="flex flex-col justify-center items-center">
       <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
-      <div class="flex">
+      <!-- desktop -->
+      <div class="hidden md:flex">
         <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
+        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
+      </div>
+      <!-- mobile -->
+      <div class="flex md:hidden">
+        <app-button [config]="addJournalEntryMobileButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
         <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
       </div>
     </div>
@@ -17,7 +23,7 @@
 
   <!-- images but no journal -->
   <ng-content *ngIf="!marker().journal && images().length > 0">
-    <div class="flex items-end justify-between">
+    <div class="flex flex-col justify-center items-center">
       <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
       <div class="flex">
         <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
@@ -39,7 +45,6 @@
   <ng-template #onlyJournal>
     <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
     <ng-content *ngTemplateOutlet="journal"></ng-content>
-    <ng-content *ngTemplateOutlet="missingThingsEmoji; context: { text: 'You don\'t any images yet.' }"></ng-content>
   </ng-template>
 
   <!-- journals and images -->
@@ -52,12 +57,12 @@
     <ng-content *ngTemplateOutlet="journal"></ng-content>
     <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
   </ng-template>
-</div>
+</section>
 
 <!-- templates -->
 
 <ng-template #breadcrumbs>
-  <div id="breadcrumbs" class="mt-6 mb-6">
+  <div id="breadcrumbs" class="mt-6 mb-6 self-baseline">
     <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps > </a>
     <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/markers', atlasId]">{{ atlasTitle }} > </a>
     <h1 class="text-6xl font-bold">
@@ -67,8 +72,8 @@
 </ng-template>
 
 <ng-template #journal>
-  <div id="journal" class="mt-6 mb-6">
-    <p class="break-words">
+  <div id="journal" class="mt-6 mb-6 flex flex-col items-center gap-5">
+    <p class="break-anywhere text-justify">
       @if (marker().journal) {
       {{ marker().journal }}
       }
@@ -76,8 +81,8 @@
     <button *ngIf="marker().journal" (click)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())" class="text-sm text-blue-600 underline hover:text-blue-800 cursor-pointer">
       Manage journal entry
     </button>
+    <app-image-upload [atlasId]="atlasId" [markerId]="markerId"></app-image-upload>
   </div>
-  <app-image-upload [atlasId]="atlasId" [markerId]="markerId"></app-image-upload>
 </ng-template>
 
 <!-- Image Grid Section -->
@@ -109,8 +114,8 @@
 
 <ng-template #missingThingsEmoji let-text="text">
   <div class="flex-2 flex flex-col justify-center text-center">
-    <p class="text-6xl m-6">¯\_(ツ)_/¯</p>
-    <p class="text-zinc-800 text-xl m-6">
+    <p class="text-3xl m-6">¯\_(ツ)_/¯</p>
+    <p class="text-zinc-800 text-lg m-3">
       {{ text }}
     </p>
   </div>
@@ -125,7 +130,7 @@
     [formControl]="addCaptionFormControl"
     type="text"
     placeholder="Say something about this image..."
-    class="w-100 p-4 border"
+    class="w-full p-4 border"
     [ngClass]="{
       'border-red-700': addCaptionFormControl.dirty && !addCaptionFormControl.valid,
       'border-zinc-300': addCaptionFormControl.valid

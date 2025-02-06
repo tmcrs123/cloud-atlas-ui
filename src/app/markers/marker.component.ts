@@ -29,6 +29,20 @@ export class MarkerComponent {
     svg: 'globe',
   };
 
+  protected goToMapButtonConfigMobileBtnConfig: ButtonConfig = {
+    text: '',
+    type: 'primary_action',
+    svg: 'globe',
+    customCss: 'rounded-full bg-yellow-600 text-white hover:bg-yellow-700 focus:outline-none shadow-md cursor-pointer p-3',
+  };
+
+  protected deleteMarkerMobileBtnConfig: ButtonConfig = {
+    text: '',
+    type: 'secondary_action',
+    svg: 'speech_bubble',
+    customCss: 'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
+  };
+
   // inject
   protected datePipe = inject(DatePipe);
   protected route = inject(ActivatedRoute);

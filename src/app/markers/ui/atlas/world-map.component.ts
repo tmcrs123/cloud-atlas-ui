@@ -12,7 +12,7 @@ import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/bu
 import { CardComponent } from '../../../shared/ui/card/card.component.js';
 import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component.js';
 import { AppStore } from '../../../store/store.js';
-import { ADD_BUTTON_CONFIG, ADD_MODE_MAP_OPTIONS, DEFAULT_MAP_OPTIONS, GO_BACK_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG, MOVE_MODE_MAP_OPTIONS } from './world-map.component.config.js';
+import { ADD_BUTTON_CONFIG, ADD_MODE_MAP_OPTIONS, DEFAULT_MAP_OPTIONS, GO_BACK_BUTTON_CONFIG, GO_BACK_MOBILE_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG, MOVE_MODE_MAP_OPTIONS } from './world-map.component.config.js';
 
 @Component({
   selector: 'app-atlas',
@@ -24,7 +24,7 @@ import { ADD_BUTTON_CONFIG, ADD_MODE_MAP_OPTIONS, DEFAULT_MAP_OPTIONS, GO_BACK_B
       :host {
         display: block;
         height: calc(100vh - 150px);
-        padding: 2rem;
+        padding: 1rem;
       }
     `,
   ],
@@ -32,6 +32,7 @@ import { ADD_BUTTON_CONFIG, ADD_MODE_MAP_OPTIONS, DEFAULT_MAP_OPTIONS, GO_BACK_B
 export class WorldMapComponent {
   //config
   protected goBackButtonConfig: ButtonConfig = GO_BACK_BUTTON_CONFIG;
+  protected goBackMobileButtonConfig: ButtonConfig = GO_BACK_MOBILE_BUTTON_CONFIG;
   protected infoWindowOptions = INFO_WINDOW_OPTIONS;
 
   //inject

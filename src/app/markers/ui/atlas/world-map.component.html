@@ -26,12 +26,14 @@
       </map-info-window>
       }
     </google-map>
+
+    <!-- markers -->
     <app-dialog [dialogConfig]="dialogConfig()" [open]="isDialogOpen" (dialogClosed)="userCompletesAddDialog($event)">
       <input
         type="text"
         [formControl]="newMarkerNameFormControl"
         placeholder="The name of your new marker"
-        class="w-100 p-4 border"
+        class="w-full p-4 border"
         [ngClass]="{
           'border-red-700': newMarkerNameFormControl.dirty && !newMarkerNameFormControl.valid,
           'border-zinc-300': newMarkerNameFormControl.valid
@@ -41,8 +43,9 @@
       <div class="text-red-700 font-medium mt-2">A name is required</div>
       }
     </app-dialog>
+    <app-button class="flex fixed z-1 bottom-10 right-10 md:hidden" [config]="goBackMobileButtonConfig" (btnClick)="router.navigate(['markers', atlasId])"></app-button>
   </div>
-  <div class="flex-1 bg-gray-100 flex flex-col justify-around p-4">
+  <div class="hidden md:block flex-1 bg-gray-100 flex-col justify-around p-4">
     <h1 class="text-4xl font-bold text-center">
       {{ atlas?.title || "Untitled map 🤦‍♂️" }}
     </h1>

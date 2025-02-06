@@ -1,20 +1,40 @@
-<nav class="bg-white font-semibold p-4 navbar">
-  <div class="container mx-auto flex items-center justify-between">
+<nav class="bg-white font-semibold">
+  <div class="p-2 flex justify-between md:p-4">
     <!-- Logo -->
     <a routerLink="/">
       <img class="w-24 md:w-32 lg:w-34" src="/assets/logo.svg" alt="logo" />
     </a>
 
     <!-- Menu items for large screens -->
-    <div class="space-x-6">
+    <div class="hidden md:flex space-x-6 justify-center items-center">
       @if(auth.isAuthenticated()){
       <a routerLink="list" [class]="navItemCss">Your maps</a>
-      <a (click)="auth.logout()" [class]="navItemCss">Logout</a>
+      <a (click)="auth.logout()" [class]="navItemCss">Log out</a>
 
       }@else {
-      <a (click)="auth.login()" [class]="navItemCss">Login</a>
+      <a (click)="auth.login()" [class]="navItemCss">Log in</a>
       }
       <a routerLink="about" [class]="navItemCss">About</a>
+    </div>
+
+    <div class="flex md:hidden relative">
+      <button id="menu-button" type="button" class="text-zinc-800 cursor-pointer" (click)="mobileMenu.classList.toggle('hidden')">
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden absolute top-20 w-50/100 right-9 border-zinc-1000 shadow-lg rounded-2xl transition-shadow duration-300" #mobileMenu>
+      @if (auth.isAuthenticated()) {
+      <a routerLink="list" class="block px-3 py-2 font-medium text-zinc-800">Your maps</a>
+      <a (click)="auth.logout()" class="block px-3 py-2 font-medium text-zinc-800">Log out</a>
+      } @else {
+      <a (click)="auth.login()" class="block px-3 py-2 font-medium text-zinc-800">Log in</a>
+
+      }
+      <a routerLink="about" class="block px-3 py-2 font-medium text-zinc-800">About</a>
     </div>
   </div>
 </nav>

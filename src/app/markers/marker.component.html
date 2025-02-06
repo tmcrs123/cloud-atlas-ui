@@ -1,4 +1,4 @@
-<section class="max-w-6xl mx-auto p-6 h-full">
+<section class="flex flex-col h-full">
   <div class="flex items-end justify-between mt-6 mb-6">
     <div id="breadcrumbs" class="m-4">
       <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps > </a>
@@ -7,8 +7,9 @@
       </h1>
     </div>
     <div class="flex gap-2">
-      <app-dropdown [config]="dropdownConfig()" (optionSelected)="onDropdownOptionSelected($event)"></app-dropdown>
+      <app-dropdown class="hidden md:block" [config]="dropdownConfig()" (optionSelected)="onDropdownOptionSelected($event)"></app-dropdown>
       <app-button
+        class="hidden md:block"
         [config]="goToMapButtonConfig"
         (btnClick)="
           router.navigate(['world', this.atlasId], {
@@ -33,8 +34,8 @@
     </div>
     @if (markers().length === 0) {
     <div class="flex-col justify-center text-center">
-      <p class="text-6xl m-10">¯\_(ツ)_/¯</p>
-      <p class="text-zinc-800 text-xl m-6">No markers found</p>
+      <p class="text-3xl m-10">¯\_(ツ)_/¯</p>
+      <p class="text-zinc-800 text-lg m-3">No markers found</p>
     </div>
     }
   </div>
@@ -43,3 +44,10 @@
 <app-dialog [dialogConfig]="deleteMarkerDialogConfig()" [open]="isDeleteMarkerDialogOpen()" (dialogClosed)="onDeleteMarkerDialogClosed($event)">
   <app-select [formControl]="deleteMarkerFormControl" [options]="fetchSelectOptions()"></app-select>
 </app-dialog>
+
+<app-button class="flex fixed bottom-10 right-10 md:hidden z-1" [config]="goToMapButtonConfigMobileBtnConfig" (btnClick)="this.goToAtlasView('add')"></app-button>
+<app-button
+  class="flex fixed bottom-30 right-10 md:hidden z-1"
+  [config]="deleteMarkerMobileBtnConfig"
+  (btnClick)="this.isDeleteMarkerDialogOpen.set(!this.isDeleteMarkerDialogOpen())"
+></app-button>

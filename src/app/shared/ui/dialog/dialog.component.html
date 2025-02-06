@@ -1,16 +1,16 @@
 <!-- Dialog (Modal) -->
 @if (open()){
-<div class="fixed inset-0 flex items-center justify-center bg-zinc-900/90">
-  <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
+<div class="fixed inset-0 flex items-center justify-center bg-zinc-900/90 p-2 z-10">
+  <div class="flex flex-col items-center justify-center text-center bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
     <!-- Dialog Header -->
-    <div class="flex justify-between items-center pb-3">
+    <div class="m-3">
       <h2 class="text-xl font-semibold text-zinc-800">
         {{ dialogConfig().title }}
       </h2>
     </div>
 
     <!-- Dialog Body -->
-    <div class="mt-4" #dialogBody tabindex="-1">
+    <div class="w-full" #dialogBody tabindex="-1">
       <ng-content></ng-content>
     </div>
 

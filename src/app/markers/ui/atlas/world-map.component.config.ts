@@ -48,3 +48,10 @@ export const GO_BACK_BUTTON_CONFIG: ButtonConfig = {
   type: 'secondary_action',
   svg: 'arrow_back',
 };
+
+export const GO_BACK_MOBILE_BUTTON_CONFIG: ButtonConfig = {
+  text: '',
+  type: 'secondary_action',
+  svg: 'arrow_back',
+  customCss: 'rounded-full bg-sky-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
+};

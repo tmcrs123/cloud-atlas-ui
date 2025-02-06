@@ -4,7 +4,6 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
 import type { Atlas } from '../shared/models/atlas.model';
 import { BannerService } from '../shared/services/banner-service.js';
 import { CardComponent } from '../shared/ui/card/card.component';
@@ -12,14 +11,31 @@ import { type CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/di
 import { DropdownComponent, type DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
 import { SelectComponent } from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store.js';
+import { AuthService } from '../auth/auth.service';
+import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
 
 @Component({
   selector: 'app-atlas-list',
-  imports: [DropdownComponent, DialogComponent, SelectComponent, CardComponent, ReactiveFormsModule, CommonModule],
+  imports: [DropdownComponent, DialogComponent, SelectComponent, CardComponent, ReactiveFormsModule, CommonModule, ButtonComponent],
   providers: [DatePipe],
   templateUrl: './atlas-list.component.html',
 })
 export class AtlasListComponent {
+  //config
+  protected addAtlasMobileBtnConfig: ButtonConfig = {
+    text: '',
+    type: 'secondary_action',
+    svg: 'speech_bubble',
+    customCss: 'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
+  };
+
+  protected deleteAtlasMobileBtnConfig: ButtonConfig = {
+    text: '',
+    type: 'primary_action',
+    svg: 'speech_bubble',
+    customCss: 'rounded-full bg-sky-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
+  };
+
   //inject
   protected auth = inject(AuthService);
   protected banner = inject(BannerService);
@@ -109,8 +125,8 @@ export class AtlasListComponent {
   }
 
   ngOnInit() {
+    this.store.loadAtlasList();
     this.atlasList = this.store.filteredMaps;
-    this.addAtlasFormControl.statusChanges.subscribe(console.log);
   }
 
   fetchSelectOptions() {
