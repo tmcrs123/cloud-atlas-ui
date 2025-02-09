@@ -17,17 +17,24 @@ export class MockAuthService extends AuthService {
 
   override idToken = '';
 
-  public isAuthenticated = signal(true);
+  public isAuthenticated = signal(false);
 
   exchangeCodeForToken(): Observable<LoginResponse> {
-    return of();
+    return of({
+      isAuthenticated: true,
+      userData: null,
+      accessToken: '',
+      idToken: '',
+    });
   }
 
   login(): void {
+    this.isAuthenticated.set(true);
     this.router.navigateByUrl('/redirect');
   }
 
   logout(): void {
+    this.isAuthenticated.set(false);
     this.router.navigateByUrl('/');
   }
 }

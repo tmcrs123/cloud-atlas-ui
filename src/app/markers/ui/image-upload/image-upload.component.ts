@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, linkedSignal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal } from '@angular/core';
 import { bufferCount, catchError, from, mergeMap, Observable, tap, throwError, timer } from 'rxjs';
 import { environment } from '../../../../environments/environment.js';
 import { ImagesService } from '../../../images/data-access/images-service.js';
@@ -32,14 +32,6 @@ export class ImageUploadComponent {
       disabled: !this.canAddImages(),
     };
   });
-
-  /**
-   *
-   */
-  constructor() {
-    effect(() => console.log(this.addNewImageButtonConfig()));
-    effect(() => console.log(this.canAddImages()));
-  }
 
   handleFileUpload(event: Event) {
     const inputElement = event.target as HTMLInputElement;

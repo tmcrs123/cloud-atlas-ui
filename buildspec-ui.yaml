@@ -1,0 +1,23 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo starting build for snappin-ui environment $environment
+      - echo Installing source NPM dependencies...
+      - npm install
+      - npm install -g @angular/cli
+  build:
+    commands:
+      - npm run generate-env
+      - npm run build
+  post_build:
+    commands:
+      - cd dist
+      - aws s3 sync ./ s3://snappin-$environment-ui --delete
+artifacts:
+  files:
+    - "**/*"
+  base-directory: "dist"
+  discard-paths: no
