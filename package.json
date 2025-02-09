@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "local": "ng serve --port 4200 --configuration local",
-    "test-mode": "ng serve --port 4200 --configuration test",
+    "start:local": "ng serve --port 4200 --configuration local",
+    "start:test": "ng serve --port 4200 --configuration test",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

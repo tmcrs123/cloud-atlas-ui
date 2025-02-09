@@ -4,6 +4,13 @@
   grid-template-columns: 1fr;
   height: 100vh;
 }
+
+@media only screen and (max-width: 500px) {
+  .grid-layout {
+    grid-template-rows: 120px calc(100vh - 120px);
+  }
+}
+
 .navbar {
   grid-row: 1 / 2;
 }

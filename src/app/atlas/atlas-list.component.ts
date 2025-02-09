@@ -13,10 +13,11 @@ import { SelectComponent } from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store.js';
 import { AuthService } from '../auth/auth.service';
 import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
+import { NoItemsComponent } from '../shared/ui/no-items/no-items.component';
 
 @Component({
   selector: 'app-atlas-list',
-  imports: [DropdownComponent, DialogComponent, SelectComponent, CardComponent, ReactiveFormsModule, CommonModule, ButtonComponent],
+  imports: [DropdownComponent, DialogComponent, SelectComponent, CardComponent, ReactiveFormsModule, CommonModule, ButtonComponent, NoItemsComponent],
   providers: [DatePipe],
   templateUrl: './atlas-list.component.html',
 })
@@ -24,15 +25,15 @@ export class AtlasListComponent {
   //config
   protected addAtlasMobileBtnConfig: ButtonConfig = {
     text: '',
-    type: 'secondary_action',
-    svg: 'speech_bubble',
+    type: 'primary_action',
+    svg: 'plus',
     customCss: 'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
   };
 
   protected deleteAtlasMobileBtnConfig: ButtonConfig = {
     text: '',
-    type: 'primary_action',
-    svg: 'speech_bubble',
+    type: 'secondary_action',
+    svg: 'trash',
     customCss: 'rounded-full bg-sky-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
   };
 
@@ -125,7 +126,7 @@ export class AtlasListComponent {
   }
 
   ngOnInit() {
-    this.store.loadAtlasList();
+    // this.store.loadAtlasList();
     this.atlasList = this.store.filteredMaps;
   }
 

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding, HostListener, computed, inject, input, output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ARROW_BACK_SVG, ARROW_DOWN_SVG, ARROW_ON_SQUARE_UP_SVG, GLOBE_SVG, LIST_SVG, PENCIL_SVG, PLUS_SVG, SPEECH_BUBBLE_SVG, WARNING_SVG } from './button.svg';
+import { ARROW_BACK_SVG, ARROW_DOWN_SVG, ARROW_ON_SQUARE_UP_SVG, GLOBE_SVG, LIST_SVG, PENCIL_SVG, PLUS_SVG, SPEECH_BUBBLE_SVG, TRASH, WARNING_SVG } from './button.svg';
 
 export type ButtonConfig = {
   type: 'add' | 'delete' | 'secondary_action' | 'primary_action' | 'accent';
-  svg?: 'globe' | 'arrow_down' | 'plus' | 'list' | 'arrow_back' | 'speech_bubble' | 'warning' | 'arrow_on_square_up' | 'pencil' | null;
+  svg?: 'globe' | 'arrow_down' | 'plus' | 'list' | 'arrow_back' | 'speech_bubble' | 'warning' | 'arrow_on_square_up' | 'pencil' | 'trash' | null;
   text: string;
   customCss?: string;
   disabled?: boolean;
@@ -60,6 +60,8 @@ export class ButtonComponent {
         return this.sanitizer.bypassSecurityTrustHtml(ARROW_ON_SQUARE_UP_SVG);
       case 'pencil':
         return this.sanitizer.bypassSecurityTrustHtml(PENCIL_SVG);
+      case 'trash':
+        return this.sanitizer.bypassSecurityTrustHtml(TRASH);
       default:
         return null;
     }

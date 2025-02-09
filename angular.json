@@ -81,6 +81,9 @@
             },
             "local": {
               "buildTarget": "cloud-atlas-ui:build:local"
+            },
+            "test": {
+              "buildTarget": "cloud-atlas-ui:build:test"
             }
           },
           "defaultConfiguration": "local"

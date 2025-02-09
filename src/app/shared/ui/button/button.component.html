@@ -1,6 +1,6 @@
 <button tabindex="0" [ngClass]="config().customCss || buttonType()" [class.btn-disabled]="config().disabled" (click)="btnClick.emit()" [disabled]="config().disabled">
   @if (config().svg) {
-  <div [innerHTML]="svgIcon()"></div>
+  <div [innerHTML]="svgIcon()" class="w-6 h-6"></div>
   }
   <div [ngClass]="config().svg ? 'ml-2' : ''">
     {{ config().text }}

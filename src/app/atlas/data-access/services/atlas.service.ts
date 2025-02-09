@@ -19,7 +19,7 @@ export class AtlasService {
   }
 
   deleteAtlas(atlasId: string): Observable<void> {
-    return this.http.delete<void>(buildApiEndpoint(`atlas/${atlasId}`));
+    return this.http.delete<void>(buildApiEndpoint(`atlas/${atlasId}`), { body: {} });
   }
 
   getAtlas(atlasId: string): Observable<Atlas> {

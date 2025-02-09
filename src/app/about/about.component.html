@@ -1,93 +1,58 @@
-<section class="max-w-6xl mx-auto p-5">
-  <h1 class="text-4xl m-6">Why does this thing exist?&nbsp;🤔</h1>
+<section class="container mx-auto flex flex-col gap-10 p-4 mt-8">
+  <h1 class="text-4xl text-center">Why does this thing exist?&nbsp;🤔</h1>
 
-  <p class="m-6 text-justify">
+  <p class="text-justify">
     <i>
-      In 2024, I had the chance to finally go on a year-long trip around the
-      world with my partner—a goal I’d been thinking about for a long time. It
-      was an unforgettable experience that took me through 13 different
-      countries: the United Arab Emirates, Japan, Vietnam, Cambodia, Thailand,
-      Australia, New Zealand, the United States, Costa Rica, Chile, Argentina,
-      Peru, and Ecuador.
+      In 2024, I had the chance to finally go on a year-long trip around the world with my partner—a goal I’d been thinking about for a long time. It was an unforgettable
+      experience that took me through 13 different countries: the United Arab Emirates, Japan, Vietnam, Cambodia, Thailand, Australia, New Zealand, the United States, Costa Rica,
+      Chile, Argentina, Peru, and Ecuador.
     </i>
   </p>
 
-  <p class="m-6 text-justify">
+  <p class="text-justify">
     <i>
-      Each place had its own unique moments and lessons. When I got back, I
-      wanted a way to ease back into coding while also documenting this
-      adventure and any future travels I might take. That’s what led me to
-      create this app. If you’re interested in the technical details of how it’s
-      built, feel free to keep reading below.
+      Each place had its own unique moments and adventures. When I got back, I wanted a way to ease back into coding while also documenting this adventure and any future travels I
+      might take. That’s what led me to create this app. If you’re interested in the technical details of how it’s built, feel free to keep reading below.
     </i>
   </p>
 
-  <p class="m-6 text-justify">
+  <p class="text-justify">
     <i>I hope you have as much fun using it as I have building it.</i>
   </p>
-  <p class="m-6 text-justify font-signature tracking-wide italic">Tiago</p>
+  <p class="text-justify font-signature tracking-wide italic">Tiago</p>
 
-  <h1 class="text-4xl text-right m-6">🚀&nbsp;Technicalities</h1>
+  <h1 class="text-4xl text-center">🚀&nbsp;Technicalities</h1>
 
-  <p class="m-6 text-justify">
-    This project is a classic web app built around a UI → API → Database
-    architecture.
+  <p class="text-justify">This project is a classic web app built around a UI → API → Database architecture.</p>
+
+  <p class="text-justify">
+    The API layer is developed with Fastify and designed for flexibility, using Awilix for dependency injection (DI) management. DI is essential here, as it makes testing and local
+    development easier (especially with Docker) and allows for greater architectural flexibility when swapping components.
   </p>
 
-  <p class="m-6 text-justify">
-    The API layer is developed with Fastify and designed for flexibility, using
-    Awilix for dependency injection (DI) management. DI is essential here, as it
-    makes testing and local development easier (especially with Docker) and
-    allows for greater architectural flexibility when swapping components.
+  <p class="text-justify">
+    On the backend, I rely heavily on AWS services, including CloudFront, Cognito, API Gateway, Lambda, ECS, S3, SQS, SNS, and DynamoDB, along with infrastructure essentials like
+    VPCs, secrets management, and CloudFormation. All infrastructure is defined using CloudFormation YAML files. For local development I use Localstack to fake AWS services
+    integration.
+  </p>
+  <i class="text-justify"> <strong>note:</strong> below there's a diagram of the AWS architecture for this project and how everything ties together. </i>
+
+  <p class="text-justify">
+    On the frontend, the UI is built with Angular 19 and uses Ngrx Signal Store for state management, with RxJs handling asynchronous operations like image uploads and API calls.
+    Although I have used frameworks like Angular Material in the past, this time I went with Tailwind CSS (even though I'm still using Angular Material CDK for stuff like dialogs).
+    Other key libraries include Angular OIDC for Cognito OAuth authentication and Google Maps.
   </p>
 
-  <p class="m-6 text-justify">
-    On the backend, I rely heavily on AWS services, including CloudFront,
-    Cognito, API Gateway, Lambda, ECS, S3, SQS, SNS, and DynamoDB, along with
-    infrastructure essentials like VPCs, secrets management, and CloudFormation.
-    All infrastructure is defined using CloudFormation YAML files. For local
-    development I use Localstack to fake AWS services integration.
-  </p>
-  <i class="m-6 text-justify">
-    <strong>note:</strong> below there's a diagram of the AWS architecture for
-    this project and how everything ties together.
-  </i>
+  <p class="text-justify">There’s still a lot or work to do, this is a work in progress. Still, it accomplishes it's main goal so it's MVP...kind off 🐱‍🏍</p>
 
-  <p class="m-6 text-justify">
-    On the frontend, the UI is built with Angular 19 and uses Ngrx Signal Store
-    for state management, with RxJs handling asynchronous operations like image
-    uploads and API calls. Although I have used frameworks like Angular Material
-    in the past, this time I went with Tailwind CSS (even though I'm still using
-    Angular Material CDK for stuff like dialogs). Other key libraries include
-    Angular OIDC for Cognito OAuth authentication and Google Maps.
-  </p>
-
-  <p class="m-6 text-justify">
-    There’s still a lot or work to do, this is a work in progress
-    (<strong>*cough*&nbsp;</strong>&nbsp;tests&nbsp;<strong>&nbsp;*cough*&nbsp;</strong>better
-    responsiveness/accessability,<strong>&nbsp;*cough*&nbsp;</strong> the list
-    goes on...). Still, it accomplishes it's main goal so it's MVP...kind off
-    🐱‍🏍
-  </p>
-
-  <p class="text-left m-6">Here are some pictures...</p>
-  <figure class="flex flex-col items-center m-10">
-    <img
-      src="/assets/infra_1.png"
-      alt="an image that depicts the technical infrastructure that runs the app"
-    />
-    <figcaption class="text-center text-sm text-gray-500">
-      VPC and subnet infrastructure
-    </figcaption>
+  <p class="text-left text-justify">Here are some pictures...</p>
+  <figure class="flex flex-col items-center">
+    <img src="/assets/infra_1.png" alt="an image that depicts the technical infrastructure that runs the app" />
+    <figcaption class="text-center text-sm text-gray-500">VPC and subnet infrastructure</figcaption>
   </figure>
 
-  <figure class="flex flex-col items-center m-10">
-    <img
-      src="/assets/infra_2.png"
-      alt="an image that depicts the technical infrastructure that runs the app"
-    />
-    <figcaption class="text-center text-sm text-gray-500 mt-2">
-      AWS services infrastructure
-    </figcaption>
+  <figure class="flex flex-col items-center">
+    <img src="/assets/infra_2.png" alt="an image that depicts the technical infrastructure that runs the app" />
+    <figcaption class="text-center text-sm text-gray-500 mt-2">AWS services infrastructure</figcaption>
   </figure>
 </section>

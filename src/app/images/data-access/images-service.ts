@@ -21,7 +21,7 @@ export class ImagesService {
   }
 
   public deleteImageFromMarker(atlasId: string, markerId: string, imageId: string): Observable<void> {
-    return this.http.delete<void>(buildApiEndpoint(`images/${atlasId}/${markerId}/${imageId}`));
+    return this.http.delete<void>(buildApiEndpoint(`images/${atlasId}/${markerId}/${imageId}`), { body: {} });
   }
 
   public createPresignedURL(atlasId: string, markerId: string): Observable<{ url: string; fields: { [field: string]: string } }> {
