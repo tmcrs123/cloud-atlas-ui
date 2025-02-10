@@ -23,7 +23,7 @@ export class ImageUploadComponent {
   buttonConfig = input<ButtonConfig>();
   markerId = input('');
   canAddImages = computed(() => {
-    return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < environment.imagesLimit;
+    return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < Number.parseInt(environment.imagesLimit);
   });
   addNewImageButtonConfig = linkedSignal<ButtonConfig>(() => {
     return {
@@ -44,8 +44,8 @@ export class ImageUploadComponent {
       throw new Error('Only 10 files allowed per upload. ⚠');
     }
     const imageCount = this.store.getImagesForMarker(this.atlasId(), this.markerId())().length;
-    if (imageCount + files.length > environment.imagesLimit) {
-      throw new Error(`You are going over the limit of 25 images. You can only upload ${environment.imagesLimit - imageCount} more images🗻`);
+    if (imageCount + files.length > Number.parseInt(environment.imagesLimit)) {
+      throw new Error(`You are going over the limit of 25 images. You can only upload ${Number.parseInt(environment.imagesLimit) - imageCount} more images🗻`);
     }
 
     from(files)
@@ -130,7 +130,7 @@ export class ImageUploadComponent {
   };
 
   private validFileSize(file: File) {
-    if (file.size > environment.maxImageFileSizeInBytes) return false;
+    if (file.size > Number.parseInt(environment.maxImageFileSizeInBytes)) return false;
     return true;
   }
 
