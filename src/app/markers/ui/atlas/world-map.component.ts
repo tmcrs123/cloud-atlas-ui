@@ -116,7 +116,7 @@ export class WorldMapComponent {
       title: 'What is the name of the new marker?',
       primaryActionButtonConfig: {
         text: 'Add marker',
-        type: 'add',
+        type: 'primary_action',
         disabled: this.newMarkerNameFormControlStatusChangesSignal() === 'INVALID',
       },
       secondaryActionButtonConfig: {

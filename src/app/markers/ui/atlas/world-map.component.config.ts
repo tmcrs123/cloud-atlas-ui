@@ -39,7 +39,7 @@ export const MOVE_BUTTON_CONFIG: ButtonConfig = {
 
 export const ADD_BUTTON_CONFIG: ButtonConfig = {
   text: 'Add marker',
-  type: 'add',
+  type: 'primary_action',
   svg: 'plus',
 };
 

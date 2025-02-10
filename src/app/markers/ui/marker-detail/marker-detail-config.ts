@@ -11,19 +11,19 @@ export const DELETE_DIALOG_CONFIG: CustomDialogConfig = {
   },
   secondaryActionButtonConfig: {
     text: 'Cancel',
-    type: 'secondary_action',
+    type: 'cancel',
   },
 };
 
 export const ADD_CAPTION_DIALOG_CONFIG: CustomDialogConfig = {
-  title: 'Add or update caption for image',
+  title: 'Add or update caption',
   primaryActionButtonConfig: {
     text: 'Save',
-    type: 'add',
+    type: 'primary_action',
   },
   secondaryActionButtonConfig: {
     text: 'Cancel',
-    type: 'secondary_action',
+    type: 'cancel',
   },
 };
 
@@ -31,11 +31,11 @@ export const ADD_JOURNAL_ENTRY_DIALOG_CONFIG: CustomDialogConfig = {
   title: 'Manage journal entry',
   primaryActionButtonConfig: {
     text: 'Save journal',
-    type: 'add',
+    type: 'primary_action',
   },
   secondaryActionButtonConfig: {
     text: 'Cancel',
-    type: 'secondary_action',
+    type: 'cancel',
   },
 };
 
@@ -43,7 +43,7 @@ export const DISPLAY_CAPTION_DIALOG_CONFIG: CustomDialogConfig = {
   title: 'Caption',
   secondaryActionButtonConfig: {
     text: 'Cancel',
-    type: 'secondary_action',
+    type: 'cancel',
   },
 };
 
@@ -61,14 +61,14 @@ export const DROPDOWN_CONFIG: DropdownConfig = {
 };
 export const DISPLAY_CAPTION_BUTTON_CONFIG: ButtonConfig = {
   text: '',
-  type: 'accent',
+  type: 'secondary_action',
   svg: 'speech_bubble',
   customCss: 'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-1',
 };
 
 export const ADD_JOURNAL_ENTRY_BUTTON_CONFIG: ButtonConfig = {
-  text: 'Add journal',
-  type: 'add',
+  text: 'Manage journal',
+  type: 'primary_action',
   svg: 'pencil',
 };
 

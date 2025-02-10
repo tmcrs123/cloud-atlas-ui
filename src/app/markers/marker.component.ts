@@ -14,19 +14,18 @@ import { type CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/di
 import { DropdownComponent, type DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
 import { SelectComponent } from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store.js';
-import { NoItemsComponent } from '../shared/ui/no-items/no-items.component.js';
 
 @Component({
   selector: 'app-marker',
-  imports: [ButtonComponent, CardComponent, DropdownComponent, DialogComponent, SelectComponent, ReactiveFormsModule, RouterLink, NoItemsComponent],
+  imports: [ButtonComponent, CardComponent, DropdownComponent, DialogComponent, SelectComponent, ReactiveFormsModule, RouterLink],
   providers: [DatePipe],
   templateUrl: './marker.component.html',
 })
 export class MarkerComponent {
   //configs
   protected goToMapButtonConfig: ButtonConfig = {
-    text: 'Show markers on map',
-    type: 'add',
+    text: 'Show on map',
+    type: 'secondary_action',
     svg: 'globe',
   };
 
@@ -76,7 +75,7 @@ export class MarkerComponent {
       },
       secondaryActionButtonConfig: {
         text: 'Cancel',
-        type: 'secondary_action',
+        type: 'cancel',
       },
     };
   });
@@ -84,7 +83,7 @@ export class MarkerComponent {
     const baseConfig: DropdownConfig = {
       options: [],
       buttonConfig: {
-        text: 'Add or delete markers',
+        text: 'Manage markers',
         type: 'primary_action',
         svg: 'arrow_down',
       },

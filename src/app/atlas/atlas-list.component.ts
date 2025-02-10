@@ -66,7 +66,7 @@ export class AtlasListComponent {
     const baseConfig: DropdownConfig = {
       options: [],
       buttonConfig: {
-        text: 'Add Or Delete',
+        text: 'Manage maps',
         type: 'primary_action',
         svg: 'arrow_down',
         disabled: false,
@@ -82,12 +82,12 @@ export class AtlasListComponent {
       title: 'What is the name of your new map?',
       primaryActionButtonConfig: {
         text: 'Add map',
-        type: 'add',
+        type: 'primary_action',
         disabled: this.addAtlasFormControlStatusChangesSignal() === 'INVALID',
       },
       secondaryActionButtonConfig: {
         text: 'Cancel',
-        type: 'secondary_action',
+        type: 'cancel',
       },
     };
   });
@@ -102,7 +102,7 @@ export class AtlasListComponent {
       },
       secondaryActionButtonConfig: {
         text: 'Cancel',
-        type: 'secondary_action',
+        type: 'cancel',
       },
     };
   });

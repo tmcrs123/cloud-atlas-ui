@@ -1,195 +1,110 @@
-<section class="flex flex-col h-full p-2 md:w-3/4 md:m-auto">
-  <!-- mobile -->
+<section class="flex flex-col h-full p-2 md:w-3/4 md:m-auto md:gap-8">
   <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
+
+  <div class="hidden md:flex justify-end">
+    <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
+    <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
+  </div>
+
+  <ng-content *ngTemplateOutlet="journal"></ng-content>
+  <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
+
   <app-button
     class="flex fixed z-1 bottom-24 right-10 md:hidden"
     [config]="addJournalEntryMobileButtonConfig"
     (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
   ></app-button>
   <app-image-upload [buttonConfig]="uploadImagesMobileButtonConfig" [atlasId]="atlasId" [markerId]="markerId"></app-image-upload>
-  <ng-content *ngTemplateOutlet="journalMobile"></ng-content>
-  <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
 
-  <app-no-items *ngIf="this.noItemsText()" class="relative top-1/4" [noItemsText]="this.noItemsText() || ''"></app-no-items>
+  <!-- templates -->
 
-  <!-- no journal and no images -->
-  <!-- <ng-content *ngIf="!marker().journal && images().length === 0">
-    <ng-content *ngTemplateOutlet="noJournalOrImages"></ng-content>
-  </ng-content> -->
-
-  <ng-template #noJournalOrImages>
-    <div class="flex flex-col justify-center items-center">
-      <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
-      <!-- desktop -->
-      <div class="hidden md:flex">
-        <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
-        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class=""></app-image-upload>
-      </div>
-      <!-- mobile -->
-      <div class="flex md:hidden">
-        <app-button
-          class="flex fixed z-1 bottom-24 right-10 md:hidden"
-          [config]="addJournalEntryMobileButtonConfig"
-          (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
-        ></app-button>
-        <app-image-upload [buttonConfig]="uploadImagesMobileButtonConfig" [atlasId]="atlasId" [markerId]="markerId" class=""></app-image-upload>
-      </div>
+  <ng-template #breadcrumbs>
+    <div id="breadcrumbs" class="mt-6 mb-6 self-center text-center md:self-end md:text-end">
+      <a class="text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps > </a>
+      <a class="text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/markers', atlasId]">{{ atlasTitle }} > </a>
+      <h1 class="text-6xl font-bold">
+        {{ marker().title }}
+      </h1>
     </div>
   </ng-template>
 
-  <!-- images but no journal -->
-  <!-- <ng-content *ngIf="!marker().journal && images().length > 0">
-    <div class="flex flex-col justify-center items-center">
-      <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
-      <div class="flex">
-        <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
-        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class=""></app-image-upload>
-      </div>
+  <ng-template #journal>
+    <div id="journal" *ngIf="marker().journal" class="mt-6 mb-6 flex flex-col items-center gap-5">
+      <p class="text md break-anywhere text-justify md:text-xl">
+        {{ marker().journal }}
+      </p>
     </div>
-    <ng-content *ngTemplateOutlet="onlyImages"> </ng-content>
-  </ng-content> -->
-
-  <ng-template #onlyImages>
-    <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
   </ng-template>
 
-  <!-- journal but no images -->
-  <!-- <ng-content *ngIf="marker().journal && images().length === 0">
-    <ng-content *ngTemplateOutlet="onlyJournal"></ng-content>
-  </ng-content> -->
+  <!-- Image Grid Section -->
+  <ng-template #imageGrid>
+    <div class="relative flex flex-col mt-6 mb-3 pb-3">
+      <div class="images-container">
+        @for (image of images(); track $index) {
 
-  <ng-template #onlyJournal>
-    <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
-    <ng-content *ngTemplateOutlet="journal"></ng-content>
-  </ng-template>
+        <div class="relative mb-5">
+          @if(images().length > 0){
+          <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1" (optionSelected)="onDropdownOptionSelected($event, $index)"> </app-dropdown>
 
-  <!-- journals and images -->
-  <!-- <ng-content *ngIf="marker().journal && images().length > 0">
-    <ng-content *ngTemplateOutlet="journalAndImages"></ng-content>
-  </ng-content> -->
+          @if (image.legend) {
+          <app-button [config]="displayCaptionButtonConfig" (btnClick)="onLegendButtonClicked($index)" class="absolute left-10 top-1"></app-button>
+          }
 
-  <ng-template #journalAndImages>
-    <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
-    <ng-content *ngTemplateOutlet="journal"></ng-content>
-    <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
-  </ng-template>
-</section>
-
-<!-- templates -->
-
-<ng-template #breadcrumbs>
-  <div id="breadcrumbs" class="mt-6 mb-6 self-center text-center">
-    <a class="text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps > </a>
-    <a class="text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/markers', atlasId]">{{ atlasTitle }} > </a>
-    <h1 class="text-6xl font-bold">
-      {{ marker().title }}
-    </h1>
-  </div>
-</ng-template>
-
-<ng-template #journal>
-  <div id="journal" class="mt-6 mb-6 flex flex-col items-center gap-5">
-    <p class="break-anywhere text-justify">
-      @if (marker().journal) {
-      {{ marker().journal }}
-      }
-    </p>
-    <button *ngIf="marker().journal" (click)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())" class="text-sm text-blue-600 underline hover:text-blue-800 cursor-pointer">
-      Manage journal entry
-    </button>
-    <app-image-upload [atlasId]="atlasId" [markerId]="markerId"></app-image-upload>
-  </div>
-</ng-template>
-
-<ng-template #journalMobile>
-  <div id="journal" class="mt-6 mb-6 flex flex-col items-center gap-5">
-    <p class="text md break-anywhere text-justify md:text-xl">
-      {{ marker().journal }}
-    </p>
-    <button (click)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())" class="hidden md:block text-xl text-blue-600 underline hover:text-blue-800 cursor-pointer">
-      Manage journal entry
-    </button>
-  </div>
-</ng-template>
-
-<!-- Image Grid Section -->
-<ng-template #imageGrid>
-  <div class="relative flex flex-col mt-6 mb-3 pb-3">
-    <div class="images-container">
-      @for (image of images(); track $index) {
-
-      <div class="relative mb-5">
-        @if(images().length > 0){
-        <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1" (optionSelected)="onDropdownOptionSelected($event, $index)"> </app-dropdown>
-
-        @if (image.legend) {
-        <app-button [config]="displayCaptionButtonConfig" (btnClick)="onLegendButtonClicked($index)" class="absolute left-10 top-1"></app-button>
-        }
-
-        <img
-          [src]="image.url"
-          (click)="onImageClicked($index)"
-          [alt]="image.legend"
-          class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-        />
+          <img
+            [src]="image.url"
+            (click)="onImageClicked($index)"
+            [alt]="image.legend"
+            class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+          />
+          }
+        </div>
         }
       </div>
-      }
     </div>
-  </div>
-</ng-template>
-<!-- <app-button
-  class="flex fixed z-1 bottom-24 right-10 md:hidden"
-  [config]="addJournalEntryMobileButtonConfig"
-  (btnClick)="this.isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
-></app-button> -->
-<!-- <app-button
-    class="flex fixed z-1 bottom-8 right-10 md:hidden"
-    [config]="deleteAtlasMobileBtnConfig"
-    (btnClick)="this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())"
-  ></app-button> -->
+  </ng-template>
 
-<app-dialog #deleteImageDialog [dialogConfig]="deleteDialogConfig" [open]="isDeleteDialogOpen()" (dialogClosed)="onDeleteImageDialogClosed($event)">
-  <app-warning-banner [warningText]="'Are you sure? This action is irreversible.'"></app-warning-banner>
-</app-dialog>
+  <app-dialog #deleteImageDialog [dialogConfig]="deleteDialogConfig" [open]="isDeleteDialogOpen()" (dialogClosed)="onDeleteImageDialogClosed($event)">
+    <app-warning-banner [warningText]="'Are you sure? This action is irreversible.'"></app-warning-banner>
+  </app-dialog>
 
-<app-dialog #addCaptionDialog [dialogConfig]="addCaptionDialogConfig" [open]="isAddCaptionDialogOpen()" (dialogClosed)="onAddCaptionDialogClose($event)">
-  <input
-    [formControl]="addCaptionFormControl"
-    type="text"
-    placeholder="Say something about this image..."
-    class="w-full p-4 border"
-    [ngClass]="{
-      'border-red-700': addCaptionFormControl.dirty && !addCaptionFormControl.valid,
-      'border-zinc-300': addCaptionFormControl.valid
-    }"
-  />
-  @if (addCaptionFormControl.dirty && addCaptionFormControl.hasError('required')) {
-  <div class="text-red-700 font-medium mt-2">A name is required</div>
-  }
-</app-dialog>
+  <app-dialog #addCaptionDialog [dialogConfig]="addCaptionDialogConfig" [open]="isAddCaptionDialogOpen()" (dialogClosed)="onAddCaptionDialogClose($event)">
+    <input
+      [formControl]="addCaptionFormControl"
+      type="text"
+      placeholder="Say something about this image..."
+      class="w-full p-4 border"
+      [ngClass]="{
+        'border-red-700': addCaptionFormControl.dirty && !addCaptionFormControl.valid,
+        'border-zinc-300': addCaptionFormControl.valid
+      }"
+    />
+    @if (addCaptionFormControl.dirty && addCaptionFormControl.hasError('required')) {
+    <div class="text-red-700 font-medium mt-2">A name is required</div>
+    }
+  </app-dialog>
 
-<app-dialog
-  #displayCaptionDialog
-  [dialogConfig]="displayCaptionDialogConfig"
-  [open]="isDisplayCaptionDialogOpen()"
-  (dialogClosed)="isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen())"
->
-  <i>{{ focusedImagedIndex() !== null && images()[focusedImagedIndex()!].legend }}</i>
-</app-dialog>
-
-<app-dialog #addJournalEntryDialog [dialogConfig]="addJournalEntryDialogConfig" [open]="isJournalEntryDialogOpen()" (dialogClosed)="onAddJournalEntryDialogClosed($event)">
-  <textarea
-    [formControl]="addJournalEntryFormControl"
-    [value]="addJournalEntryFormControl.value"
-    placeholder="Say something about this marker..."
-    class="w-full p-2 border rounded-md"
-    rows="4"
-    >{{ addJournalEntryFormControl.value }}</textarea
+  <app-dialog
+    #displayCaptionDialog
+    [dialogConfig]="displayCaptionDialogConfig"
+    [open]="isDisplayCaptionDialogOpen()"
+    (dialogClosed)="isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen())"
   >
-</app-dialog>
+    <i>{{ focusedImagedIndex() !== null && images()[focusedImagedIndex()!].legend }}</i>
+  </app-dialog>
 
-<!-- open is controlled from outside because of the event handlers on the lightbox -->
-@if (isLightboxOpen()) {
-<app-lightbox [images]="images()" [lightboxConfig]="lightboxConfig()" (close)="isLightboxOpen.set(false)"></app-lightbox>
-}
+  <app-dialog #addJournalEntryDialog [dialogConfig]="addJournalEntryDialogConfig" [open]="isJournalEntryDialogOpen()" (dialogClosed)="onAddJournalEntryDialogClosed($event)">
+    <textarea
+      [formControl]="addJournalEntryFormControl"
+      [value]="addJournalEntryFormControl.value"
+      placeholder="Say something about this marker..."
+      class="w-full p-2 border rounded-md"
+      rows="4"
+      >{{ addJournalEntryFormControl.value }}</textarea
+    >
+  </app-dialog>
+
+  <!-- open is controlled from outside because of the event handlers on the lightbox -->
+  @if (isLightboxOpen()) {
+  <app-lightbox [images]="images()" [lightboxConfig]="lightboxConfig()" (close)="isLightboxOpen.set(false)"></app-lightbox>
+  }
+</section>

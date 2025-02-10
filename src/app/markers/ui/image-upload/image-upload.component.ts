@@ -28,7 +28,7 @@ export class ImageUploadComponent {
   addNewImageButtonConfig = linkedSignal<ButtonConfig>(() => {
     return {
       text: 'Add new image',
-      type: 'primary_action',
+      type: 'secondary_action',
       svg: 'arrow_on_square_up',
       disabled: !this.canAddImages(),
       ...this.buttonConfig(),

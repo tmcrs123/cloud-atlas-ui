@@ -1,12 +1,12 @@
 <nav class="bg-white font-semibold">
-  <div class="flex justify-between p-4 md:justify-evenly md:p-10">
+  <div class="flex justify-between p-4 md:p-10">
     <!-- Logo -->
     <a routerLink="/">
       <img class="w-24 md:w-32 lg:w-34" src="/assets/alt.svg" alt="logo" />
     </a>
 
     <!-- Menu items for large screens -->
-    <div class="hidden md:flex space-x-6 justify-center items-center">
+    <div class="hidden md:flex gap-8 justify-center items-center">
       @if(auth.isAuthenticated()){
       <a routerLink="list" [class]="navItemCss">Your maps</a>
       <a (click)="auth.logout()" [class]="navItemCss">Log out</a>
