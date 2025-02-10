@@ -13,7 +13,7 @@ phases:
       - ng build cloud-atlas-ui --configuration $environmentName
   post_build:
     commands:
-      - cd dist
+      - cd dist/cloud-atlas-ui/browser
       - aws s3 sync ./ s3://cloud-atlas-$environmentName-ui --delete
 artifacts:
   files:
