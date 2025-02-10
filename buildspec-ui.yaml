@@ -4,18 +4,17 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo starting build for snappin-ui environment $environment
+      - echo starting build for cloud-atlas-ui environment $environment
       - echo Installing source NPM dependencies...
-      - npm install
+      - npm install --force
       - npm install -g @angular/cli
   build:
     commands:
-      - npm run generate-env
-      - npm run build
+      - ng build cloud-atlas-ui --configuration $environment
   post_build:
     commands:
       - cd dist
-      - aws s3 sync ./ s3://snappin-$environment-ui --delete
+      - aws s3 sync ./ s3://cloud-atlas-$environment-ui --delete
 artifacts:
   files:
     - "**/*"
