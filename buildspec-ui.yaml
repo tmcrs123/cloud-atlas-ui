@@ -10,6 +10,7 @@ phases:
       - npm install -g @angular/cli
   build:
     commands:
+      - npm run generate-env
       - ng build cloud-atlas-ui --configuration $environmentName
   post_build:
     commands:

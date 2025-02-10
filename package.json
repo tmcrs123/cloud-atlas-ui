@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "generate-env": "node src/environments/generate-environment.js",
     "start:local": "ng serve --port 4200 --configuration local",
     "start:test": "ng serve --port 4200 --configuration test",
     "build": "ng build",
