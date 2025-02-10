@@ -63,7 +63,7 @@ export class MarkerComponent {
   protected markers: Signal<Marker[]> = signal([]);
   protected showAtlas = signal(false);
   protected canAddMarkers = computed(() => {
-    return this.markers().length < environment.markersLimit;
+    return this.markers().length < Number.parseInt(environment.markersLimit);
   });
   protected deleteMarkerDialogConfig = computed<CustomDialogConfig>(() => {
     return {

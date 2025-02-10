@@ -28,7 +28,7 @@ export class AwsAuthService extends AuthService {
   private tokenExpirationTimer = new Subject<void>();
   private tokenExpirationTimer$ = this.tokenExpirationTimer.asObservable().pipe(
     switchMap(() =>
-      timer(environment.idTokenExpirationInMiliseconds).pipe(
+      timer(Number.parseInt(environment.idTokenExpirationInMiliseconds)).pipe(
         take(1),
         tap(() => {
           this.bannerService.setMessage({ message: 'Your session has expired. For security reasons you will be logged out 🔒', type: 'info' });
