@@ -1,5 +1,5 @@
 <!-- Lightbox Modal -->
-<div #lightboxContainer class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
+<div #lightboxContainer class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-5">
   <button class="absolute top-4 right-4 text-white text-5xl cursor-pointer" (click)="close.emit()">&times;</button>
   @if (images().length > 0) {
   <img id="lightbox-img" [src]="images()[currentIndex()].url" alt="Lightbox" class="max-w-full max-h-full" />

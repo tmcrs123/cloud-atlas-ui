@@ -20,6 +20,7 @@ export class ImageUploadComponent {
 
   // signals
   atlasId = input('');
+  buttonConfig = input<ButtonConfig>();
   markerId = input('');
   canAddImages = computed(() => {
     return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < environment.imagesLimit;
@@ -30,6 +31,7 @@ export class ImageUploadComponent {
       type: 'primary_action',
       svg: 'arrow_on_square_up',
       disabled: !this.canAddImages(),
+      ...this.buttonConfig(),
     };
   });
 

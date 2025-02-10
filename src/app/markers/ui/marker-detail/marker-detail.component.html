@@ -1,8 +1,21 @@
-<section class="flex flex-col h-full p-2">
+<section class="flex flex-col h-full p-2 md:w-3/4 md:m-auto">
+  <!-- mobile -->
+  <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
+  <app-button
+    class="flex fixed z-1 bottom-24 right-10 md:hidden"
+    [config]="addJournalEntryMobileButtonConfig"
+    (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
+  ></app-button>
+  <app-image-upload [buttonConfig]="uploadImagesMobileButtonConfig" [atlasId]="atlasId" [markerId]="markerId"></app-image-upload>
+  <ng-content *ngTemplateOutlet="journalMobile"></ng-content>
+  <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
+
+  <app-no-items *ngIf="this.noItemsText()" class="relative top-1/4" [noItemsText]="this.noItemsText() || ''"></app-no-items>
+
   <!-- no journal and no images -->
-  <ng-content *ngIf="!marker().journal && images().length === 0">
+  <!-- <ng-content *ngIf="!marker().journal && images().length === 0">
     <ng-content *ngTemplateOutlet="noJournalOrImages"></ng-content>
-  </ng-content>
+  </ng-content> -->
 
   <ng-template #noJournalOrImages>
     <div class="flex flex-col justify-center items-center">
@@ -10,37 +23,40 @@
       <!-- desktop -->
       <div class="hidden md:flex">
         <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
-        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
+        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class=""></app-image-upload>
       </div>
       <!-- mobile -->
       <div class="flex md:hidden">
-        <app-button [config]="addJournalEntryMobileButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
-        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
+        <app-button
+          class="flex fixed z-1 bottom-24 right-10 md:hidden"
+          [config]="addJournalEntryMobileButtonConfig"
+          (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
+        ></app-button>
+        <app-image-upload [buttonConfig]="uploadImagesMobileButtonConfig" [atlasId]="atlasId" [markerId]="markerId" class=""></app-image-upload>
       </div>
     </div>
-    <ng-content *ngTemplateOutlet="missingThingsEmoji; context: { text: 'You don\'t have any images or journal entry yet.' }"></ng-content>
   </ng-template>
 
   <!-- images but no journal -->
-  <ng-content *ngIf="!marker().journal && images().length > 0">
+  <!-- <ng-content *ngIf="!marker().journal && images().length > 0">
     <div class="flex flex-col justify-center items-center">
       <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
       <div class="flex">
         <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
-        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
+        <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class=""></app-image-upload>
       </div>
     </div>
     <ng-content *ngTemplateOutlet="onlyImages"> </ng-content>
-  </ng-content>
+  </ng-content> -->
 
   <ng-template #onlyImages>
     <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
   </ng-template>
 
   <!-- journal but no images -->
-  <ng-content *ngIf="marker().journal && images().length === 0">
+  <!-- <ng-content *ngIf="marker().journal && images().length === 0">
     <ng-content *ngTemplateOutlet="onlyJournal"></ng-content>
-  </ng-content>
+  </ng-content> -->
 
   <ng-template #onlyJournal>
     <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
@@ -48,9 +64,9 @@
   </ng-template>
 
   <!-- journals and images -->
-  <ng-content *ngIf="marker().journal && images().length > 0">
+  <!-- <ng-content *ngIf="marker().journal && images().length > 0">
     <ng-content *ngTemplateOutlet="journalAndImages"></ng-content>
-  </ng-content>
+  </ng-content> -->
 
   <ng-template #journalAndImages>
     <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
@@ -62,9 +78,9 @@
 <!-- templates -->
 
 <ng-template #breadcrumbs>
-  <div id="breadcrumbs" class="mt-6 mb-6 self-baseline">
-    <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps > </a>
-    <a class="text-sm font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/markers', atlasId]">{{ atlasTitle }} > </a>
+  <div id="breadcrumbs" class="mt-6 mb-6 self-center text-center">
+    <a class="text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps > </a>
+    <a class="text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/markers', atlasId]">{{ atlasTitle }} > </a>
     <h1 class="text-6xl font-bold">
       {{ marker().title }}
     </h1>
@@ -85,6 +101,17 @@
   </div>
 </ng-template>
 
+<ng-template #journalMobile>
+  <div id="journal" class="mt-6 mb-6 flex flex-col items-center gap-5">
+    <p class="text md break-anywhere text-justify md:text-xl">
+      {{ marker().journal }}
+    </p>
+    <button (click)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())" class="hidden md:block text-xl text-blue-600 underline hover:text-blue-800 cursor-pointer">
+      Manage journal entry
+    </button>
+  </div>
+</ng-template>
+
 <!-- Image Grid Section -->
 <ng-template #imageGrid>
   <div class="relative flex flex-col mt-6 mb-3 pb-3">
@@ -93,10 +120,10 @@
 
       <div class="relative mb-5">
         @if(images().length > 0){
-        <app-dropdown [config]="dropdownConfig" class="absolute right-1 top-1" (optionSelected)="onDropdownOptionSelected($event, $index)"> </app-dropdown>
+        <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1" (optionSelected)="onDropdownOptionSelected($event, $index)"> </app-dropdown>
 
         @if (image.legend) {
-        <app-button [config]="displayCaptionButtonConfig" (btnClick)="onLegendButtonClicked($index)" class="absolute left-1 top-1"></app-button>
+        <app-button [config]="displayCaptionButtonConfig" (btnClick)="onLegendButtonClicked($index)" class="absolute left-10 top-1"></app-button>
         }
 
         <img
@@ -111,15 +138,16 @@
     </div>
   </div>
 </ng-template>
-
-<ng-template #missingThingsEmoji let-text="text">
-  <div class="flex-2 flex flex-col justify-center text-center">
-    <p class="text-3xl m-6">¯\_(ツ)_/¯</p>
-    <p class="text-zinc-800 text-lg m-3">
-      {{ text }}
-    </p>
-  </div>
-</ng-template>
+<!-- <app-button
+  class="flex fixed z-1 bottom-24 right-10 md:hidden"
+  [config]="addJournalEntryMobileButtonConfig"
+  (btnClick)="this.isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
+></app-button> -->
+<!-- <app-button
+    class="flex fixed z-1 bottom-8 right-10 md:hidden"
+    [config]="deleteAtlasMobileBtnConfig"
+    (btnClick)="this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())"
+  ></app-button> -->
 
 <app-dialog #deleteImageDialog [dialogConfig]="deleteDialogConfig" [open]="isDeleteDialogOpen()" (dialogClosed)="onDeleteImageDialogClosed($event)">
   <app-warning-banner [warningText]="'Are you sure? This action is irreversible.'"></app-warning-banner>

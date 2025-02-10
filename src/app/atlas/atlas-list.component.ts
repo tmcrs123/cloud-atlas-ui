@@ -27,14 +27,14 @@ export class AtlasListComponent {
     text: '',
     type: 'primary_action',
     svg: 'plus',
-    customCss: 'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
+    customCss: 'rounded-full bg-sky-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
   };
 
   protected deleteAtlasMobileBtnConfig: ButtonConfig = {
     text: '',
     type: 'secondary_action',
     svg: 'trash',
-    customCss: 'rounded-full bg-sky-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
+    customCss: 'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
   };
 
   //inject

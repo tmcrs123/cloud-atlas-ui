@@ -49,13 +49,13 @@ export const DISPLAY_CAPTION_DIALOG_CONFIG: CustomDialogConfig = {
 
 export const DROPDOWN_CONFIG: DropdownConfig = {
   options: [
-    { label: 'Delete', index: 0 },
     { label: 'Manage caption', index: 1 },
+    { label: 'Delete', index: 0 },
   ],
   buttonConfig: {
     text: '',
     type: 'primary_action',
-    svg: 'plus',
+    svg: 'ellipsis',
     customCss: 'rounded-full bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer p-1',
   },
 };
@@ -73,8 +73,17 @@ export const ADD_JOURNAL_ENTRY_BUTTON_CONFIG: ButtonConfig = {
 };
 
 export const ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG: ButtonConfig = {
-  text: 'Add journal',
-  type: 'add',
+  text: '',
+  type: 'primary_action',
+  svg: 'pencil',
+  customCss: 'rounded-full bg-yellow-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
+};
+
+export const UPLOAD_IMAGES_MOBILE_BUTTON_CONFIG: ButtonConfig = {
+  text: '',
+  type: 'primary_action',
+  svg: 'arrow_on_square_up',
+  customCss: 'fixed z-1 bottom-8 right-10 rounded-full bg-sky-600 text-white focus:outline-none shadow-md cursor-pointer p-3 md:hidden ',
 };
 
 export const LIGHTBOX_CONFIG: LightboxConfig = {

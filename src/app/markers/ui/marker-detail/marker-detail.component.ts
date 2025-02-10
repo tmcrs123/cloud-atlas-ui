@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, type Signal, effect, inject, signal, viewChild, viewChildren } from '@angular/core';
+import { Component, DestroyRef, type Signal, computed, effect, inject, signal, viewChild, viewChildren } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import type { Marker } from '../../../shared/models/marker.js';
@@ -11,11 +11,23 @@ import { LightboxComponent } from '../../../shared/ui/lightbox/lightbox.componen
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component';
 import { AppStore } from '../../../store/store.js';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
-import { ADD_CAPTION_DIALOG_CONFIG, ADD_JOURNAL_ENTRY_BUTTON_CONFIG, ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG, ADD_JOURNAL_ENTRY_DIALOG_CONFIG, DELETE_DIALOG_CONFIG, DISPLAY_CAPTION_BUTTON_CONFIG, DISPLAY_CAPTION_DIALOG_CONFIG, DROPDOWN_CONFIG, LIGHTBOX_CONFIG } from './marker-detail-config.js';
+import {
+  ADD_CAPTION_DIALOG_CONFIG,
+  ADD_JOURNAL_ENTRY_BUTTON_CONFIG,
+  ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG,
+  ADD_JOURNAL_ENTRY_DIALOG_CONFIG,
+  DELETE_DIALOG_CONFIG,
+  DISPLAY_CAPTION_BUTTON_CONFIG,
+  DISPLAY_CAPTION_DIALOG_CONFIG,
+  DROPDOWN_CONFIG,
+  LIGHTBOX_CONFIG,
+  UPLOAD_IMAGES_MOBILE_BUTTON_CONFIG,
+} from './marker-detail-config.js';
+import { NoItemsComponent } from '../../../shared/ui/no-items/no-items.component';
 
 @Component({
   selector: 'app-marker-detail',
-  imports: [LightboxComponent, DropdownComponent, DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule],
+  imports: [LightboxComponent, DropdownComponent, DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule, NoItemsComponent],
   templateUrl: './marker-detail.component.html',
   styles: `.images-container {
     column-count: 3;
@@ -36,12 +48,13 @@ export class MarkerDetailComponent {
   // Configs
   protected readonly addCaptionDialogConfig = ADD_CAPTION_DIALOG_CONFIG;
   protected readonly addJournalEntryButtonConfig: ButtonConfig = ADD_JOURNAL_ENTRY_BUTTON_CONFIG;
-  protected readonly addJournalEntryMobileButtonConfig: ButtonConfig = ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG;
   protected readonly addJournalEntryDialogConfig = ADD_JOURNAL_ENTRY_DIALOG_CONFIG;
+  protected readonly addJournalEntryMobileButtonConfig: ButtonConfig = ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG;
   protected readonly deleteDialogConfig = DELETE_DIALOG_CONFIG;
   protected readonly displayCaptionButtonConfig: ButtonConfig = DISPLAY_CAPTION_BUTTON_CONFIG;
   protected readonly displayCaptionDialogConfig: CustomDialogConfig = DISPLAY_CAPTION_DIALOG_CONFIG;
   protected readonly dropdownConfig: DropdownConfig = DROPDOWN_CONFIG;
+  protected readonly uploadImagesMobileButtonConfig: ButtonConfig = UPLOAD_IMAGES_MOBILE_BUTTON_CONFIG;
 
   //Inject
   protected readonly destroyRef = inject(DestroyRef);
@@ -58,6 +71,20 @@ export class MarkerDetailComponent {
   protected isLightboxOpen = signal(false);
   protected lightboxConfig = signal(LIGHTBOX_CONFIG);
   protected marker!: Signal<Marker>;
+  protected noItemsText = computed(() => {
+    let message = '';
+    if (!this.marker().journal && this.images().length === 0) {
+      message += 'You have no journal entry or images for this map';
+      return message;
+    }
+    if (!this.marker().journal) {
+      message += 'You have no journal entry for this map';
+      return;
+    }
+
+    if (this.images().length === 0) message += 'You have no images for this map';
+    return message;
+  });
 
   //VC-CC
   protected addCaptionDialogRef = viewChild.required<DialogComponent>('addCaptionDialog');

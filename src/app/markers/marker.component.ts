@@ -14,10 +14,11 @@ import { type CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/di
 import { DropdownComponent, type DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
 import { SelectComponent } from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store.js';
+import { NoItemsComponent } from '../shared/ui/no-items/no-items.component.js';
 
 @Component({
   selector: 'app-marker',
-  imports: [ButtonComponent, CardComponent, DropdownComponent, DialogComponent, SelectComponent, ReactiveFormsModule, RouterLink],
+  imports: [ButtonComponent, CardComponent, DropdownComponent, DialogComponent, SelectComponent, ReactiveFormsModule, RouterLink, NoItemsComponent],
   providers: [DatePipe],
   templateUrl: './marker.component.html',
 })
@@ -32,14 +33,14 @@ export class MarkerComponent {
   protected goToMapButtonConfigMobileBtnConfig: ButtonConfig = {
     text: '',
     type: 'primary_action',
-    svg: 'globe',
-    customCss: 'rounded-full bg-yellow-600 text-white hover:bg-yellow-700 focus:outline-none shadow-md cursor-pointer p-3',
+    svg: 'plus',
+    customCss: 'rounded-full bg-sky-600 text-white hover:bg-yellow-700 focus:outline-none shadow-md cursor-pointer p-3',
   };
 
   protected deleteMarkerMobileBtnConfig: ButtonConfig = {
     text: '',
     type: 'secondary_action',
-    svg: 'speech_bubble',
+    svg: 'trash',
     customCss: 'rounded-full bg-pink-600 text-white hover:bg-pink-700 focus:outline-none shadow-md cursor-pointer p-3',
   };
 
@@ -88,12 +89,11 @@ export class MarkerComponent {
         svg: 'arrow_down',
       },
     };
+    if (this.canAddMarkers()) baseConfig.options.push({ label: 'Add marker', index: 1 });
 
     if (this.markers().length > 0) {
       baseConfig.options.push({ label: 'Delete marker', index: 0 });
     }
-
-    if (this.canAddMarkers()) baseConfig.options.push({ label: 'Add marker', index: 1 });
 
     return baseConfig;
   });

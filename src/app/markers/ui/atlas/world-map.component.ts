@@ -15,16 +15,21 @@ import { AppStore } from '../../../store/store.js';
 import { ADD_BUTTON_CONFIG, ADD_MODE_MAP_OPTIONS, DEFAULT_MAP_OPTIONS, GO_BACK_BUTTON_CONFIG, GO_BACK_MOBILE_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG, MOVE_MODE_MAP_OPTIONS } from './world-map.component.config.js';
 
 @Component({
-  selector: 'app-atlas',
+  selector: 'app-world-map',
   imports: [GoogleMapsModule, MapInfoWindow, DialogComponent, ReactiveFormsModule, CardComponent, ButtonComponent, CommonModule],
   providers: [DatePipe],
   templateUrl: './world-map.component.html',
   styles: [
     `
       :host {
+        height: 100%;
         display: block;
-        height: calc(100vh - 150px);
-        padding: 1rem;
+      }
+
+      @media only screen and (min-width: 500px) {
+        :host {
+          padding: 3rem;
+        }
       }
     `,
   ],
