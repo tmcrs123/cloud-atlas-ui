@@ -11,16 +11,17 @@ function generateEnvironment() {
     redirectUrl:${process.env.redirectUrl},
     postLogoutRedirectUri:${process.env.postLogoutRedirectUri},
     clientId:${process.env.clientId},
-    renewTimeBeforeTokenExpiresInSeconds:${process.env.renewTimeBeforeTokenExpiresInSeconds},
+    renewTimeBeforeTokenExpiresInSeconds:"${process.env.renewTimeBeforeTokenExpiresInSeconds}",
     region:${process.env.region},
     userPoolId:${process.env.userPoolId},
-    maxImageFileSizeInBytes:${process.env.maxImageFileSizeInBytes},
+    maxImageFileSizeInBytes:"${process.env.maxImageFileSizeInBytes}",
     googleMapId:${process.env.googleMapId},
     googleMapsApiKey:${process.env.googleMapsApiKey},
-    idTokenExpirationInMiliseconds:${process.env.idTokenExpirationInMiliseconds},
+    idTokenExpirationInMiliseconds:"${process.env.idTokenExpirationInMiliseconds}",
     logoutUri:${process.env.logoutUri},
-    mapsLimit:${process.env.mapsLimit},
-    markersLimit:${process.env.markersLimit},
+    mapsLimit:"${process.env.mapsLimit}",
+    markersLimit:"${process.env.markersLimit}",
+    imagesLimit:"${process.env.imagesLimit}",
     };`;
 
   process.chdir("src/environments");
