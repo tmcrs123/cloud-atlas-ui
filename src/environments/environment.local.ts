@@ -1,5 +1,5 @@
 export const environment = {
-  name: 'local',
+  environmentName: 'local',
   appName: 'cloud-atlas-dev',
   api_endpoint: 'http://localhost:3000',
   authority: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_szwZtfXgl',

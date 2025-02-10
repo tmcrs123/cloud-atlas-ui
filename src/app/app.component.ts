@@ -15,7 +15,7 @@ import { AppStore } from './store/store.js';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = `Cloud-Atlas=${environment.name}`;
+  title = `Cloud-Atlas=${environment.environmentName}`;
 
   loaderService = inject(LoaderService);
 }

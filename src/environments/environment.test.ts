@@ -1,5 +1,5 @@
 export const environment = {
-  name: 'test',
+  environmentName: 'test',
   appName: 'cloud-atlas-test',
   api_endpoint: 'https://5oi3tgtev9.execute-api.us-east-1.amazonaws.com/test',
   authority: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_E0cRkWXvn',
