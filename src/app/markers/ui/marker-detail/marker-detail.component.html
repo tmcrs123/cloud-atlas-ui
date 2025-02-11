@@ -10,11 +10,13 @@
   <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
 
   <app-button
-    class="flex fixed z-1 bottom-24 right-10 md:hidden"
+    class="flex fixed z-1 bottom-8 right-10 md:hidden"
     [config]="addJournalEntryMobileButtonConfig"
     (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
   ></app-button>
   <app-image-upload [buttonConfig]="uploadImagesMobileButtonConfig" [atlasId]="atlasId" [markerId]="markerId"></app-image-upload>
+
+  <app-no-items *ngIf="!marker().journal && images().length === 0" [noItemsText]="'There is nothing to see here yet.'"></app-no-items>
 
   <!-- templates -->
 

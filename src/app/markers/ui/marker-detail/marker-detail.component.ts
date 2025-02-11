@@ -23,10 +23,11 @@ import {
   LIGHTBOX_CONFIG,
   UPLOAD_IMAGES_MOBILE_BUTTON_CONFIG,
 } from './marker-detail-config.js';
+import { NoItemsComponent } from '../../../shared/ui/no-items/no-items.component';
 
 @Component({
   selector: 'app-marker-detail',
-  imports: [LightboxComponent, DropdownComponent, DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule],
+  imports: [LightboxComponent, DropdownComponent, DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule, NoItemsComponent],
   templateUrl: './marker-detail.component.html',
   styles: `.images-container {
     column-count: 3;

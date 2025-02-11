@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { Component, type Signal, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,10 +14,11 @@ import { type CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/di
 import { DropdownComponent, type DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
 import { SelectComponent } from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store.js';
+import { NoItemsComponent } from '../shared/ui/no-items/no-items.component.js';
 
 @Component({
   selector: 'app-marker',
-  imports: [ButtonComponent, CardComponent, DropdownComponent, DialogComponent, SelectComponent, ReactiveFormsModule, RouterLink],
+  imports: [ButtonComponent, CardComponent, DropdownComponent, DialogComponent, SelectComponent, ReactiveFormsModule, RouterLink, NoItemsComponent, NgIf],
   providers: [DatePipe],
   templateUrl: './marker.component.html',
 })

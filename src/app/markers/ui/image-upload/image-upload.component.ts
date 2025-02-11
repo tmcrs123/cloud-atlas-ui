@@ -56,7 +56,7 @@ export class ImageUploadComponent {
               message: 'Processing your images. Please wait ⌚',
               type: 'info',
             },
-            11000,
+            0,
             true
           );
           this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: true }));
