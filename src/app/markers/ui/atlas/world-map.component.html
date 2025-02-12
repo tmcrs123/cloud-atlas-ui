@@ -1,5 +1,5 @@
 <div class="flex flex-row-reverse h-full shadow-lg">
-  <div class="flex-2">
+  <div class="flex-3">
     <google-map [options]="mapOptions()" [width]="'100%'" [height]="'100%'" (mapClick)="canOpenAddMarkerDialog() && (isDialogOpen = true)" class="cursor-pointer relative">
       @for (atlasMarker of atlasMarkers(); track $index) {
       <map-advanced-marker #thisMarker="mapAdvancedMarker" [options]="atlasMarker" (mapClick)="thisInfoWindow.open(thisMarker)"></map-advanced-marker>

@@ -1,5 +1,5 @@
-import { Component, computed, inject, input, linkedSignal } from '@angular/core';
-import { bufferCount, catchError, from, mergeMap, Observable, tap, throwError, timer } from 'rxjs';
+import { Component, computed, effect, inject, input, linkedSignal } from '@angular/core';
+import { bufferCount, catchError, from, map, mergeMap, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment.js';
 import { ImagesService } from '../../../images/data-access/images-service.js';
 import { BannerService } from '../../../shared/services/banner-service.js';
@@ -25,6 +25,7 @@ export class ImageUploadComponent {
   canAddImages = computed(() => {
     return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < Number.parseInt(environment.imagesLimit);
   });
+  markerCurrentImageCount = computed(() => this.store.getImagesForMarker(this.atlasId(), this.markerId())().length);
   addNewImageButtonConfig = linkedSignal<ButtonConfig>(() => {
     return {
       text: 'Add new image',
@@ -34,6 +35,15 @@ export class ImageUploadComponent {
       ...this.buttonConfig(),
     };
   });
+
+  constructor() {
+    effect(() => {
+      if (!this.store.imageUploadInProgress()) {
+        this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: false }));
+        this.bannerService.dismissManually();
+      }
+    });
+  }
 
   handleFileUpload(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -53,10 +63,10 @@ export class ImageUploadComponent {
         tap(() => {
           this.bannerService.setMessage(
             {
-              message: 'Processing your images. Please wait ⌚',
+              message: 'Processing your photos, this can take up to 30 seconds. Please wait 😇',
               type: 'info',
             },
-            0,
+            -1,
             true
           );
           this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: true }));
@@ -69,20 +79,25 @@ export class ImageUploadComponent {
             })
           )
         ),
-        bufferCount(files.length)
+        bufferCount(files.length),
+        map(() => files.length)
       )
       .subscribe({
-        complete: () =>
-          timer(10000).subscribe({
-            next: () => {
-              this.store.loadImagesForMarker({
-                atlasId: this.atlasId(),
-                markerId: this.markerId(),
-              });
-              this.bannerService.dismissManually();
-              this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: false }));
+        complete: () => {
+          this.bannerService.setMessage(
+            {
+              message: 'Finished processing, now retrieving your photos 📷',
+              type: 'info',
             },
-          }),
+            -1,
+            true
+          );
+          this.store.poolForImages({
+            atlasId: this.atlasId(),
+            markerId: this.markerId(),
+            targetCount: this.markerCurrentImageCount() + files.length,
+          });
+        },
       });
   }
 

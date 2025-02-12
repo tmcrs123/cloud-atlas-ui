@@ -2,7 +2,7 @@ import { type Signal, computed, inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import { getState, patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap } from 'rxjs';
+import { pipe, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment.js';
 import { ImagesService } from '../images/data-access/images-service.js';
 import { MarkersService } from '../markers/data-access/markers.service';
@@ -14,11 +14,13 @@ import { AtlasService } from '../atlas/data-access/services/atlas.service.js';
 type AppState = {
   atlasList: { [atlasId: string]: Atlas };
   filter: { query: string; order: 'asc' | 'desc' };
+  imageUploadInProgress: boolean;
 };
 
 const initialState: AppState = {
   atlasList: {},
   filter: { query: '', order: 'asc' },
+  imageUploadInProgress: false,
 };
 
 export const AppStore = signalStore(
@@ -274,6 +276,40 @@ export const AppStore = signalStore(
                   return {
                     ...state,
                     atlasList: updatedState,
+                  };
+                });
+              },
+              error: console.error,
+            })
+          );
+        })
+      )
+    ),
+    poolForImages: rxMethod<{ atlasId: string; markerId: string; targetCount: number }>(
+      pipe(
+        tap(() =>
+          patchState(store, (state) => {
+            return {
+              ...state,
+              imageUploadInProgress: true,
+            };
+          })
+        ),
+        switchMap((params) => {
+          return imagesService.poolForMarkerImages(params.atlasId, params.markerId, params.targetCount).pipe(
+            tapResponse({
+              next: (images) => {
+                patchState(store, (state) => {
+                  const updatedState = structuredClone(state.atlasList);
+
+                  const markerIndex = findMarkerIndex(state, params.atlasId, params.markerId);
+
+                  updatedState[params.atlasId].markers[markerIndex].images = images;
+
+                  return {
+                    ...state,
+                    atlasList: updatedState,
+                    imageUploadInProgress: false,
                   };
                 });
               },

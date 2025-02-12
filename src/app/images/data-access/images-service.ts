@@ -1,9 +1,9 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import type { Observable } from 'rxjs';
-import { ERROR_MESSAGE } from '../../shared/tokens/tokens.js';
-import { buildApiEndpoint } from '../../shared/utils/api-endpoint.js';
+import { Injectable, inject } from '@angular/core';
+import { type Observable, expand, last, of, switchMap, takeWhile, timer } from 'rxjs';
 import type { MarkerImage } from '../../shared/models/marker-image.js';
+import { BYPASS_LOADER, ERROR_MESSAGE } from '../../shared/tokens/tokens.js';
+import { buildApiEndpoint } from '../../shared/utils/api-endpoint.js';
 import { isEnvironment } from '../../shared/utils/is-env.js';
 
 @Injectable({
@@ -32,5 +32,21 @@ export class ImagesService {
     const context = new HttpContext().set(ERROR_MESSAGE, 'Failed to save images 🔥');
 
     return this.http.post<MarkerImage>(presignedUrl, isEnvironment('local') ? null : formData, { context });
+  }
+
+  public poolForMarkerImages(atlasId: string, markerId: string, requiredCount: number): Observable<MarkerImage[]> {
+    let retries = 0;
+    const maxRetries = 2;
+    return this.http.get<MarkerImage[]>(buildApiEndpoint(`images/${atlasId}/${markerId}/markers`), { context: new HttpContext().set(BYPASS_LOADER, true) }).pipe(
+      expand((response: MarkerImage[]) => {
+        if (response.length === requiredCount) {
+          return of(response);
+        }
+        retries += 1;
+        return timer(5000).pipe(switchMap(() => this.http.get<MarkerImage[]>(buildApiEndpoint(`images/${atlasId}/${markerId}/markers`), { context: new HttpContext().set(BYPASS_LOADER, true) })));
+      }),
+      takeWhile((response) => retries !== maxRetries && response.length !== requiredCount, true),
+      last()
+    );
   }
 }

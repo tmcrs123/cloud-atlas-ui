@@ -4,13 +4,14 @@ import { EMPTY, catchError, finalize, tap } from 'rxjs';
 import { BannerService } from '../services/banner-service.js';
 import { LoaderService } from '../services/loader.service';
 import { COGNITO_URLS } from './external-urls.js';
-import { ERROR_MESSAGE, INFO_MESSAGE } from '../tokens/tokens.js';
+import { BYPASS_LOADER, ERROR_MESSAGE, INFO_MESSAGE } from '../tokens/tokens.js';
 
 export const LoaderInterceptor: HttpInterceptorFn = (request, next) => {
   const loaderService = inject(LoaderService);
   const bannerService = inject(BannerService);
 
   if (COGNITO_URLS.includes(request.url)) return next(request.clone());
+  if (request.context.has(BYPASS_LOADER)) return next(request.clone());
 
   loaderService.isLoading.set(true);
   return next(request).pipe(
