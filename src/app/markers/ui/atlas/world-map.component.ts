@@ -2,9 +2,9 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, DestroyRef, Injector, type WritableSignal, computed, inject, signal, viewChild } from '@angular/core';
 import { outputToObservable, takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GoogleMap, GoogleMapsModule, MapInfoWindow } from '@angular/google-maps';
+import { GoogleMap, GoogleMapsModule, MapGeocoder, MapInfoWindow } from '@angular/google-maps';
 import { ActivatedRoute, Router } from '@angular/router';
-import { defer, filter, map, startWith, switchMap, take, tap } from 'rxjs';
+import { debounceTime, defer, distinctUntilChanged, filter, map, startWith, switchMap, take, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment.js';
 import type { Atlas } from '../../../shared/models/atlas.model.js';
 import { BannerService } from '../../../shared/services/banner-service.js';
@@ -50,11 +50,14 @@ export class WorldMapComponent {
   protected injector = inject(Injector);
 
   //properties
-  protected atlasId: string = this.activatedRoute.snapshot.paramMap.get('atlasId') as string;
-  protected mapModeQueryParam: string = this.activatedRoute.snapshot.queryParamMap.get('mapMode') as string;
-
-  protected isDialogOpen = false;
   protected atlas: Atlas | undefined = undefined;
+  protected atlasId: string = this.activatedRoute.snapshot.paramMap.get('atlasId') as string;
+  protected isDialogOpen = false;
+  protected mapModeQueryParam: string = this.activatedRoute.snapshot.queryParamMap.get('mapMode') as string;
+  protected geocoder = new MapGeocoder();
+
+  //FormControls
+  protected searchFormControl = new FormControl<string>('');
 
   //signals
   protected markers = this.store.getMarkersForAtlas(this.atlasId);
@@ -96,7 +99,6 @@ export class WorldMapComponent {
     }
   });
   protected canOpenAddMarkerDialog = computed(() => this.mapMode() === 'add');
-  // biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
   protected lastLatLngClicked = signal<google.maps.LatLng | null>(null);
   protected atlasMarkers = computed(() =>
     this.markers().map(
@@ -107,7 +109,6 @@ export class WorldMapComponent {
             lat: marker.coordinates.lat,
             lng: marker.coordinates.lng,
           },
-          // biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
         } as google.maps.marker.AdvancedMarkerElementOptions)
     )
   );
@@ -172,6 +173,7 @@ export class WorldMapComponent {
   ngOnInit() {
     this.clearFormControlOnDialogClose$.subscribe();
     this.atlas = this.store.getAtlasById(this.atlasId);
+    this.onSearchTermChanged();
   }
 
   ngAfterViewInit() {
@@ -203,7 +205,7 @@ export class WorldMapComponent {
     this.isDialogOpen = false;
   };
 
-  onCardClick(index: number) {
+  protected onCardClick(index: number) {
     const m = this.atlasMarkers()[index];
     if (!m.position?.lat && !m.position?.lng) return;
     this.googleMapRef().googleMap?.setCenter({
@@ -214,5 +216,26 @@ export class WorldMapComponent {
 
   protected navigateToMarkerDetail(markerIndex: number) {
     this.router.navigate(['markers', this.atlasId, 'marker', this.markers()[markerIndex].markerId, 'detail']);
+  }
+
+  protected onSearchTermChanged() {
+    this.searchFormControl.valueChanges
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        filter((query) => !!query),
+        switchMap((query) => {
+          return this.geocoder.geocode({ address: query });
+        })
+      )
+      .subscribe({
+        next: (geocoderResponse) => {
+          console.log(geocoderResponse);
+          if (geocoderResponse.results.length === 0) return;
+          const res = geocoderResponse.results[0];
+          this.googleMapRef().googleMap?.setCenter(res.geometry.location);
+          this.googleMapRef().googleMap?.setZoom(7);
+        },
+      });
   }
 }
