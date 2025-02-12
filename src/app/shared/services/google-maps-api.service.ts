@@ -10,6 +10,5 @@ export class GoogleMapsLoaderService {
 
   public async load() {
     await this.loader.importLibrary('maps');
-    // await this.loader.importLibrary('marker');
   }
 }
