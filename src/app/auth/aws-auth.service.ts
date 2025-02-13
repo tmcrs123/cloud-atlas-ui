@@ -61,6 +61,6 @@ export class AwsAuthService extends AuthService {
       window.sessionStorage.clear();
     }
 
-    window.location.href = `https://${environment.appName}-${environment.environmentName}.auth.${environment.region}.amazoncognito.com/logout?client_id=${environment.clientId}&logout_uri=${environment.logoutUri}`;
+    window.location.href = `https://${environment.appName}.auth.${environment.region}.amazoncognito.com/logout?client_id=${environment.clientId}&logout_uri=${environment.logoutUri}`;
   }
 }
