@@ -121,7 +121,7 @@ export class ImageUploadComponent {
     const fileReader = new FileReader();
     return new Observable<File>((subscriber) => {
       if (!this.validFileSize(file)) {
-        subscriber.error(`File ${file.name} exceeds limit of 10mb`);
+        subscriber.error(`File ${file.name} exceeds limit of 20mb`);
       }
 
       if (!this.validFileType(file)) {

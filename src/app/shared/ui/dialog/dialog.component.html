@@ -15,7 +15,7 @@
     </div>
 
     <!-- Dialog Footer -->
-    <div class="mt-6 flex justify-end space-x-2">
+    <div class="mt-6 flex justify-center gap-4">
       <app-button [config]="dialogConfig().secondaryActionButtonConfig" (btnClick)="cancelAction()"></app-button>
 
       @if (dialogConfig().primaryActionButtonConfig !== null && dialogConfig().primaryActionButtonConfig !==undefined) {

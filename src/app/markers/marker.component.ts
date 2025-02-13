@@ -104,7 +104,7 @@ export class MarkerComponent {
   constructor() {
     effect(() => {
       if (!this.canAddMarkers()) {
-        this.banner.setMessage({ message: 'You have reached the limit of 25 markers for this map 🗻', type: 'info' });
+        this.banner.setMessage({ message: `You have reached the limit of ${environment.markersLimit} markers for this map 🗻`, type: 'info' });
       }
     });
   }

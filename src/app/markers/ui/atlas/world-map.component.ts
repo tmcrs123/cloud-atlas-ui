@@ -230,7 +230,6 @@ export class WorldMapComponent {
       )
       .subscribe({
         next: (geocoderResponse) => {
-          console.log(geocoderResponse);
           if (geocoderResponse.results.length === 0) return;
           const res = geocoderResponse.results[0];
           this.googleMapRef().googleMap?.setCenter(res.geometry.location);
