@@ -233,7 +233,7 @@ export class WorldMapComponent {
           if (geocoderResponse.results.length === 0) return;
           const res = geocoderResponse.results[0];
           this.googleMapRef().googleMap?.setCenter(res.geometry.location);
-          this.googleMapRef().googleMap?.setZoom(7);
+          this.googleMapRef().googleMap?.setZoom(15);
         },
       });
   }

@@ -75,6 +75,7 @@ export class ImageUploadComponent {
           this.fileValidations$(file).pipe(
             mergeMap((file) => this.pushFileToS3(file)),
             catchError((error: string) => {
+              this.addNewImageButtonConfig.update((state) => ({ ...state, disabled: false }));
               return throwError(() => new Error(error));
             })
           )

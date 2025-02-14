@@ -113,6 +113,7 @@ export class MarkerDetailComponent {
   constructor() {
     effect(() => {
       this.addJournalEntryFormControl.setValue(this.marker().journal);
+      console.log(this.images());
     });
   }
   ngOnInit() {
