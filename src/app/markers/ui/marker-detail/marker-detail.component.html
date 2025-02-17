@@ -23,7 +23,7 @@
   <ng-template #breadcrumbs>
     <div id="breadcrumbs" class="mt-6 mb-6 self-center text-center md:self-end md:text-end">
       <a class="block mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps</a>
-      <a class="block mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/markers', atlasId]">{{ atlasTitle }}</a>
+      <a class="mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" (click)="this.location.back()">{{ atlasTitle }}</a>
       <h1 class="text-6xl font-bold">
         {{ marker().title }}
       </h1>

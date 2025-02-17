@@ -11,16 +11,20 @@ import type { MarkerImage } from '../shared/models/marker-image.js';
 import type { Marker } from '../shared/models/marker.js';
 import { AtlasService } from '../atlas/data-access/services/atlas.service.js';
 
+export type LastWorldMapState = ({ [K in keyof google.maps.MapOptions as K extends 'zoom' ? K : never]-?: google.maps.MapOptions[K] & {} } & { coordinates: Marker['coordinates'] }) | null;
+
 type AppState = {
   atlasList: { [atlasId: string]: Atlas };
   filter: { query: string; order: 'asc' | 'desc' };
   imageUploadInProgress: boolean;
+  lastWorldMapState: LastWorldMapState;
 };
 
 const initialState: AppState = {
   atlasList: {},
   filter: { query: '', order: 'asc' },
   imageUploadInProgress: false,
+  lastWorldMapState: null,
 };
 
 export const AppStore = signalStore(
@@ -381,6 +385,15 @@ export const AppStore = signalStore(
     getImagesForMarker: (atlasId: string, markerId: string) => {
       const index = findMarkerIndex(getState(store), atlasId, markerId);
       return computed(() => store.atlasList()[atlasId].markers[index].images);
+    },
+    // component relate state which arguably should live elsewhere
+    setLastWorldMapState: (arg: { coordinates: Marker['coordinates']; zoom: number }) => {
+      patchState(store, (state) => {
+        return {
+          ...state,
+          lastWorldMapState: arg,
+        };
+      });
     },
   }))
 );

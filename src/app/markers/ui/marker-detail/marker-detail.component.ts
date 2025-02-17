@@ -1,21 +1,22 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, DestroyRef, type Signal, computed, effect, inject, signal, viewChild, viewChildren } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import type { Marker } from '../../../shared/models/marker.js';
 import type { MarkerImage } from '../../../shared/models/marker-image.js';
+import type { Marker } from '../../../shared/models/marker.js';
 import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component';
 import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component';
 import { DropdownComponent, type DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component';
 import { LightboxComponent } from '../../../shared/ui/lightbox/lightbox.component';
+import { NoItemsComponent } from '../../../shared/ui/no-items/no-items.component';
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component';
 import { AppStore } from '../../../store/store.js';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
 import {
   ADD_CAPTION_DIALOG_CONFIG,
   ADD_JOURNAL_ENTRY_BUTTON_CONFIG,
-  ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG,
   ADD_JOURNAL_ENTRY_DIALOG_CONFIG,
+  ADD_JOURNAL_ENTRY_MOBILE_BUTTON_CONFIG,
   DELETE_DIALOG_CONFIG,
   DISPLAY_CAPTION_BUTTON_CONFIG,
   DISPLAY_CAPTION_DIALOG_CONFIG,
@@ -23,7 +24,6 @@ import {
   LIGHTBOX_CONFIG,
   UPLOAD_IMAGES_MOBILE_BUTTON_CONFIG,
 } from './marker-detail-config.js';
-import { NoItemsComponent } from '../../../shared/ui/no-items/no-items.component';
 
 @Component({
   selector: 'app-marker-detail',
@@ -58,6 +58,7 @@ export class MarkerDetailComponent {
 
   //Inject
   protected readonly destroyRef = inject(DestroyRef);
+  protected readonly location = inject(Location);
   protected readonly route = inject(ActivatedRoute);
   protected readonly store = inject(AppStore);
 
@@ -113,7 +114,6 @@ export class MarkerDetailComponent {
   constructor() {
     effect(() => {
       this.addJournalEntryFormControl.setValue(this.marker().journal);
-      console.log(this.images());
     });
   }
   ngOnInit() {

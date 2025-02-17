@@ -2,6 +2,7 @@ import { environment } from '../../../../environments/environment.js';
 import type { ButtonConfig } from '../../../shared/ui/button/button.component';
 
 // biome-ignore lint/correctness/noUndeclaredVariables: <explanation>
+
 export const DEFAULT_MAP_OPTIONS: google.maps.MapOptions = {
   draggableCursor: 'grab',
   draggingCursor: 'grab',

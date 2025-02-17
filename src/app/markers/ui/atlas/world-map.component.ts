@@ -39,6 +39,8 @@ export class WorldMapComponent {
   protected goBackButtonConfig: ButtonConfig = GO_BACK_BUTTON_CONFIG;
   protected goBackMobileButtonConfig: ButtonConfig = GO_BACK_MOBILE_BUTTON_CONFIG;
   protected infoWindowOptions = INFO_WINDOW_OPTIONS;
+  private readonly defaultLat = 51.4933675; //Greenwich lat
+  private readonly defaultLng = 0; //Greenwich lng
 
   //inject
   protected activatedRoute = inject(ActivatedRoute);
@@ -59,6 +61,10 @@ export class WorldMapComponent {
   //FormControls
   protected searchFormControl = new FormControl<string>('');
 
+  //VC / CC
+  protected dialogComponentRef = viewChild.required<DialogComponent>(DialogComponent);
+  protected googleMapRef = viewChild.required<GoogleMap>(GoogleMap);
+
   //signals
   protected markers = this.store.getMarkersForAtlas(this.atlasId);
   protected mapMode: WritableSignal<string> = signal('loading');
@@ -70,8 +76,8 @@ export class WorldMapComponent {
         return {
           ...DEFAULT_MAP_OPTIONS,
           center: {
-            lat: 51.4933675, //Greenwich
-            lng: 0, //Greenwich
+            lat: this.defaultLat,
+            lng: this.defaultLng,
           },
         };
       case 'move':
@@ -92,8 +98,8 @@ export class WorldMapComponent {
         return {
           ...DEFAULT_MAP_OPTIONS,
           center: {
-            lat: 51.4933675, //Greenwich
-            lng: 0, //Greenwich
+            lat: this.defaultLat,
+            lng: this.defaultLng,
           },
         };
     }
@@ -127,10 +133,6 @@ export class WorldMapComponent {
     };
   });
 
-  //VC / CC
-  protected dialogComponentRef = viewChild.required<DialogComponent>(DialogComponent);
-  protected googleMapRef = viewChild.required<GoogleMap>(GoogleMap);
-
   //Form controls
   protected newMarkerNameFormControl = new FormControl('', {
     validators: [Validators.required, Validators.minLength(3)],
@@ -144,6 +146,17 @@ export class WorldMapComponent {
       takeUntilDestroyed(this.destroyRef),
       map((click) => click.latLng),
       tap((latLng) => this.lastLatLngClicked.set(latLng))
+    )
+  );
+
+  protected onMapLoaded$ = defer(() =>
+    this.googleMapRef().idle.pipe(
+      take(1),
+      filter(() => this.markers().length > 0),
+      tap(() => {
+        this.googleMapRef().googleMap?.setZoom(this.store.lastWorldMapState()?.zoom ?? (DEFAULT_MAP_OPTIONS.zoom as number));
+        this.googleMapRef().googleMap?.setCenter({ lat: this.store.lastWorldMapState()?.coordinates.lat ?? this.defaultLat, lng: this.store.lastWorldMapState()?.coordinates.lng ?? this.defaultLng });
+      })
     )
   );
 
@@ -179,7 +192,12 @@ export class WorldMapComponent {
   ngAfterViewInit() {
     this.lastLatLngClicked$.subscribe();
     this.markersLimitReached$.subscribe();
+    this.onMapLoaded$.subscribe();
     this.mapMode.set(this.mapModeQueryParam); //allow enough time for google maps api to load
+  }
+
+  ngOnDestroy() {
+    this.store.setLastWorldMapState({ coordinates: { lat: this.googleMapRef().googleMap?.getCenter()?.lat() ?? this.defaultLat, lng: this.googleMapRef().googleMap?.getCenter()?.lng() || this.defaultLng }, zoom: this.googleMapRef().googleMap?.getZoom() || (DEFAULT_MAP_OPTIONS.zoom as number) });
   }
 
   protected userCompletesAddDialog = (hasMarkerToCreate: boolean) => {
@@ -215,7 +233,8 @@ export class WorldMapComponent {
   }
 
   protected navigateToMarkerDetail(markerIndex: number) {
-    this.router.navigate(['markers', this.atlasId, 'marker', this.markers()[markerIndex].markerId, 'detail']);
+    const markerId = this.markers()[markerIndex].markerId;
+    this.router.navigate(['markers', this.atlasId, 'marker', markerId, 'detail']);
   }
 
   protected onSearchTermChanged() {
