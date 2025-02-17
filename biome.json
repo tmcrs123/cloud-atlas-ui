@@ -21,7 +21,7 @@
       "indentWidth": 2,
       "indentStyle": "space",
       "semicolons": "asNeeded",
-      "lineWidth": 300,
+      "lineWidth": 200,
       "quoteStyle": "single",
       "trailingCommas": "all"
     }
