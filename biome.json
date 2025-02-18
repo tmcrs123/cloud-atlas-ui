@@ -7,7 +7,7 @@
     "formatter": {
       "enabled": true,
       "trailingCommas": "none",
-      "lineWidth": 200,
+      "lineWidth": 250,
       "indentStyle": "space",
       "indentWidth": 2,
       "lineEnding": "lf"
@@ -21,7 +21,7 @@
       "indentWidth": 2,
       "indentStyle": "space",
       "semicolons": "asNeeded",
-      "lineWidth": 200,
+      "lineWidth": 250,
       "quoteStyle": "single",
       "trailingCommas": "all"
     }
@@ -143,22 +143,5 @@
         "noBannedTypes": "off"
       }
     }
-  },
-  "overrides": [
-    {
-      "formatter": {
-        "lineWidth": 300
-      },
-      "include": [
-        "src/db/drizzle.config.ts"
-      ],
-      "linter": {
-        "rules": {
-          "style": {
-            "noDefaultExport": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }
