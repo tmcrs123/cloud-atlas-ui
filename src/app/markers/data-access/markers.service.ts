@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
-import type { Marker } from '../../shared/models/marker.js';
-import { buildApiEndpoint } from '../../shared/utils/api-endpoint.js';
+import type { Marker } from '../../shared/models/marker';
+import { buildApiEndpoint } from '../../shared/utils/api-endpoint';
 
 @Injectable({
   providedIn: 'root',

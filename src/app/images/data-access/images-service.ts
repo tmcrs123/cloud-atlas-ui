@@ -1,10 +1,10 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { type Observable, expand, last, of, switchMap, takeWhile, timer } from 'rxjs';
-import type { MarkerImage } from '../../shared/models/marker-image.js';
-import { BYPASS_LOADER, ERROR_MESSAGE } from '../../shared/tokens/tokens.js';
-import { buildApiEndpoint } from '../../shared/utils/api-endpoint.js';
-import { isEnvironment } from '../../shared/utils/is-env.js';
+import type { MarkerImage } from '../../shared/models/marker-image';
+import { BYPASS_LOADER, ERROR_MESSAGE } from '../../shared/tokens/tokens';
+import { buildApiEndpoint } from '../../shared/utils/api-endpoint';
+import { isEnvironment } from '../../shared/utils/is-env';
 
 @Injectable({
   providedIn: 'root',

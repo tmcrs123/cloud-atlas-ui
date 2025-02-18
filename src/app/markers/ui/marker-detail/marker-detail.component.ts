@@ -2,15 +2,15 @@ import { CommonModule, Location } from '@angular/common'
 import { Component, DestroyRef, type Signal, computed, effect, inject, signal, viewChild, viewChildren } from '@angular/core'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { ActivatedRoute, RouterLink } from '@angular/router'
-import type { MarkerImage } from '../../../shared/models/marker-image.js'
-import type { Marker } from '../../../shared/models/marker.js'
+import type { MarkerImage } from '../../../shared/models/marker-image'
+import type { Marker } from '../../../shared/models/marker'
 import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component'
 import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component'
 import { DropdownComponent, type DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component'
 import { LightboxComponent } from '../../../shared/ui/lightbox/lightbox.component'
 import { NoItemsComponent } from '../../../shared/ui/no-items/no-items.component'
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component'
-import { AppStore } from '../../../store/store.js'
+import { AppStore } from '../../../store/store'
 import { ImageUploadComponent } from '../image-upload/image-upload.component'
 import {
   ADD_CAPTION_DIALOG_CONFIG,
@@ -23,7 +23,7 @@ import {
   DROPDOWN_CONFIG,
   LIGHTBOX_CONFIG,
   UPLOAD_IMAGES_MOBILE_BUTTON_CONFIG,
-} from './marker-detail-config.js'
+} from './marker-detail-config'
 
 @Component({
   selector: 'app-marker-detail',

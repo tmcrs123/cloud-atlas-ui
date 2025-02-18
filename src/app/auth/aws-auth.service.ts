@@ -2,14 +2,17 @@ import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { EMPTY, Subject, map, switchMap, take, tap, timer } from 'rxjs';
-import { environment } from '../../environments/environment.js';
-import { BannerService } from '../shared/services/banner-service.js';
-import { AuthService } from './auth.service.js';
+import { environment } from '../../environments/environment';
+import { BannerService } from '../shared/services/banner-service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AwsAuthService extends AuthService {
+  override whoami(): void {
+    console.log('real auth');
+  }
   private readonly bannerService = inject(BannerService);
   private readonly oidcSecurityService = inject(OidcSecurityService);
 

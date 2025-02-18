@@ -4,17 +4,17 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { startWith } from 'rxjs';
-import { environment } from '../../environments/environment.js';
+import { environment } from '../../environments/environment';
 import type { Atlas } from '../shared/models/atlas.model';
-import type { Marker } from '../shared/models/marker.js';
-import { BannerService } from '../shared/services/banner-service.js';
+import type { Marker } from '../shared/models/marker';
+import { BannerService } from '../shared/services/banner-service';
 import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
 import { CardComponent } from '../shared/ui/card/card.component';
 import { type CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/dialog.component';
 import { DropdownComponent, type DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
 import { SelectComponent } from '../shared/ui/select/select.component';
-import { AppStore } from '../store/store.js';
-import { NoItemsComponent } from '../shared/ui/no-items/no-items.component.js';
+import { AppStore } from '../store/store';
+import { NoItemsComponent } from '../shared/ui/no-items/no-items.component';
 
 @Component({
   selector: 'app-marker',

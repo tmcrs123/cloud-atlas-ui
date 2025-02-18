@@ -19,6 +19,7 @@ export class LandingComponent {
 	private router = inject(Router);
 
 	navigate() {
+		this.auth.whoami()
 		if (this.auth.isAuthenticated()) this.router.navigate(["list"]);
 		else this.auth.login();
 	}

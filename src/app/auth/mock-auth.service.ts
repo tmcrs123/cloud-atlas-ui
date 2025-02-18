@@ -7,10 +7,15 @@ import { GoogleMapsLoaderService } from '../shared/services/google-maps-api.serv
 
 @Injectable({ providedIn: 'root' })
 export class MockAuthService extends AuthService {
+  override whoami(): void {
+    console.log('moch auth');
+  }
   private router = inject(Router);
   private googleMapsLoader = inject(GoogleMapsLoaderService);
 
+
   constructor() {
+    console.log('hello from MOCK auth');
     super();
     this.googleMapsLoader.load();
   }
