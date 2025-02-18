@@ -3,7 +3,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { environment } from "../../../environments/environment";
 
 @Injectable({ providedIn: "root" })
-export class GoogleMapsLoaderService {
+export class GoogleMapsAPIService {
 	private loader = new Loader({
 		apiKey: `${environment.googleMapsApiKey}`,
 	});

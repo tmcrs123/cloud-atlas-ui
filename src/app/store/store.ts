@@ -54,7 +54,7 @@ export const AppStore = signalStore(
     filteredMaps: computed(() => {
       return Object.values(state.atlasList()).filter((item) => item.title.includes(state.filter().query))
     }),
-    canAddMaps: computed(() => Object.values(state.atlasList()).length < Number.parseInt(environment.mapsLimit)),
+    canAddAtlas: computed(() => Object.values(state.atlasList()).length < Number.parseInt(environment.mapsLimit)),
   })),
   withProps(() => ({
     atlasService: inject(AtlasService),

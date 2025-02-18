@@ -10,9 +10,6 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class AwsAuthService extends AuthService {
-  override whoami(): void {
-    console.log('real auth');
-  }
   private readonly bannerService = inject(BannerService);
   private readonly oidcSecurityService = inject(OidcSecurityService);
 

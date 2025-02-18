@@ -8,5 +8,4 @@ export abstract class AuthService {
   abstract exchangeCodeForToken(): Observable<LoginResponse>;
   abstract login(): void;
   abstract logout(): void;
-  abstract whoami(): void;
 }
