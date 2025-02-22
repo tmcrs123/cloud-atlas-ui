@@ -1,25 +1,24 @@
 <div class="flex flex-row-reverse h-full shadow-lg">
   <div class="flex-3">
-    <google-map [options]="mapOptions()" [width]="'100%'" [height]="'100%'" (mapClick)="canOpenAddMarkerDialog() && (isDialogOpen = true)" class="cursor-pointer relative">
-      <input type="text" class="z-1 absolute block bg-white top-4 left-4 p-2 shadow-2xl" [formControl]="searchFormControl" placeholder="search..." />
+    <google-map [options]="mapOptions" [width]="'100%'" [height]="'100%'"
+      (mapClick)="canOpenAddMarkerDialog() && (isDialogOpen = true)" class="cursor-pointer relative">
+      <input type="text" class="z-1 absolute block bg-white top-4 left-4 p-2 shadow-2xl"
+        [formControl]="searchFormControl" placeholder="search..." />
       @for (atlasMarker of atlasMarkers(); track $index) {
-      <map-advanced-marker #thisMarker="mapAdvancedMarker" [options]="atlasMarker" (mapClick)="thisInfoWindow.open(thisMarker)"></map-advanced-marker>
+      <map-advanced-marker #thisMarker="mapAdvancedMarker" [options]="atlasMarker"
+        (mapClick)="thisInfoWindow.open(thisMarker)"></map-advanced-marker>
       <map-info-window [options]="infoWindowOptions" #thisInfoWindow="mapInfoWindow">
         <div class="flex flex-col items-start">
           <p class="text-xl m-2 font-bold">
             {{ atlasMarker.title }}
           </p>
           <div class="flex flex-row">
-            <button
-              (click)="thisInfoWindow.close()"
-              class="bg-gray-400 text-white hover:bg-gray-500 focus:outline-none shadow-md cursor-pointer text-xs flex flex-row items-center content-center justify-center mx-2 p-2"
-            >
+            <button (click)="thisInfoWindow.close()"
+              class="bg-gray-400 text-white hover:bg-gray-500 focus:outline-none shadow-md cursor-pointer text-xs flex flex-row items-center content-center justify-center mx-2 p-2">
               Close
             </button>
-            <button
-              (click)="navigateToMarkerDetail($index)"
-              class="bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer text-xs flex flex-row items-center content-center justify-center mx-2 p-2"
-            >
+            <button (click)="navigateToMarkerDetail($index)"
+              class="bg-sky-600 text-white hover:bg-sky-700 focus:outline-none shadow-md cursor-pointer text-xs flex flex-row items-center content-center justify-center mx-2 p-2">
               Go to marker
             </button>
           </div>
@@ -30,21 +29,17 @@
 
     <!-- markers -->
     <app-dialog [dialogConfig]="dialogConfig()" [open]="isDialogOpen" (dialogClosed)="userCompletesAddDialog($event)">
-      <input
-        type="text"
-        [formControl]="newMarkerNameFormControl"
-        placeholder="The name of your new marker"
-        class="w-full p-4 border"
-        [ngClass]="{
+      <input type="text" [formControl]="newMarkerNameFormControl" placeholder="The name of your new marker"
+        class="w-full p-4 border" [ngClass]="{
           'border-red-700': newMarkerNameFormControl.dirty && !newMarkerNameFormControl.valid,
           'border-zinc-300': newMarkerNameFormControl.valid
-        }"
-      />
+        }" />
       @if (newMarkerNameFormControl.dirty && newMarkerNameFormControl.hasError('required')) {
       <div class="text-red-700 font-medium mt-2">A name is required</div>
       }
     </app-dialog>
-    <app-button class="flex fixed z-1 bottom-8 right-10 md:hidden" [config]="goBackMobileButtonConfig" (btnClick)="router.navigate(['markers', atlasId])"></app-button>
+    <app-button class="flex fixed z-1 bottom-8 right-10 md:hidden" [config]="goBackMobileButtonConfig"
+      (btnClick)="router.navigate(['markers', atlasId])"></app-button>
   </div>
   <div class="hidden md:flex flex-col justify-around flex-1 p-4 bg-gray-100">
     <h1 class="text-4xl font-bold text-center">
@@ -53,14 +48,10 @@
 
     <div class="overflow-y-auto max-h-8/10">
       @for (item of markers(); track $index) {
-      <app-card
-        class="m-2 bg-white"
-        (click)="onCardClick($index)"
-        [cardConfig]="{
+      <app-card class="m-2 bg-white" (click)="onCardClick($index)" [cardConfig]="{
           title: item.title,
           subtitle: datePipe.transform(item.createdAt, 'EEEE, MMMM d, y') || ''
-        }"
-      ></app-card>
+        }"></app-card>
       } @empty {
       <div class="flex-col justify-center text-center">
         <p class="text-6xl m-10">¯\_(ツ)_/¯</p>
@@ -69,7 +60,8 @@
       }
     </div>
     <div class="flex flex-row justify-center mt-7">
-      <app-button [config]="goBackButtonConfig" (btnClick)="router.navigate(['markers', atlasId])" class="m-2"></app-button>
+      <app-button [config]="goBackButtonConfig" (btnClick)="router.navigate(['markers', atlasId])"
+        class="m-2"></app-button>
 
       @if (mapMode() === 'add') {
       <app-button [config]="moveButtonConfig()" (btnClick)="mapMode.set('move')" class="m-2"></app-button>
