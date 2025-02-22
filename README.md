@@ -3,6 +3,8 @@
 Cloud Atlas is the outcome of a year long journey around the world. It's a interactive photo album where you can create maps with markers, and add images to those markers.
 Find a demo version here (no login required): [demo.cloud-atlas.net](https://demo.cloud-atlas.net/)
 
+<img src="https://imgur.com/a/1iNCNw4" />
+
 ## Technical aspects
 
 This app is composed of 4 repositories, all under this account:
