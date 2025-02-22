@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# projected related
+.vscode
+.angular
+environments/environment.local.ts
+environments/environment.test.ts
