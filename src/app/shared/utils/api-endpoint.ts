@@ -1,5 +1,5 @@
 import { environment } from '../../../environments/environment';
 
-export const buildApiEndpoint = (path: string) => {
+export function buildApiEndpoint(path: string) {
   return `${environment.api_endpoint}/${path}`;
 };
