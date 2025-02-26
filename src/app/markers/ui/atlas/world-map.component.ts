@@ -5,6 +5,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { GoogleMap, GoogleMapsModule, MapGeocoder, MapInfoWindow } from '@angular/google-maps'
 import { ActivatedRoute, Router } from '@angular/router'
 import { debounceTime, defer, distinctUntilChanged, filter, map, startWith, switchMap, take, tap } from 'rxjs'
+<<<<<<< HEAD
 import { environment } from '../../../../environments/environment.js'
 import type { Atlas } from '../../../shared/models/atlas.model.js'
 import { BannerService } from '../../../shared/services/banner-service.js'
@@ -13,14 +14,32 @@ import { CardComponent } from '../../../shared/ui/card/card.component.js'
 import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component.js'
 import { AppStore } from '../../../store/store.js'
 import { ADD_BUTTON_CONFIG, GO_BACK_BUTTON_CONFIG, GO_BACK_MOBILE_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG } from './world-map.component.config.js'
+=======
+import { environment } from '../../../../environments/environment'
+import type { Atlas } from '../../../shared/models/atlas.model'
+import { BannerService } from '../../../shared/services/banner-service'
+import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component'
+import { CardComponent } from '../../../shared/ui/card/card.component'
+import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component'
+import { AppStore, type MapOptions } from '../../../store/store'
+import { ADD_BUTTON_CONFIG, GO_BACK_BUTTON_CONFIG, GO_BACK_MOBILE_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG } from './world-map.component.config'
+>>>>>>> cypress
 
 type MapMode = 'loading' | 'add' | 'move'
 
 @Component({
-  selector: 'app-world-map',
-  imports: [GoogleMapsModule, MapInfoWindow, DialogComponent, ReactiveFormsModule, CardComponent, ButtonComponent, CommonModule],
+  selector: "app-world-map",
+  imports: [
+    GoogleMapsModule,
+    MapInfoWindow,
+    DialogComponent,
+    ReactiveFormsModule,
+    CardComponent,
+    ButtonComponent,
+    CommonModule,
+  ],
   providers: [DatePipe],
-  templateUrl: './world-map.component.html',
+  templateUrl: "./world-map.component.html",
   styles: [
     `
       :host {

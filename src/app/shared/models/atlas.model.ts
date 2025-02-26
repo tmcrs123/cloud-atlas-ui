@@ -1,4 +1,4 @@
-import type { Marker } from './marker.js';
+import type { Marker } from './marker';
 
 export type Atlas = {
   atlasId: string;

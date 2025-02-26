@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { EMPTY, of, switchMap, take, tap, timer } from 'rxjs';
-import type { BannerNotification } from '../models/banner-notification.js';
+import type { BannerNotification } from '../models/banner-notification';
 
 @Injectable({
   providedIn: 'root',

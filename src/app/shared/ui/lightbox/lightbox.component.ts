@@ -1,7 +1,7 @@
 import { Component, DestroyRef, ElementRef, inject, input, linkedSignal, output, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, fromEvent, tap } from 'rxjs';
-import type { MarkerImage } from '../../models/marker-image.js';
+import type { MarkerImage } from '../../models/marker-image';
 export interface LightboxConfig {
   openAtIndex: number;
   isVisible: boolean;

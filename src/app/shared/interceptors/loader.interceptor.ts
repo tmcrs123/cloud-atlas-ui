@@ -1,10 +1,10 @@
 import type { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { EMPTY, catchError, finalize, tap } from 'rxjs';
-import { BannerService } from '../services/banner-service.js';
+import { BannerService } from '../services/banner-service';
 import { LoaderService } from '../services/loader.service';
-import { COGNITO_URLS } from './external-urls.js';
-import { BYPASS_LOADER, ERROR_MESSAGE, INFO_MESSAGE } from '../tokens/tokens.js';
+import { COGNITO_URLS } from './external-urls';
+import { BYPASS_LOADER, ERROR_MESSAGE, INFO_MESSAGE } from '../tokens/tokens';
 
 export const LoaderInterceptor: HttpInterceptorFn = (request, next) => {
   const loaderService = inject(LoaderService);

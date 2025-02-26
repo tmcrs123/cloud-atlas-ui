@@ -1,5 +1,5 @@
 import { type ErrorHandler, Injectable, inject } from '@angular/core';
-import { BannerService } from './banner-service.js';
+import { BannerService } from './banner-service';
 
 @Injectable({
   providedIn: 'root',

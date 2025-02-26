@@ -1,10 +1,10 @@
 import { Component, computed, effect, inject, input, linkedSignal } from '@angular/core';
 import { bufferCount, catchError, from, map, mergeMap, Observable, tap, throwError } from 'rxjs';
-import { environment } from '../../../../environments/environment.js';
-import { ImagesService } from '../../../images/data-access/images-service.js';
-import { BannerService } from '../../../shared/services/banner-service.js';
+import { environment } from '../../../../environments/environment';
+import { ImagesService } from '../../../images/data-access/images-service';
+import { BannerService } from '../../../shared/services/banner-service';
 import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component';
-import { AppStore } from '../../../store/store.js';
+import { AppStore } from '../../../store/store';
 import { NgIf } from '@angular/common';
 
 @Component({
