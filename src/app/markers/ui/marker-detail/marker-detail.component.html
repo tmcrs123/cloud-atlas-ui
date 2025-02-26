@@ -2,28 +2,40 @@
   <ng-content *ngTemplateOutlet="breadcrumbs"></ng-content>
 
   <div class="hidden md:flex justify-end">
-    <app-button [config]="addJournalEntryButtonConfig" (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
-    <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload>
+    <app-button [config]="addJournalEntryButtonConfig"
+      (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
+    <ng-container
+      *ngTemplateOutlet="imageUpload, context: {buttonConfig: null, styling: 'hidden md:flex ml-2', isDesktop: true}"></ng-container>
+    <!-- <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload> -->
   </div>
 
   <ng-content *ngTemplateOutlet="journal"></ng-content>
   <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
 
-  <app-button
-    class="flex fixed z-1 bottom-8 right-10 md:hidden"
-    [config]="addJournalEntryMobileButtonConfig"
-    (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"
-  ></app-button>
-  <app-image-upload [buttonConfig]="uploadImagesMobileButtonConfig" [atlasId]="atlasId" [markerId]="markerId"></app-image-upload>
+  <app-button class="flex fixed z-1 bottom-8 right-10 md:hidden" [config]="addJournalEntryMobileButtonConfig"
+    (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
+  <ng-container [ngTemplateOutlet]="imageUpload"
+    [ngTemplateOutletContext]="{buttonConfig: uploadImagesMobileButtonConfig, styling: 'flex md:hidden', isDesktop: false}"></ng-container>
 
-  <app-no-items *ngIf="!marker().journal && images().length === 0" [noItemsText]="'There is nothing to see here yet.'"></app-no-items>
+  <!-- <app-image-upload [buttonConfig]="uploadImagesMobileButtonConfig" [atlasId]="atlasId"
+    [markerId]="markerId"></app-image-upload> -->
+
+  <app-no-items *ngIf="!marker().journal && images().length === 0"
+    [noItemsText]="'There is nothing to see here yet.'"></app-no-items>
 
   <!-- templates -->
 
+  <ng-template #imageUpload let-buttonConfig="buttonConfig" let-styling="styling" let-isDesktop="isDesktop">
+    <app-image-upload [ngClass]="styling" [buttonConfig]="buttonConfig" [isDesktop]="isDesktop" [atlasId]="atlasId"
+      [markerId]="markerId"></app-image-upload>
+  </ng-template>
+
   <ng-template #breadcrumbs>
     <div id="breadcrumbs" class="mt-6 mb-6 self-center text-center md:self-end md:text-end">
-      <a class="block mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" [routerLink]="['/list']">Your maps</a>
-      <a class="mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer" (click)="this.location.back()">{{ atlasTitle }}</a>
+      <a class="block mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer"
+        [routerLink]="['/list']">Your maps</a>
+      <a class="mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer"
+        (click)="this.location.back()">{{ atlasTitle }}</a>
       <h1 class="text-6xl font-bold">
         {{ marker().title }}
       </h1>
@@ -46,18 +58,16 @@
 
         <div class="relative mb-5">
           @if(images().length > 0){
-          <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1" (optionSelected)="onDropdownOptionSelected($event, $index)"> </app-dropdown>
+          <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1"
+            (optionSelected)="onDropdownOptionSelected($event, $index)"> </app-dropdown>
 
           @if (image.legend) {
-          <app-button [config]="displayCaptionButtonConfig" (btnClick)="onLegendButtonClicked($index)" class="absolute left-10 top-1"></app-button>
+          <app-button [config]="displayCaptionButtonConfig" (btnClick)="onLegendButtonClicked($index)"
+            class="absolute left-10 top-1"></app-button>
           }
 
-          <img
-            [src]="image.url"
-            (click)="onImageClicked($index)"
-            [alt]="image.legend"
-            class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-          />
+          <img [src]="image.url" (click)="onImageClicked($index)" [alt]="image.legend"
+            class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer" />
           }
         </div>
         }
@@ -65,48 +75,38 @@
     </div>
   </ng-template>
 
-  <app-dialog #deleteImageDialog [dialogConfig]="deleteDialogConfig" [open]="isDeleteDialogOpen()" (dialogClosed)="onDeleteImageDialogClosed($event)">
+  <app-dialog #deleteImageDialog [dialogConfig]="deleteDialogConfig" [open]="isDeleteDialogOpen()"
+    (dialogClosed)="onDeleteImageDialogClosed($event)">
     <app-warning-banner [warningText]="'Are you sure? This action is irreversible.'"></app-warning-banner>
   </app-dialog>
 
-  <app-dialog #addCaptionDialog [dialogConfig]="addCaptionDialogConfig" [open]="isAddCaptionDialogOpen()" (dialogClosed)="onAddCaptionDialogClose($event)">
-    <input
-      [formControl]="addCaptionFormControl"
-      type="text"
-      placeholder="Say something about this image..."
-      class="w-full p-4 border"
-      [ngClass]="{
+  <app-dialog #addCaptionDialog [dialogConfig]="addCaptionDialogConfig" [open]="isAddCaptionDialogOpen()"
+    (dialogClosed)="onAddCaptionDialogClose($event)">
+    <input [formControl]="addCaptionFormControl" type="text" placeholder="Say something about this image..."
+      class="w-full p-4 border" [ngClass]="{
         'border-red-700': addCaptionFormControl.dirty && !addCaptionFormControl.valid,
         'border-zinc-300': addCaptionFormControl.valid
-      }"
-    />
+      }" />
     @if (addCaptionFormControl.dirty && addCaptionFormControl.hasError('required')) {
     <div class="text-red-700 font-medium mt-2">A name is required</div>
     }
   </app-dialog>
 
-  <app-dialog
-    #displayCaptionDialog
-    [dialogConfig]="displayCaptionDialogConfig"
-    [open]="isDisplayCaptionDialogOpen()"
-    (dialogClosed)="isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen())"
-  >
+  <app-dialog #displayCaptionDialog [dialogConfig]="displayCaptionDialogConfig" [open]="isDisplayCaptionDialogOpen()"
+    (dialogClosed)="isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen())">
     <i>{{ focusedImagedIndex() !== null && images()[focusedImagedIndex()!].legend }}</i>
   </app-dialog>
 
-  <app-dialog #addJournalEntryDialog [dialogConfig]="addJournalEntryDialogConfig" [open]="isJournalEntryDialogOpen()" (dialogClosed)="onAddJournalEntryDialogClosed($event)">
-    <textarea
-      [formControl]="addJournalEntryFormControl"
-      [value]="addJournalEntryFormControl.value"
-      placeholder="Say something about this marker..."
-      class="w-full p-2 border rounded-md"
-      rows="4"
-      >{{ addJournalEntryFormControl.value }}</textarea
-    >
+  <app-dialog #addJournalEntryDialog [dialogConfig]="addJournalEntryDialogConfig" [open]="isJournalEntryDialogOpen()"
+    (dialogClosed)="onAddJournalEntryDialogClosed($event)">
+    <textarea [formControl]="addJournalEntryFormControl" [value]="addJournalEntryFormControl.value"
+      placeholder="Say something about this marker..." class="w-full p-2 border rounded-md"
+      rows="4">{{ addJournalEntryFormControl.value }}</textarea>
   </app-dialog>
 
   <!-- open is controlled from outside because of the event handlers on the lightbox -->
   @if (isLightboxOpen()) {
-  <app-lightbox [images]="images()" [lightboxConfig]="lightboxConfig()" (close)="isLightboxOpen.set(false)"></app-lightbox>
+  <app-lightbox [images]="images()" [lightboxConfig]="lightboxConfig()"
+    (close)="isLightboxOpen.set(false)"></app-lightbox>
   }
 </section>

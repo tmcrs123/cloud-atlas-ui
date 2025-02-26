@@ -1,2 +1,3 @@
-<app-button *ngIf="canAddImages()" [config]="addNewImageButtonConfig()" (btnClick)="fileInput.click()" class="p2 flex flex-row-reverse"></app-button>
-<input #fileInput hidden type="file" max="10" multiple (change)="handleFileUpload($event)" />
+<app-button *ngIf="canAddImages()" [config]="addNewImageButtonConfig()" (btnClick)="fileInput.click()"
+    class="p2 flex flex-row-reverse"></app-button>
+<input #fileInput [class]="dataTestId()" hidden type="file" max="10" multiple (change)="handleFileUpload($event)" />

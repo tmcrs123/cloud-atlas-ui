@@ -21,11 +21,13 @@ export class ImageUploadComponent {
   // signals
   atlasId = input('');
   buttonConfig = input<ButtonConfig>();
+  isDesktop = input(false);
   markerId = input('');
   canAddImages = computed(() => {
     return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < Number.parseInt(environment.imagesLimit);
   });
   markerCurrentImageCount = computed(() => this.store.getImagesForMarker(this.atlasId(), this.markerId())().length);
+  dataTestId = computed(() => `file-upload-${this.isDesktop() ? 'desktop' : 'mobile'}`)
   addNewImageButtonConfig = linkedSignal<ButtonConfig>(() => {
     return {
       text: 'Add new image',
