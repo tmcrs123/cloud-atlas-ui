@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { buildApiEndpoint } from '../../../shared/utils/api-endpoint';
-import type { Atlas } from '../../../shared/models/atlas.model.js';
+import type { Atlas } from '../../../shared/models/atlas.model';
 
 @Injectable({
   providedIn: 'root',
