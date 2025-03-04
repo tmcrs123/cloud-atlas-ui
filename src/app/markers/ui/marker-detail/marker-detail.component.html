@@ -6,19 +6,18 @@
       (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
     <ng-container
       *ngTemplateOutlet="imageUpload, context: {buttonConfig: null, styling: 'hidden md:flex ml-2', isDesktop: true}"></ng-container>
-    <!-- <app-image-upload [atlasId]="atlasId" [markerId]="markerId" class="ml-2"></app-image-upload> -->
   </div>
 
   <ng-content *ngTemplateOutlet="journal"></ng-content>
-  <ng-content *ngTemplateOutlet="imageGrid"></ng-content>
+  <app-image-gallery *ngIf="images().length > 0" [images]="images()"
+    (optionSelected)="onDropdownOptionSelected($event.optionIndex, $event.imageIndex)"
+    (btnClick)="onLegendButtonClicked($event)" (imageClicked)="onImageClicked($event)"></app-image-gallery>
 
   <app-button class="flex fixed z-1 bottom-8 right-10 md:hidden" [config]="addJournalEntryMobileButtonConfig"
     (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
   <ng-container [ngTemplateOutlet]="imageUpload"
     [ngTemplateOutletContext]="{buttonConfig: uploadImagesMobileButtonConfig, styling: 'flex md:hidden', isDesktop: false}"></ng-container>
 
-  <!-- <app-image-upload [buttonConfig]="uploadImagesMobileButtonConfig" [atlasId]="atlasId"
-    [markerId]="markerId"></app-image-upload> -->
 
   <app-no-items *ngIf="!marker().journal && images().length === 0"
     [noItemsText]="'There is nothing to see here yet.'"></app-no-items>
@@ -34,8 +33,8 @@
     <div id="breadcrumbs" class="mt-6 mb-6 self-center text-center md:self-end md:text-end">
       <a class="block mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer"
         [routerLink]="['/list']">Your maps</a>
-      <a class="mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer"
-        (click)="this.location.back()">{{ atlasTitle }}</a>
+      <button class="mb-4 text-md font-medium text-blue-600 underline hover:text-blue-900 cursor-pointer"
+        (click)="this.location.back()">{{ atlasTitle }}</button>
       <h1 class="text-6xl font-bold">
         {{ marker().title }}
       </h1>
@@ -50,30 +49,6 @@
     </div>
   </ng-template>
 
-  <!-- Image Grid Section -->
-  <ng-template #imageGrid>
-    <div class="relative flex flex-col mt-6 mb-3 pb-3">
-      <div class="images-container">
-        @for (image of images(); track $index) {
-
-        <div class="relative mb-5">
-          @if(images().length > 0){
-          <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1"
-            (optionSelected)="onDropdownOptionSelected($event, $index)"> </app-dropdown>
-
-          @if (image.legend) {
-          <app-button [config]="displayCaptionButtonConfig" (btnClick)="onLegendButtonClicked($index)"
-            class="absolute left-10 top-1"></app-button>
-          }
-
-          <img [src]="image.url" (click)="onImageClicked($index)" [alt]="image.legend"
-            class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer" />
-          }
-        </div>
-        }
-      </div>
-    </div>
-  </ng-template>
 
   <app-dialog #deleteImageDialog [dialogConfig]="deleteDialogConfig" [open]="isDeleteDialogOpen()"
     (dialogClosed)="onDeleteImageDialogClosed($event)">

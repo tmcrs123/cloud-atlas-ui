@@ -9,16 +9,17 @@
     <div class="hidden md:flex gap-8 justify-center items-center">
       @if(auth.isAuthenticated()){
       <a routerLink="list" [class]="navItemCss">Your maps</a>
-      <a (click)="auth.logout()" [class]="navItemCss">Log out</a>
+      <button (click)="auth.logout()" [class]="navItemCss">Log out</button>
 
       }@else {
-      <a (click)="auth.login()" [class]="navItemCss">Log in</a>
+      <button (click)="auth.login()" [class]="navItemCss">Log in</button>
       }
       <a routerLink="about" [class]="navItemCss">About</a>
     </div>
 
     <div class="flex md:hidden relative">
-      <button id="menu-button" type="button" class="text-zinc-800 cursor-pointer" (click)="mobileMenu.classList.toggle('hidden')">
+      <button id="menu-button" type="button" class="text-zinc-800 cursor-pointer"
+        (click)="mobileMenu.classList.toggle('hidden')">
         <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -26,10 +27,12 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden z-4 absolute top-20 w-50/100 right-9 border-zinc-1000 bg-white shadow-lg rounded-2xl transition-shadow duration-300" #mobileMenu>
+    <div id="mobile-menu"
+      class="hidden md:hidden z-4 absolute top-20 w-50/100 right-9 border-zinc-1000 bg-white shadow-lg rounded-2xl transition-shadow duration-300"
+      #mobileMenu>
       @if (auth.isAuthenticated()) {
       <a routerLink="list" class="block px-3 py-2 font-medium text-zinc-800">Your maps</a>
-      <a (click)="auth.logout()" class="block px-3 py-2 font-medium text-zinc-800">Log out</a>
+      <button (click)="auth.logout()" class="block px-3 py-2 font-medium text-zinc-800">Log out</button>
       } @else {
       <a (click)="auth.login()" class="block px-3 py-2 font-medium text-zinc-800">Log in</a>
 

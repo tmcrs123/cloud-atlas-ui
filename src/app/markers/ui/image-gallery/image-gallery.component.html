@@ -1,0 +1,21 @@
+<p class="dots">Fetching your images</p>
+<div class="images-container" #imagesContainer>
+
+
+  @for (image of images(); track $index) {
+
+  <div class="relative mb-5">
+    <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1"
+      (optionSelected)="optionSelected.emit({optionIndex: $event, imageIndex: $index})"></app-dropdown>
+    <app-button [config]="displayCaptionButtonConfig" class="absolute left-10 top-1"
+      (btnClick)="btnClick.emit($index)"></app-button>
+    <div #imageContainer></div>
+  </div>
+
+
+  <!-- <img [src]="image.url" [alt]="image.legend"
+            class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+            loading="lazy" /> -->
+  }
+
+</div>

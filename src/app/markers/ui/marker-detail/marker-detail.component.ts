@@ -24,21 +24,13 @@ import {
   LIGHTBOX_CONFIG,
   UPLOAD_IMAGES_MOBILE_BUTTON_CONFIG,
 } from './marker-detail-config'
+import { ImageGalleryComponent } from '../image-gallery/image-gallery.component'
 
 @Component({
   selector: 'app-marker-detail',
-  imports: [LightboxComponent, DropdownComponent, DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule, NoItemsComponent],
+  imports: [LightboxComponent, DropdownComponent, DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule, NoItemsComponent, ImageGalleryComponent],
   templateUrl: './marker-detail.component.html',
-  styles: `.images-container {
-    column-count: 3;
-  }
-  
-  @media only screen and (max-width: 500px) {
-    .images-container {
-      column-count: 1;
-    }
-  }
-
+  styles: `
   .break-anywhere {
     overflow-wrap: anywhere;
   }
