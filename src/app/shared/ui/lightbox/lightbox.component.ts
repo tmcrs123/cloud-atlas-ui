@@ -1,7 +1,8 @@
-import { Component, DestroyRef, ElementRef, inject, input, linkedSignal, output, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, input, linkedSignal, output, Renderer2, viewChild, ViewContainerRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, fromEvent, tap } from 'rxjs';
 import type { MarkerImage } from '../../models/marker-image';
+import { CommonModule } from '@angular/common';
 export interface LightboxConfig {
   openAtIndex: number;
   isVisible: boolean;
@@ -11,17 +12,18 @@ const handledKeyboardEvents = ['Escape', 'ArrowRight', 'ArrowLeft'];
 
 @Component({
   selector: 'app-lightbox',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './lightbox.component.html',
   styleUrl: './lightbox.component.css',
 })
 export class LightboxComponent {
   destroyRef = inject(DestroyRef);
-  lightboxConfig = input.required<LightboxConfig>();
-  images = input.required<MarkerImage[]>();
+  renderer = inject(Renderer2);
+  open = input.required<boolean>();
   close = output<void>();
+  updateIndex = output<'next' | 'prev'>();
 
-  currentIndex = linkedSignal(() => this.lightboxConfig().openAtIndex);
+
   lightboxContainer = viewChild.required('lightboxContainer', {
     read: ElementRef,
   });
@@ -80,12 +82,10 @@ export class LightboxComponent {
   }
 
   private onPrev() {
-    const newIndex = this.currentIndex() - 1 >= 0 ? this.currentIndex() - 1 : this.images().length - 1;
-    this.currentIndex.set(newIndex);
+    this.updateIndex.emit('prev')
   }
 
   private onNext() {
-    const newIndex = this.currentIndex() + 1 >= this.images().length ? 0 : this.currentIndex() + 1;
-    this.currentIndex.set(newIndex);
+    this.updateIndex.emit('next')
   }
 }

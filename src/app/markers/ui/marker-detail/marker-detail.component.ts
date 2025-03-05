@@ -2,15 +2,15 @@ import { CommonModule, Location } from '@angular/common'
 import { Component, DestroyRef, type Signal, computed, effect, inject, signal, viewChild, viewChildren } from '@angular/core'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { ActivatedRoute, RouterLink } from '@angular/router'
-import type { MarkerImage } from '../../../shared/models/marker-image'
 import type { Marker } from '../../../shared/models/marker'
+import type { MarkerImage } from '../../../shared/models/marker-image'
 import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component'
 import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component'
 import { DropdownComponent, type DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component'
-import { LightboxComponent } from '../../../shared/ui/lightbox/lightbox.component'
 import { NoItemsComponent } from '../../../shared/ui/no-items/no-items.component'
 import { WarningBannerComponent } from '../../../shared/ui/warning-banner/warning-banner.component'
 import { AppStore } from '../../../store/store'
+import { ImageGalleryComponent } from '../image-gallery/image-gallery.component'
 import { ImageUploadComponent } from '../image-upload/image-upload.component'
 import {
   ADD_CAPTION_DIALOG_CONFIG,
@@ -21,14 +21,12 @@ import {
   DISPLAY_CAPTION_BUTTON_CONFIG,
   DISPLAY_CAPTION_DIALOG_CONFIG,
   DROPDOWN_CONFIG,
-  LIGHTBOX_CONFIG,
   UPLOAD_IMAGES_MOBILE_BUTTON_CONFIG,
 } from './marker-detail-config'
-import { ImageGalleryComponent } from '../image-gallery/image-gallery.component'
 
 @Component({
   selector: 'app-marker-detail',
-  imports: [LightboxComponent, DropdownComponent, DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule, NoItemsComponent, ImageGalleryComponent],
+  imports: [DialogComponent, ButtonComponent, ReactiveFormsModule, WarningBannerComponent, ImageUploadComponent, RouterLink, CommonModule, NoItemsComponent, ImageGalleryComponent],
   templateUrl: './marker-detail.component.html',
   styles: `
   .break-anywhere {
@@ -62,7 +60,6 @@ export class MarkerDetailComponent {
   protected isDisplayCaptionDialogOpen = signal(false)
   protected isJournalEntryDialogOpen = signal(false)
   protected isLightboxOpen = signal(false)
-  protected lightboxConfig = signal(LIGHTBOX_CONFIG)
   protected marker!: Signal<Marker>
   protected noItemsText = computed(() => {
     let message = ''
@@ -126,14 +123,6 @@ export class MarkerDetailComponent {
   onLegendButtonClicked(imageIndex: number) {
     this.focusedImagedIndex.set(imageIndex)
     this.isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen())
-  }
-
-  onImageClicked(imageIndex: number) {
-    this.lightboxConfig.update((state) => ({
-      ...state,
-      openAtIndex: imageIndex,
-    }))
-    this.isLightboxOpen.set(true)
   }
 
   onDropdownOptionSelected(option: number, dropdownIndex: number) {

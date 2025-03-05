@@ -2,7 +2,7 @@
 <div class="images-container" #imagesContainer>
 
 
-  @for (image of images(); track $index) {
+  @for (image of groupedImages(); track $index) {
 
   <div class="relative mb-5">
     <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1"
@@ -11,11 +11,10 @@
       (btnClick)="btnClick.emit($index)"></app-button>
     <div #imageContainer></div>
   </div>
-
-
-  <!-- <img [src]="image.url" [alt]="image.legend"
-            class="w-full h-auto shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-            loading="lazy" /> -->
   }
 
 </div>
+
+<app-lightbox [open]="isLightboxOpen()" (close)="onClose()" (updateIndex)="updateFocusedImageIndex($event)">
+  <div #injectImage class="w-8/10"></div>
+</app-lightbox>

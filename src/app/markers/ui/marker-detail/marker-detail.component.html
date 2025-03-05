@@ -11,7 +11,7 @@
   <ng-content *ngTemplateOutlet="journal"></ng-content>
   <app-image-gallery *ngIf="images().length > 0" [images]="images()"
     (optionSelected)="onDropdownOptionSelected($event.optionIndex, $event.imageIndex)"
-    (btnClick)="onLegendButtonClicked($event)" (imageClicked)="onImageClicked($event)"></app-image-gallery>
+    (btnClick)="onLegendButtonClicked($event)"></app-image-gallery>
 
   <app-button class="flex fixed z-1 bottom-8 right-10 md:hidden" [config]="addJournalEntryMobileButtonConfig"
     (btnClick)="isJournalEntryDialogOpen.set(!isJournalEntryDialogOpen())"></app-button>
@@ -78,10 +78,4 @@
       placeholder="Say something about this marker..." class="w-full p-2 border rounded-md"
       rows="4">{{ addJournalEntryFormControl.value }}</textarea>
   </app-dialog>
-
-  <!-- open is controlled from outside because of the event handlers on the lightbox -->
-  @if (isLightboxOpen()) {
-  <app-lightbox [images]="images()" [lightboxConfig]="lightboxConfig()"
-    (close)="isLightboxOpen.set(false)"></app-lightbox>
-  }
 </section>
