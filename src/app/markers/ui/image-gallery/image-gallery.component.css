@@ -1,5 +1,7 @@
 .images-container {
   column-count: 2;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
 }
 
 @media only screen and (max-width: 500px) {

@@ -14,6 +14,7 @@ import { AtlasServiceMock } from '../mocks/atlas.service.mock'
 import { GoogleMapsAPIServiceMock } from '../mocks/google-maps-api.service.mock'
 import { ImagesServiceMock } from '../mocks/images-service.mock'
 import { MarkersServiceMock } from '../mocks/markers.service.mock'
+import { EnvironmentVariablesService } from '../../app/shared/services/environment-variables.service'
 
 export const testingModuleBaseConfig: Omit<TestModuleMetadata, 'imports'> = {
     providers: [
@@ -26,6 +27,7 @@ export const testingModuleBaseConfig: Omit<TestModuleMetadata, 'imports'> = {
         { provide: AtlasService, useClass: AtlasServiceMock },
         { provide: MarkersService, useClass: MarkersServiceMock },
         { provide: BannerService, useClass: BannerService },
+        { provide: EnvironmentVariablesService, useClass: EnvironmentVariablesService },
         provideRouter(routeDefinitions)
     ]
 }

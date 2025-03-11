@@ -20,6 +20,7 @@ export class LightboxComponent {
   destroyRef = inject(DestroyRef);
   renderer = inject(Renderer2);
   open = input.required<boolean>();
+  url = input.required<string>();
   close = output<void>();
   updateIndex = output<'next' | 'prev'>();
 
@@ -31,6 +32,8 @@ export class LightboxComponent {
   private swipeTime: number;
 
   swipe(e: TouchEvent, when: string) {
+    if (!this.open()) return;
+
     const coord: [number, number] = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
     const time = new Date().getTime();
 
@@ -56,6 +59,7 @@ export class LightboxComponent {
   ngAfterViewInit() {
     fromEvent<KeyboardEvent>(document, 'keydown')
       .pipe(
+        filter(() => this.open()),
         takeUntilDestroyed(this.destroyRef),
         tap(() => {
           event?.preventDefault();

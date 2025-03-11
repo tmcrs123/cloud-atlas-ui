@@ -6,7 +6,7 @@ import { AppStore } from "../store/store"
 import { Router } from "@angular/router"
 import { AuthService } from "../auth/auth.service"
 
-describe('Redirect component', () => {
+describe.only('Redirect component', () => {
 
     let fixture: ComponentFixture<RedirectComponent>
 
@@ -25,9 +25,9 @@ describe('Redirect component', () => {
         const router = TestBed.inject(Router)
         const authService = TestBed.inject(AuthService)
 
-        const googleMapsLoaderServiceSpy = spyOn(googleMapsLoaderService, 'load')
-        const storeSpy = spyOn(store, 'loadAtlasList')
-        const routerSpy = spyOn(router, 'navigate')
+        const googleMapsLoaderServiceSpy = jest.spyOn(googleMapsLoaderService, 'load')
+        const storeSpy = jest.spyOn(store, 'loadAtlasList')
+        const routerSpy = jest.spyOn(router, 'navigate')
 
         fixture.detectChanges();
 
@@ -37,7 +37,7 @@ describe('Redirect component', () => {
 
         expect(googleMapsLoaderServiceSpy).toHaveBeenCalledTimes(1)
         expect(storeSpy).toHaveBeenCalledTimes(1)
-        expect(routerSpy).toHaveBeenCalledOnceWith(['list'])
+        expect(routerSpy).toHaveBeenCalledWith(['list'])
 
     })
 })

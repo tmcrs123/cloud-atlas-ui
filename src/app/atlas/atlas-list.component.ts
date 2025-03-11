@@ -15,6 +15,7 @@ import { AuthService } from '../auth/auth.service';
 import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
 import { NoItemsComponent } from '../shared/ui/no-items/no-items.component';
 import { environment } from '../../environments/environment';
+import { EnvironmentVariablesService } from '../shared/services/environment-variables.service';
 
 @Component({
   selector: 'app-atlas-list',
@@ -44,6 +45,7 @@ export class AtlasListComponent {
   protected datePipe = inject(DatePipe);
   protected router = inject(Router);
   protected store = inject(AppStore);
+  protected env = inject(EnvironmentVariablesService);
 
   // Controls
   protected searchAtlasFormControl = new FormControl<string>('');
@@ -62,7 +64,7 @@ export class AtlasListComponent {
   protected addAtlasFormControlStatusChangesSignal = toSignal(this.addAtlasFormControl.statusChanges.pipe(startWith('INVALID')));
   protected deleteAtlasFormControlStatusChangesSignal = toSignal(this.deleteAtlasFormControl.statusChanges.pipe(startWith('INVALID')));
   protected atlasList: Signal<Atlas[]> = signal([]);
-  protected canAddAtlas = this.store.canAddAtlas;
+  protected canAddAtlas = computed(() => (Object.values(this.store.atlasList()).length < Number.parseInt(this.env.getEnvironmentValue('mapsLimit'))))
   protected dropdownConfig = computed(() => {
     const baseConfig: DropdownConfig = {
       options: [],
@@ -120,7 +122,7 @@ export class AtlasListComponent {
   constructor() {
     effect(() => {
       if (!this.canAddAtlas()) {
-        this.banner.setMessage({ message: `You have reached the limit of ${environment.mapsLimit}  maps 🗻`, type: 'info' });
+        this.banner.setMessage({ message: `You have reached the limit of ${this.env.getEnvironmentValue('mapsLimit')}  maps 🗻`, type: 'info' });
       }
     });
   }

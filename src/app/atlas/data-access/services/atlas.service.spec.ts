@@ -1,13 +1,13 @@
-import { TestBed } from '@angular/core/testing';
-import { AtlasService } from './atlas.service';
-import { testingModuleBaseConfig } from '../../../../test/config/config';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { AuthService } from '../../../auth/auth.service';
+import { TestBed } from '@angular/core/testing';
+import { AtlasService } from './atlas.service';
+import { EnvironmentVariablesService } from '../../../shared/services/environment-variables.service';
 
 describe('AtlasService', () => {
   let service: AtlasService;
   let http: HttpClient
+  let env: EnvironmentVariablesService
 
   beforeEach(() => {
     TestBed.configureTestingModule(
@@ -18,6 +18,9 @@ describe('AtlasService', () => {
     ).compileComponents()
     service = TestBed.inject(AtlasService);
     http = TestBed.inject(HttpClient);
+    env = TestBed.inject(EnvironmentVariablesService)
+
+    jest.spyOn(env, 'getEnvironmentValue').mockReturnValue('http://localhost:3000')
   });
 
   it('should be created', () => {
@@ -26,7 +29,7 @@ describe('AtlasService', () => {
 
   it('invokes createAtlas with correct endpoint and data', () => {
 
-    const httpSpy = spyOn(http, 'post');
+    const httpSpy = jest.spyOn(http, 'post');
 
     service.createAtlas({ atlasId: '1234' })
 
@@ -35,7 +38,7 @@ describe('AtlasService', () => {
 
   it('invokes load atlas list with correct endpoint and data', () => {
 
-    const httpSpy = spyOn(http, 'get');
+    const httpSpy = jest.spyOn(http, 'get');
 
     service.loadAtlasList()
 
@@ -44,7 +47,7 @@ describe('AtlasService', () => {
 
   it('invokes get atlas with correct endpoint and data', () => {
 
-    const httpSpy = spyOn(http, 'get');
+    const httpSpy = jest.spyOn(http, 'get');
 
     service.getAtlas('12345')
 
@@ -53,7 +56,7 @@ describe('AtlasService', () => {
 
   it('invokes update atlas with correct endpoint and data', () => {
 
-    const httpSpy = spyOn(http, 'put');
+    const httpSpy = jest.spyOn(http, 'put');
 
     service.updateAtlas('1234', {})
 
@@ -62,7 +65,7 @@ describe('AtlasService', () => {
 
   it('invokes delete atlas with correct endpoint and data', () => {
 
-    const httpSpy = spyOn(http, 'delete');
+    const httpSpy = jest.spyOn(http, 'delete');
 
     service.deleteAtlas('1234')
 

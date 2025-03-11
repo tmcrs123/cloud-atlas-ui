@@ -22,10 +22,10 @@ describe('Marker component', () => {
   it('loads marker from store on init', () => {
     const store = TestBed.inject(AppStore);
     store.loadAtlasList()
-    const loadMarkersSpy = spyOn(store, 'loadMarkers')
+    const loadMarkersSpy = jest.spyOn(store, 'loadMarkers')
 
     fixture.detectChanges()
 
-    expect(loadMarkersSpy).toHaveBeenCalledOnceWith({ atlasId: '42' })
+    expect(loadMarkersSpy).toHaveBeenCalledWith({ atlasId: '42' })
   })
 })

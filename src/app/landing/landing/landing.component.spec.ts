@@ -35,8 +35,8 @@ describe('Landing Page', () => {
     //setup
     (authService as MockAuthService).setIsAuthenticated(true);
 
-    const routerSpy = spyOn(router, 'navigate')
-    const authSpy = spyOn(authService, 'login')
+    const routerSpy = jest.spyOn(router, 'navigate')
+    const authSpy = jest.spyOn(authService, 'login')
     const anchor = fixture.nativeElement.querySelector('#navigate') as HTMLAnchorElement;
 
     //Act
@@ -51,7 +51,7 @@ describe('Landing Page', () => {
     //setup
     (authService as MockAuthService).setIsAuthenticated(false);
 
-    const authSpy = spyOn(authService, 'login')
+    const authSpy = jest.spyOn(authService, 'login')
     const anchor = fixture.nativeElement.querySelector('#navigate') as HTMLAnchorElement;
 
     //Act

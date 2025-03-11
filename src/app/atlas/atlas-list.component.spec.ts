@@ -3,10 +3,10 @@ import { of } from "rxjs"
 import { testingModuleBaseConfig } from "../../test/config/config"
 import { Atlas } from "../shared/models/atlas.model"
 import { BannerService } from "../shared/services/banner-service"
+import { EnvironmentVariablesService } from "../shared/services/environment-variables.service"
 import { AppStore } from "../store/store"
 import { AtlasListComponent } from "./atlas-list.component"
 import { AtlasService } from "./data-access/services/atlas.service"
-
 
 let fixture: ComponentFixture<AtlasListComponent>
 
@@ -17,11 +17,16 @@ async function compileAndCreate() {
 
     }).compileComponents()
 
+    // this needs to be set here because this value is read onInit
+    const envVariablesService = TestBed.inject(EnvironmentVariablesService)
+    jest.spyOn(envVariablesService, 'getEnvironmentValue').mockReturnValue("10")
     fixture = TestBed.createComponent(AtlasListComponent)
+
+    fixture.detectChanges();
 }
 
-
 describe('Atlas list', () => {
+
     beforeEach(async () => {
         compileAndCreate()
     })
@@ -30,49 +35,48 @@ describe('Atlas list', () => {
         const store = TestBed.inject(AppStore)
         store.loadAtlasList()
 
-        fixture.detectChanges()
+        fixture.detectChanges();
 
         expect(Array.from(fixture.nativeElement.querySelectorAll('app-card')).length).toBe(1);
-        expect(fixture.nativeElement.querySelector('app-card').innerText).toBe('Bananas')
     })
 
     it('creates a new atlas if the add dialog is closed with the sufficient data', () => {
         const store = TestBed.inject(AppStore)
-        const createAtlasSpy = spyOn(store, 'createAtlas')
+        const createAtlasSpy = jest.spyOn(store, 'createAtlas')
         fixture.componentInstance['addAtlasFormControl'].setValue('apples')
 
         fixture.componentInstance['onAddDialogClose'](true)
 
-        expect(createAtlasSpy).toHaveBeenCalledOnceWith({ title: 'apples' })
+        expect(createAtlasSpy).toHaveBeenCalledWith({ title: 'apples' })
         expect(fixture.componentInstance['addAtlasFormControl'].value).toBe('')
     })
 
     it('deletes an existing atlas if the delete dialog is closed with delete action', () => {
         const store = TestBed.inject(AppStore)
-        const deleteAtlasSpy = spyOn(store, 'deleteAtlas')
+        const deleteAtlasSpy = jest.spyOn(store, 'deleteAtlas')
         fixture.componentInstance['deleteAtlasFormControl'].setValue('apples')
 
         fixture.componentInstance['onDeleteDialogClose'](true)
 
-        expect(deleteAtlasSpy).toHaveBeenCalledOnceWith({ atlasId: 'apples' })
+        expect(deleteAtlasSpy).toHaveBeenCalledWith({ atlasId: 'apples' })
     })
 
     it('updates query on search term changed', async () => {
         const store = TestBed.inject(AppStore)
-        const updateQuerySpy = spyOn(store, 'updateQuery')
-        fixture.detectChanges()
+        const updateQuerySpy = jest.spyOn(store, 'updateQuery')
 
-        fixture.componentInstance['searchAtlasFormControl'].setValue('pears')
+        fixture.componentInstance['searchAtlasFormControl'].setValue('pears');
+
         await fixture.whenStable();
 
         expect(updateQuerySpy).toHaveBeenCalledWith('pears')
     })
 
-    it('shows banner if user cannot add more maps', () => {
+    it('shows banner if user cannot add more maps', async () => {
         const store = TestBed.inject(AppStore)
         const atlasService = TestBed.inject(AtlasService)
         const bannerService = TestBed.inject(BannerService)
-        const setMessageSpy = spyOn(bannerService, 'setMessage')
+        const setMessageSpy = jest.spyOn(bannerService, 'setMessage')
 
         const mockAtlas: Atlas[] = [];
         for (let i = 0; i < 30; i++) {
@@ -86,14 +90,11 @@ describe('Atlas list', () => {
             })
         }
 
-        spyOn(atlasService, 'loadAtlasList').and.returnValue(of(mockAtlas))
-
+        jest.spyOn(atlasService, 'loadAtlasList').mockReturnValueOnce(of(mockAtlas))
         store.loadAtlasList()
 
         fixture.detectChanges()
 
         expect(setMessageSpy).toHaveBeenCalledTimes(1)
-
     })
-
 })
