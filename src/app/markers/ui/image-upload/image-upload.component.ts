@@ -1,10 +1,10 @@
 import { Component, computed, effect, inject, input, linkedSignal } from '@angular/core';
 import { bufferCount, catchError, from, map, mergeMap, Observable, tap, throwError } from 'rxjs';
-import { environment } from '../../../../environments/environment.js';
-import { ImagesService } from '../../../images/data-access/images-service.js';
-import { BannerService } from '../../../shared/services/banner-service.js';
+import { environment } from '../../../../environments/environment';
+import { ImagesService } from '../../../images/data-access/images-service';
+import { BannerService } from '../../../shared/services/banner-service';
 import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component';
-import { AppStore } from '../../../store/store.js';
+import { AppStore } from '../../../store/store';
 import { NgIf } from '@angular/common';
 
 @Component({
@@ -21,11 +21,13 @@ export class ImageUploadComponent {
   // signals
   atlasId = input('');
   buttonConfig = input<ButtonConfig>();
+  isDesktop = input(false);
   markerId = input('');
   canAddImages = computed(() => {
     return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < Number.parseInt(environment.imagesLimit);
   });
   markerCurrentImageCount = computed(() => this.store.getImagesForMarker(this.atlasId(), this.markerId())().length);
+  dataTestId = computed(() => `file-upload-${this.isDesktop() ? 'desktop' : 'mobile'}`)
   addNewImageButtonConfig = linkedSignal<ButtonConfig>(() => {
     return {
       text: 'Add new image',

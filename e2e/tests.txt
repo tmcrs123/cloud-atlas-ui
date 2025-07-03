@@ -1,0 +1,6 @@
+
+google maps
+
+assert click when card moves map
+assert marker text shows the correct header
+assert going forward/back does not move map

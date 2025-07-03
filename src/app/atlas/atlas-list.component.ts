@@ -4,16 +4,17 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 import type { Atlas } from '../shared/models/atlas.model';
-import { BannerService } from '../shared/services/banner-service.js';
+import { BannerService } from '../shared/services/banner-service';
+import { EnvironmentVariablesService } from '../shared/services/environment-variables.service';
+import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
 import { CardComponent } from '../shared/ui/card/card.component';
 import { type CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/dialog.component';
 import { DropdownComponent, type DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
-import { SelectComponent } from '../shared/ui/select/select.component';
-import { AppStore } from '../store/store.js';
-import { AuthService } from '../auth/auth.service';
-import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
 import { NoItemsComponent } from '../shared/ui/no-items/no-items.component';
+import { SelectComponent } from '../shared/ui/select/select.component';
+import { AppStore } from '../store/store';
 
 @Component({
   selector: 'app-atlas-list',
@@ -43,6 +44,7 @@ export class AtlasListComponent {
   protected datePipe = inject(DatePipe);
   protected router = inject(Router);
   protected store = inject(AppStore);
+  protected env = inject(EnvironmentVariablesService);
 
   // Controls
   protected searchAtlasFormControl = new FormControl<string>('');
@@ -61,7 +63,7 @@ export class AtlasListComponent {
   protected addAtlasFormControlStatusChangesSignal = toSignal(this.addAtlasFormControl.statusChanges.pipe(startWith('INVALID')));
   protected deleteAtlasFormControlStatusChangesSignal = toSignal(this.deleteAtlasFormControl.statusChanges.pipe(startWith('INVALID')));
   protected atlasList: Signal<Atlas[]> = signal([]);
-  protected canAddAtlas = this.store.canAddMaps;
+  protected canAddAtlas = computed(() => (Object.values(this.store.atlasList()).length < Number.parseInt(this.env.getEnvironmentValue('mapsLimit'))))
   protected dropdownConfig = computed(() => {
     const baseConfig: DropdownConfig = {
       options: [],
@@ -117,16 +119,17 @@ export class AtlasListComponent {
   );
 
   constructor() {
-    this.handleSearchControlChanges$.subscribe((v) => this.store.updateQuery(v));
     effect(() => {
       if (!this.canAddAtlas()) {
-        this.banner.setMessage({ message: 'You have reached the limit of 25 maps 🗻', type: 'info' });
+        this.banner.setMessage({ message: `You have reached the limit of ${this.env.getEnvironmentValue('mapsLimit')}  maps 🗻`, type: 'info' });
       }
     });
   }
 
   ngOnInit() {
-    // this.store.loadAtlasList();
+    this.handleSearchControlChanges$.subscribe((v) => {
+      this.store.updateQuery(v)
+    });
     this.atlasList = this.store.filteredMaps;
   }
 

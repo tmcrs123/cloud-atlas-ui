@@ -1,4 +1,4 @@
-import { environment } from '../../../environments/environment.js';
+import { environment } from '../../../environments/environment';
 
 export const COGNITO_URLS = [
   `https://cognito-idp.${environment.region}.amazonaws.com/${environment.userPoolId}/.well-known/openid-configuration`,

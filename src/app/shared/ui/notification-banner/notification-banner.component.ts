@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { BannerService } from '../../services/banner-service.js';
+import { BannerService } from '../../services/banner-service';
 
 @Component({
   selector: 'app-notification-banner',

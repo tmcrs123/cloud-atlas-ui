@@ -19,4 +19,5 @@
     "titleBar.inactiveForeground": "#15202b99"
   },
   "peacock.color": "#4aad6b",
+  "biome.enabled": false
 }

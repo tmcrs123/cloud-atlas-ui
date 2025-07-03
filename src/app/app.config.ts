@@ -10,7 +10,7 @@ import { MockAuthService } from './auth/mock-auth.service';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { LoaderInterceptor } from './shared/interceptors/loader.interceptor';
 import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
-import { isEnvironment } from './shared/utils/is-env.js';
+import { isEnvironment } from './shared/utils/is-env';
 import { AuthService } from './auth/auth.service';
 import { AwsAuthService } from './auth/aws-auth.service';
 

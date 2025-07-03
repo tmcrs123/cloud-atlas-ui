@@ -1,0 +1,19 @@
+<p class="dots">Fetching your images</p>
+<div class="images-container mb-2" #imagesContainer>
+  @for (image of groupedImages(); track image.id) {
+
+  <div class="relative mb-5">
+    <app-dropdown [config]="dropdownConfig" class="absolute left-1 top-1"
+      (optionSelected)="optionSelected.emit({optionIndex: $event, imageIndex: $index})"></app-dropdown>
+    <app-button [config]="displayCaptionButtonConfig" class="absolute left-10 top-1"
+      (btnClick)="btnClick.emit($index)"></app-button>
+
+    <img [src]="image.url" [alt]="image.legend" (load)="imageLoaded(image.id)" (click)="onImageClicked($index, $event)"
+      (keydown.enter)="onImageClicked($index, $event)" #img />
+  </div>
+  }
+</div>
+
+<app-lightbox [open]="isLightboxOpen()" (close)="onClose()" (updateIndex)="updateFocusedImageIndex($event)"
+  [url]="groupedImages()[focusedImageIndex].url">
+</app-lightbox>

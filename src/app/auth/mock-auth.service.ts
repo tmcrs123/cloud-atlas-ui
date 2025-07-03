@@ -3,12 +3,12 @@ import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { type Observable, of } from 'rxjs';
 import type { LoginResponse } from 'angular-auth-oidc-client';
-import { GoogleMapsLoaderService } from '../shared/services/google-maps-api.service';
+import { GoogleMapsAPIService } from '../shared/services/google-maps-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class MockAuthService extends AuthService {
   private router = inject(Router);
-  private googleMapsLoader = inject(GoogleMapsLoaderService);
+  private googleMapsLoader = inject(GoogleMapsAPIService);
 
   constructor() {
     super();
@@ -28,13 +28,17 @@ export class MockAuthService extends AuthService {
     });
   }
 
+  setIsAuthenticated(isAuthenticated: boolean): void {
+    this.isAuthenticated.set(isAuthenticated)
+  }
+
   login(): void {
     this.isAuthenticated.set(true);
-    this.router.navigateByUrl('/redirect');
+    this.router.navigate(['redirect']);
   }
 
   logout(): void {
     this.isAuthenticated.set(false);
-    this.router.navigateByUrl('/');
+    this.router.navigate(['/']);
   }
 }

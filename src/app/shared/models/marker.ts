@@ -1,4 +1,4 @@
-import type { MarkerImage } from './marker-image.js';
+import type { MarkerImage } from './marker-image';
 
 export type Marker = {
   markerId: string;

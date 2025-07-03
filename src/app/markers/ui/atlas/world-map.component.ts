@@ -1,26 +1,34 @@
 import { CommonModule, DatePipe } from '@angular/common'
-import { Component, DestroyRef, Injector, type WritableSignal, computed, inject, linkedSignal, signal, viewChild } from '@angular/core'
+import { Component, DestroyRef, Injector, type WritableSignal, computed, effect, inject, signal, viewChild } from '@angular/core'
 import { outputToObservable, takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { GoogleMap, GoogleMapsModule, MapGeocoder, MapInfoWindow } from '@angular/google-maps'
 import { ActivatedRoute, Router } from '@angular/router'
 import { debounceTime, defer, distinctUntilChanged, filter, map, startWith, switchMap, take, tap } from 'rxjs'
-import { environment } from '../../../../environments/environment.js'
-import type { Atlas } from '../../../shared/models/atlas.model.js'
-import { BannerService } from '../../../shared/services/banner-service.js'
-import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component.js'
-import { CardComponent } from '../../../shared/ui/card/card.component.js'
-import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component.js'
-import { AppStore, type MapOptions } from '../../../store/store.js'
-import { ADD_BUTTON_CONFIG, GO_BACK_BUTTON_CONFIG, GO_BACK_MOBILE_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG } from './world-map.component.config.js'
+import { environment } from '../../../../environments/environment'
+import type { Atlas } from '../../../shared/models/atlas.model'
+import { BannerService } from '../../../shared/services/banner-service'
+import { ButtonComponent, type ButtonConfig } from '../../../shared/ui/button/button.component'
+import { CardComponent } from '../../../shared/ui/card/card.component'
+import { type CustomDialogConfig, DialogComponent } from '../../../shared/ui/dialog/dialog.component'
+import { AppStore, type MapOptions } from '../../../store/store'
+import { ADD_BUTTON_CONFIG, GO_BACK_BUTTON_CONFIG, GO_BACK_MOBILE_BUTTON_CONFIG, INFO_WINDOW_OPTIONS, MOVE_BUTTON_CONFIG } from './world-map.component.config'
 
 type MapMode = 'loading' | 'add' | 'move'
 
 @Component({
-  selector: 'app-world-map',
-  imports: [GoogleMapsModule, MapInfoWindow, DialogComponent, ReactiveFormsModule, CardComponent, ButtonComponent, CommonModule],
+  selector: "app-world-map",
+  imports: [
+    GoogleMapsModule,
+    MapInfoWindow,
+    DialogComponent,
+    ReactiveFormsModule,
+    CardComponent,
+    ButtonComponent,
+    CommonModule,
+  ],
   providers: [DatePipe],
-  templateUrl: './world-map.component.html',
+  templateUrl: "./world-map.component.html",
   styles: [
     `
       :host {
@@ -70,40 +78,7 @@ export class WorldMapComponent {
   protected mapMode: WritableSignal<MapMode> = signal('loading')
   protected addButtonConfig = signal(ADD_BUTTON_CONFIG)
   protected moveButtonConfig = signal(MOVE_BUTTON_CONFIG)
-
-  protected mapOptions = linkedSignal<MapMode, MapOptions>({
-    source: this.mapMode,
-    computation: (source, previous) => {
-      switch (source) {
-        case 'loading':
-          return this.store.worldMapState()
-        case 'move': {
-          const options: MapOptions = {
-            ...previous?.value,
-            draggableCursor: 'grab',
-            draggingCursor: 'grab',
-            zoom: previous?.value.zoom as MapOptions['zoom'],
-            center: previous?.value.center as MapOptions['center'],
-          }
-          return options
-        }
-        case 'add': {
-          const options: MapOptions = {
-            ...previous?.value,
-            draggableCursor: 'crosshair',
-            draggingCursor: 'grab',
-            zoom: previous?.value.zoom as MapOptions['zoom'],
-            center: previous?.value.center as MapOptions['center'],
-          }
-          return options
-        }
-        default: {
-          return this.store.worldMapState()
-        }
-      }
-    },
-  })
-
+  protected mapOptions = this.store.worldMapState()
   protected canOpenAddMarkerDialog = computed(() => this.mapMode() === 'add')
   protected lastLatLngClicked = signal<google.maps.LatLng | null>(null)
   protected atlasMarkers = computed(() =>
@@ -154,8 +129,8 @@ export class WorldMapComponent {
       take(1),
       filter(() => this.markers().length > 0),
       tap(() => {
-        this.googleMapRef().googleMap?.setZoom(this.store.worldMapState().zoom)
-        this.googleMapRef().googleMap?.setCenter(this.store.worldMapState().center)
+        this.googleMapRef().googleMap?.setZoom(this.store.worldMapState().zoom!)
+        this.googleMapRef().googleMap?.setCenter(this.store.worldMapState().center!)
       }),
     ),
   )
@@ -186,6 +161,16 @@ export class WorldMapComponent {
     ),
   )
 
+  constructor() {
+    effect(() => {
+      if (this.mapMode() === 'add') {
+        this.googleMapRef().googleMap?.setOptions({ draggableCursor: 'crosshair', draggingCursor: 'crosshair' })
+      } else if (this.mapMode() === 'move') {
+        this.googleMapRef().googleMap?.setOptions({ draggableCursor: 'grab', draggingCursor: 'grab' })
+      }
+    })
+  }
+
   ngOnInit() {
     this.clearFormControlOnDialogClose$.subscribe()
     this.atlas = this.store.getAtlasById(this.atlasId)
@@ -201,7 +186,7 @@ export class WorldMapComponent {
 
   ngOnDestroy() {
     this.store.setWorldMapState({
-      ...this.mapOptions(),
+      ...this.mapOptions,
       zoom: this.googleMapRef().getZoom() as number,
       center: {
         lat: this.googleMapRef().googleMap?.getCenter()?.lat() as number,
