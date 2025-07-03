@@ -4,18 +4,17 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 import type { Atlas } from '../shared/models/atlas.model';
 import { BannerService } from '../shared/services/banner-service';
+import { EnvironmentVariablesService } from '../shared/services/environment-variables.service';
+import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
 import { CardComponent } from '../shared/ui/card/card.component';
 import { type CustomDialogConfig, DialogComponent } from '../shared/ui/dialog/dialog.component';
 import { DropdownComponent, type DropdownConfig } from '../shared/ui/dropdown/dropdown.component';
+import { NoItemsComponent } from '../shared/ui/no-items/no-items.component';
 import { SelectComponent } from '../shared/ui/select/select.component';
 import { AppStore } from '../store/store';
-import { AuthService } from '../auth/auth.service';
-import { ButtonComponent, type ButtonConfig } from '../shared/ui/button/button.component';
-import { NoItemsComponent } from '../shared/ui/no-items/no-items.component';
-import { environment } from '../../environments/environment';
-import { EnvironmentVariablesService } from '../shared/services/environment-variables.service';
 
 @Component({
   selector: 'app-atlas-list',

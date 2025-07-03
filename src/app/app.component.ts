@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
-import { environment } from '../environments/environment';
+import { EnvironmentVariablesService } from './shared/services/environment-variables.service';
 import { LoaderService } from './shared/services/loader.service';
-import { BannerComponent } from './shared/ui/notification-banner/notification-banner.component';
 import { NavbarComponent } from './shared/ui/navbar/navbar.component';
+import { BannerComponent } from './shared/ui/notification-banner/notification-banner.component';
 import { AppStore } from './store/store';
 
 @Component({
@@ -15,7 +15,8 @@ import { AppStore } from './store/store';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = `Cloud-Atlas=${environment.environmentName}`;
-
   loaderService = inject(LoaderService);
+  env = inject(EnvironmentVariablesService);
+
+  title = `Cloud-Atlas=${this.env.getEnvironmentValue('environmentName')}`;
 }
