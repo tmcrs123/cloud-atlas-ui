@@ -16,14 +16,14 @@ describe('appStore', () => {
 
     it('returns correct maps count', () => {
         const store = TestBed.inject(AppStore)
-        store.createAtlas({ atlasId: '123', owner: 'someone' })
+        store.createAtlas({ id: '123', owner: 'someone' })
 
         expect(store.mapsCount()).toBe(1)
     })
 
     it('createAtlas', () => {
         const store = TestBed.inject(AppStore)
-        store.createAtlas({ atlasId: '123', owner: 'someone' })
+        store.createAtlas({ id: '123', owner: 'someone' })
 
         expect(Object.keys(store.atlasList()).length).toBe(1)
     })

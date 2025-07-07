@@ -1,7 +1,7 @@
 import type { MarkerImage } from './marker-image';
 
 export type Marker = {
-  markerId: string;
+  id: string;
   atlasId: string;
   startDate?: string;
   endDate?: string;
@@ -11,8 +11,9 @@ export type Marker = {
   title: string;
   journal?: string;
   coordinates: {
-    lng: number;
-    lat: number;
+    longitude: number;
+    latitude: number;
   };
+  markerPhotosLink: string;
   images: MarkerImage[];
 };

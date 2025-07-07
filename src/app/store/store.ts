@@ -79,7 +79,7 @@ export const AppStore = signalStore(
                 patchState(store, (state) => {
                   const currentAtlasList = structuredClone(state.atlasList)
                   newAtlas.markers = []
-                  currentAtlasList[newAtlas.atlasId] = newAtlas
+                  currentAtlasList[newAtlas.id] = newAtlas
 
                   return {
                     ...state,
@@ -102,9 +102,9 @@ export const AppStore = signalStore(
                 patchState(store, (state) => {
                   const updatedAtlasList: { [atlasId: string]: Atlas } = {}
 
-                  for (const loadedMap of loadedAtlasList) {
-                    loadedMap.markers = []
-                    updatedAtlasList[loadedMap.atlasId] = loadedMap
+                  for (const loadedAtlas of loadedAtlasList) {
+                    loadedAtlas.markers = []
+                    updatedAtlasList[loadedAtlas.id] = loadedAtlas
                   }
                   return { ...state, atlasList: updatedAtlasList }
                 })
@@ -144,7 +144,7 @@ export const AppStore = signalStore(
               next: (updatedAtlas) => {
                 patchState(store, (state) => {
                   const currentAtlasList = structuredClone(state.atlasList)
-                  currentAtlasList[updatedAtlas.atlasId] = updatedAtlas
+                  currentAtlasList[updatedAtlas.id] = updatedAtlas
 
                   return {
                     ...state,
@@ -169,7 +169,7 @@ export const AppStore = signalStore(
     createMarkers: rxMethod<{ atlasId: string; data: Partial<Marker>[] }>(
       pipe(
         switchMap((params) => {
-          return markersService.createMarkers(params.atlasId, params.data).pipe(
+          return markersService.createMarkers(params.data).pipe(
             tapResponse({
               next: (newMarkers) => {
                 patchState(store, (state) => {
@@ -259,7 +259,7 @@ export const AppStore = signalStore(
                   const updatedState = structuredClone(state.atlasList)
 
                   const oldMarkers = updatedState[params.atlasId].markers
-                  const filteredMarkers = oldMarkers.filter((marker) => !params.markerIds.includes(marker.markerId))
+                  const filteredMarkers = oldMarkers.filter((marker) => !params.markerIds.includes(marker.id))
 
                   updatedState[params.atlasId].markers = filteredMarkers
 
@@ -423,7 +423,7 @@ export const AppStore = signalStore(
 )
 
 const findMarkerIndex = (state: AppState, atlasId: string, markerId: string) => {
-  const markerIndex = state.atlasList[atlasId].markers.findIndex((marker) => marker.markerId === markerId)
+  const markerIndex = state.atlasList[atlasId].markers.findIndex((marker) => marker.id === markerId)
 
   if (markerIndex === -1) throw new Error('Marker not found')
 

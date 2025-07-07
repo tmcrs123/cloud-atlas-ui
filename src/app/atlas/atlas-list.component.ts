@@ -134,7 +134,7 @@ export class AtlasListComponent {
   }
 
   fetchSelectOptions() {
-    return this.atlasList().map((m) => ({ title: m.title, value: m.atlasId }));
+    return this.atlasList().map((m) => ({ title: m.title, value: m.id }));
   }
 
   protected navigateToMarkers(atlasId: string) {

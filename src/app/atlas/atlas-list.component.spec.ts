@@ -81,7 +81,7 @@ describe('Atlas list', () => {
         const mockAtlas: Atlas[] = [];
         for (let i = 0; i < 30; i++) {
             mockAtlas.push({
-                atlasId: Math.random().toString(36).substring(2, 15),
+                id: Math.random().toString(36).substring(2, 15),
                 createdAt: '',
                 markersCount: 10,
                 title: Math.random().toString(36).substring(2, 15),

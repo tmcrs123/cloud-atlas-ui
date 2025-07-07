@@ -121,7 +121,7 @@ export class MarkerComponent {
   }
 
   protected fetchSelectOptions() {
-    return this.markers().map((m) => ({ title: m.title, value: m.markerId }));
+    return this.markers().map((m) => ({ title: m.title, value: m.id }));
   }
 
   protected onDropdownOptionSelected(optionIndex: number) {

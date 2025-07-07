@@ -1,7 +1,7 @@
 import type { Marker } from './marker';
 
 export type Atlas = {
-  atlasId: string;
+  id: string;
   owner?: string;
   coverPhoto?: string;
   createdAt: string;

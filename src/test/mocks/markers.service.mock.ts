@@ -8,14 +8,14 @@ import { Marker } from "../../app/shared/models/marker";
 export class MarkersServiceMock {
 
   private marker: Marker = {
-    markerId: "1231",
+    id: "1231",
     atlasId: "42",
     createdAt: "1231231",
     imageCount: 1,
     title: "Bananas",
     coordinates: {
-      lng: 0,
-      lat: 0
+      longitude: 0,
+      latitude: 0
     },
     images: []
   }
