@@ -25,14 +25,14 @@ export class ImagesService {
     return this.http.delete<void>(this.buildApiEndpoint(`images/${atlasId}/${markerId}/${imageId}`), { body: {} });
   }
 
-  public createPresignedURL(atlasId: string, markerId: string): Observable<string> {
-    return this.http.post<string>(this.buildApiEndpoint('photos/presigned-url'), { body: { atlasId, markerId } });
+  public createPresignedURL(atlasId: string, markerId: string, filename: string): Observable<string> {
+    return this.http.post<string>(this.buildApiEndpoint('photos/presigned-url'), { atlasId, markerId, filename });
   }
 
-  public pushToS3Bucket(presignedUrl: string, formData: FormData) {
+  public pushToS3Bucket(presignedUrl: string, file: File) {
     const context = new HttpContext().set(ERROR_MESSAGE, 'Failed to save images 🔥');
 
-    return this.http.put<MarkerImage>(presignedUrl, isEnvironment('local') ? null : formData, { context });
+    return this.http.put<MarkerImage>(presignedUrl, file, { context, headers: { "Content-Type": file.type} });
   }
 
   public poolForMarkerImages(atlasId: string, markerId: string, requiredCount: number): Observable<MarkerImage[]> {

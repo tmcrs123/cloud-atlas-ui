@@ -105,16 +105,12 @@ export class ImageUploadComponent {
   }
 
   private pushFileToS3(file: File) {
-    return this.imagesService.createPresignedURL(this.atlasId(), this.markerId()).pipe(
+    const extension = file.name.split('.').pop() || '';
+    const name = `${crypto.randomUUID()}.${extension}`;
+    
+    return this.imagesService.createPresignedURL(this.atlasId(), this.markerId(), name).pipe(
       mergeMap((url) => {
-        const formData = new FormData();
-
-        // for (const key of Object.keys(res.fields)) {
-        //   formData.append(key, res.fields[key]);
-        // }
-
-        formData.append('file', file);
-        return this.imagesService.pushToS3Bucket(url, formData);
+        return this.imagesService.pushToS3Bucket(url, file);
       }),
       catchError((_error) => throwError(() => `Error sending ${file.name} to images repository`))
     );
