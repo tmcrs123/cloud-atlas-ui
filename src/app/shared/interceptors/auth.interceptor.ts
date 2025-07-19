@@ -9,10 +9,16 @@ export function AuthInterceptor(request: HttpRequest<unknown>, next: HttpHandler
   if (COGNITO_URLS.includes(request.url)) return next(request.clone());
   if (S3_URLS.includes(request.url)) return next(request.clone());
 
+  var a = S3_URLS.map(url => request.url.includes(url));
+
+  var b = a.find(x => x);
+
+  if (b) return next(request.clone());
+
   return next(
     request.clone({
       setHeaders: {
-        customauthheader: `${authService.idToken}`,
+        Authorization: `${authService.idToken}`,
       },
     })
   );

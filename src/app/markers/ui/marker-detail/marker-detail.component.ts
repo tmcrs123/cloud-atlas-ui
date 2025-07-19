@@ -146,7 +146,7 @@ export class MarkerDetailComponent {
       data: {
         atlasId: this.atlasId,
         markerId: this.markerId,
-        imageId: this.images()[this.focusedImagedIndex()!].imageId,
+        id: this.images()[this.focusedImagedIndex()!].id,
         legend: this.addCaptionFormControl.value,
       },
     })
@@ -163,7 +163,7 @@ export class MarkerDetailComponent {
     this.store.deleteImage({
       atlasId: this.atlasId,
       markerId: this.markerId,
-      imageId: this.images()[this.focusedImagedIndex()!].imageId,
+      imageId: this.images()[this.focusedImagedIndex()!].id,
     })
 
     this.isDeleteDialogOpen.set(!this.isDeleteDialogOpen())

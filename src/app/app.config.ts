@@ -27,7 +27,8 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: AuthService,
-      useFactory: () => (isEnvironment('local') || isEnvironment('demo') ? new MockAuthService() : new AwsAuthService()),
+      useClass: AwsAuthService
+      // useFactory: () => (isEnvironment('local') || isEnvironment('demo') ? new MockAuthService() : new AwsAuthService()),
     },
   ],
 };

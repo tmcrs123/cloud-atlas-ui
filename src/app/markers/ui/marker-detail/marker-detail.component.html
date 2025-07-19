@@ -69,7 +69,7 @@
 
   <app-dialog #displayCaptionDialog [dialogConfig]="displayCaptionDialogConfig" [open]="isDisplayCaptionDialogOpen()"
     (dialogClosed)="isDisplayCaptionDialogOpen.set(!this.isDisplayCaptionDialogOpen())">
-    <i>{{ focusedImagedIndex() !== null && images()[focusedImagedIndex()!].legend }}</i>
+    <i>{{ focusedImagedIndex() !== null && (images()[focusedImagedIndex()!].legend || 'This image does not have a caption yet.') }}</i>
   </app-dialog>
 
   <app-dialog #addJournalEntryDialog [dialogConfig]="addJournalEntryDialogConfig" [open]="isJournalEntryDialogOpen()"

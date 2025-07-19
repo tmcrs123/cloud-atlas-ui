@@ -12,7 +12,7 @@
       <app-card [cardConfig]="{
           title: item.title,
           subtitle: datePipe.transform(item.createdAt, 'EEEE, MMMM d, y') || ''
-        }" (enterPressed)="navigateToMarkers(item.atlasId)" (click)="navigateToMarkers(item.atlasId)"></app-card>
+        }" (enterPressed)="navigateToMarkers(item.id)" (click)="navigateToMarkers(item.id)"></app-card>
       }
     </div>
     @if (atlasList().length === 0) {

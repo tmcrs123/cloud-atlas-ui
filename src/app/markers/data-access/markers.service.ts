@@ -11,23 +11,22 @@ export class MarkersService {
   private readonly http = inject(HttpClient);
   private readonly env = inject(EnvironmentVariablesService);
 
-  public createMarkers(atlasId: string, data: Partial<Marker>[]): Observable<Marker[]> {
-    return this.http.post<Marker[]>(this.buildApiEndpoint(`markers/${atlasId}`), {
-      markers: data,
-    });
+  public createMarkers(data: Partial<Marker>[]): Observable<Marker[]> {
+    return this.http.post<Marker[]>(this.buildApiEndpoint(`marker`), data);
   }
 
   public getMarkersForAtlas(atlasId: string): Observable<Marker[]> {
-    return this.http.get<Marker[]>(this.buildApiEndpoint(`markers/${atlasId}`));
+    return this.http.get<Marker[]>(this.buildApiEndpoint(`marker`), { params: { atlasId } });
   }
   public deleteMarkers(atlasId: string, markerIds: string[]): Observable<void> {
-    return this.http.delete<void>(this.buildApiEndpoint(`markers/${atlasId}`), {
-      body: { markerIds },
-      params: { all: 0 },
+    const body = markerIds.map(id => ({ markerId: id, atlasId }))[0];
+
+    return this.http.delete<void>(this.buildApiEndpoint('marker'), {
+      body,
     });
   }
-  public updateMarker(atlasId: string, markerId: string, data: Partial<Marker>) {
-    return this.http.put<Marker>(this.buildApiEndpoint(`markers/${atlasId}/${markerId}`), data);
+  public updateMarker(markerId: string, data: Partial<Marker>) {
+    return this.http.put<Marker>(this.buildApiEndpoint(`marker`), {markerId, title: data.title, journal: data.journal, latitude: data.latitude, longitude: data.longitude});
   }
 
   private buildApiEndpoint(path: string) {

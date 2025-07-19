@@ -31,7 +31,7 @@ describe('AtlasService', () => {
 
     const httpSpy = jest.spyOn(http, 'post');
 
-    service.createAtlas({ atlasId: '1234' })
+    service.createAtlas({ id: '1234' })
 
     expect(httpSpy).toHaveBeenCalledWith('http://localhost:3000/atlas', { atlasId: '1234' })
   })

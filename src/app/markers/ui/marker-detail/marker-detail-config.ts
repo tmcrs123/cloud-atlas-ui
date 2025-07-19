@@ -1,7 +1,6 @@
 import type { ButtonConfig } from '../../../shared/ui/button/button.component';
 import type { CustomDialogConfig } from '../../../shared/ui/dialog/dialog.component';
 import type { DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component';
-import type { LightboxConfig } from '../../../shared/ui/lightbox/lightbox.component';
 
 export const DELETE_DIALOG_CONFIG: CustomDialogConfig = {
   title: 'Delete image',

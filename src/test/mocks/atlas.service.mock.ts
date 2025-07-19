@@ -8,7 +8,7 @@ import { Atlas } from '../../app/shared/models/atlas.model';
 })
 export class AtlasServiceMock {
   private atlas: Atlas = {
-    atlasId: '42',
+    id: '42',
     createdAt: '',
     markersCount: 10,
     title: 'Bananas',

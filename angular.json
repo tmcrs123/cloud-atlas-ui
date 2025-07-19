@@ -73,7 +73,7 @@
               "fileReplacements": [
                 {
                   "replace": "./src/environments/environment.ts",
-                  "with": "./src/environments/environment.test.ts"
+                  "with": "./src/environments/environment.local.ts"
                 }
               ]
             },
@@ -131,5 +131,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
