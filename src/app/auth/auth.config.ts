@@ -4,15 +4,15 @@ import { environment } from '../../environments/environment';
 export const authConfig: PassedInitialConfig = {
   config: {
     authority: environment.authority,
-    authWellknownEndpointUrl: environment.authWellknownEndpointUrl,
-    redirectUrl: environment.redirectUrl,
+    authWellknownEndpointUrl: environment.auth_well_known_endpoint_url,
+    redirectUrl: environment.redirect_url,
     logLevel: LogLevel.Debug,
-    postLogoutRedirectUri: environment.postLogoutRedirectUri,
-    clientId: environment.clientId,
+    postLogoutRedirectUri: environment.post_logout_redirect_uri,
+    clientId: environment.client_id,
     scope: 'openid',
     responseType: 'code',
     silentRenew: false,
     useRefreshToken: false,
-    renewTimeBeforeTokenExpiresInSeconds: Number.parseInt(environment.renewTimeBeforeTokenExpiresInSeconds),
+    renewTimeBeforeTokenExpiresInSeconds: Number.parseInt(environment.renew_time_before_token_expires_in_seconds),
   },
 };

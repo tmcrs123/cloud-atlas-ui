@@ -24,7 +24,7 @@ export class ImageUploadComponent {
   isDesktop = input(false);
   markerId = input('');
   canAddImages = computed(() => {
-    return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < Number.parseInt(environment.imagesLimit);
+    return this.store.getImagesForMarker(this.atlasId(), this.markerId())().length < Number.parseInt(environment.images_limit);
   });
   markerCurrentImageCount = computed(() => this.store.getImagesForMarker(this.atlasId(), this.markerId())().length);
   dataTestId = computed(() => `file-upload-${this.isDesktop() ? 'desktop' : 'mobile'}`)
@@ -56,8 +56,8 @@ export class ImageUploadComponent {
       throw new Error('Only 10 files allowed per upload. ⚠');
     }
     const imageCount = this.store.getImagesForMarker(this.atlasId(), this.markerId())().length;
-    if (imageCount + files.length > Number.parseInt(environment.imagesLimit)) {
-      throw new Error(`You are going over the limit of 25 images. You can only upload ${Number.parseInt(environment.imagesLimit) - imageCount} more images🗻`);
+    if (imageCount + files.length > Number.parseInt(environment.images_limit)) {
+      throw new Error(`You are going over the limit of 25 images. You can only upload ${Number.parseInt(environment.images_limit) - imageCount} more images🗻`);
     }
 
     from(files)
@@ -144,7 +144,7 @@ export class ImageUploadComponent {
   };
 
   private validFileSize(file: File) {
-    if (file.size > Number.parseInt(environment.maxImageFileSizeInBytes)) return false;
+    if (file.size > Number.parseInt(environment.max_image_file_size_in_bytes)) return false;
     return true;
   }
 

@@ -40,7 +40,7 @@ const initialState: AppState = {
     zoom: 5,
     fullscreenControl: true,
     minZoom: 3,
-    mapId: environment.googleMapId,
+    mapId: environment.google_map_id,
   },
 }
 

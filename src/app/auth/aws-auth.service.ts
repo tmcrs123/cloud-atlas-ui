@@ -28,7 +28,7 @@ export class AwsAuthService extends AuthService {
   private tokenExpirationTimer = new Subject<void>();
   private tokenExpirationTimer$ = this.tokenExpirationTimer.asObservable().pipe(
     switchMap(() =>
-      timer(Number.parseInt(environment.idTokenExpirationInMiliseconds)).pipe(
+      timer(Number.parseInt(environment.id_token_expiration_in_miliseconds)).pipe(
         take(1),
         tap(() => {
           this.bannerService.setMessage({ message: 'Your session has expired. For security reasons you will be logged out 🔒', type: 'info' });
@@ -61,6 +61,6 @@ export class AwsAuthService extends AuthService {
       window.sessionStorage.clear();
     }
 
-    window.location.href = `https://${environment.appName}.auth.${environment.region}.amazoncognito.com/logout?client_id=${environment.clientId}&logout_uri=${environment.logoutUri}`;
+    window.location.href = `https://${environment.app_name}.auth.${environment.region}.amazoncognito.com/logout?client_id=${environment.client_id}&logout_uri=${environment.logout_uri}`;
   }
 }

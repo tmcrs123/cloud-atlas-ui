@@ -64,7 +64,7 @@ export class MarkerComponent {
   protected markers: Signal<Marker[]> = signal([]);
   protected showAtlas = signal(false);
   protected canAddMarkers = computed(() => {
-    return this.markers().length < Number.parseInt(environment.markersLimit);
+    return this.markers().length < Number.parseInt(environment.markers_limit);
   });
   protected deleteMarkerDialogConfig = computed<CustomDialogConfig>(() => {
     return {
@@ -104,7 +104,7 @@ export class MarkerComponent {
   constructor() {
     effect(() => {
       if (!this.canAddMarkers()) {
-        this.banner.setMessage({ message: `You have reached the limit of ${environment.markersLimit} markers for this map 🗻`, type: 'info' });
+        this.banner.setMessage({ message: `You have reached the limit of ${environment.markers_limit} markers for this map 🗻`, type: 'info' });
       }
     });
   }

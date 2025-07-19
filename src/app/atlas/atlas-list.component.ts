@@ -63,7 +63,7 @@ export class AtlasListComponent {
   protected addAtlasFormControlStatusChangesSignal = toSignal(this.addAtlasFormControl.statusChanges.pipe(startWith('INVALID')));
   protected deleteAtlasFormControlStatusChangesSignal = toSignal(this.deleteAtlasFormControl.statusChanges.pipe(startWith('INVALID')));
   protected atlasList: Signal<Atlas[]> = signal([]);
-  protected canAddAtlas = computed(() => (Object.values(this.store.atlasList()).length < Number.parseInt(this.env.getEnvironmentValue('mapsLimit'))))
+  protected canAddAtlas = computed(() => (Object.values(this.store.atlasList()).length < Number.parseInt(this.env.getEnvironmentValue('maps_limit'))))
   protected dropdownConfig = computed(() => {
     const baseConfig: DropdownConfig = {
       options: [],
@@ -121,7 +121,7 @@ export class AtlasListComponent {
   constructor() {
     effect(() => {
       if (!this.canAddAtlas()) {
-        this.banner.setMessage({ message: `You have reached the limit of ${this.env.getEnvironmentValue('mapsLimit')}  maps 🗻`, type: 'info' });
+        this.banner.setMessage({ message: `You have reached the limit of ${this.env.getEnvironmentValue('maps_limit')}  maps 🗻`, type: 'info' });
       }
     });
   }

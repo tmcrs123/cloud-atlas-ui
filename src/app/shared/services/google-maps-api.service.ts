@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: "root" })
 export class GoogleMapsAPIService {
 	private loader = new Loader({
-		apiKey: `${environment.googleMapsApiKey}`,
+		apiKey: `${environment.google_maps_api_key}`,
 	});
 
 	public async load() {

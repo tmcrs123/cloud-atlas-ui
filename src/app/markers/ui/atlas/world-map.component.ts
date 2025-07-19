@@ -142,7 +142,7 @@ export class WorldMapComponent {
     this.googleMapRef().idle.pipe(
       take(1),
       switchMap(() => toObservable(this.markers, { injector: this.injector })),
-      filter((markers) => markers.length >= Number.parseInt(environment.markersLimit)),
+      filter((markers) => markers.length >= Number.parseInt(environment.markers_limit)),
       tap(() => {
         this.mapMode.set('move')
         this.addButtonConfig.update((state) => ({ ...state, disabled: true }))
