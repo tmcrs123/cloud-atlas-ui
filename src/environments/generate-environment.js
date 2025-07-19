@@ -3,7 +3,7 @@ function generateEnvironment() {
   const fileName = "environment.ts";
 
   const content = `export const environment = {
-    environment:"${process.env.environment_name}",
+    environment:"${process.env.environment}",
     app_name:"${process.env.app_name}",
     api_endpoint:"${process.env.api_endpoint}",
     authority:"${process.env.authority}",
