@@ -13,6 +13,6 @@ export const authConfig: PassedInitialConfig = {
     responseType: 'code',
     silentRenew: false,
     useRefreshToken: false,
-    renewTimeBeforeTokenExpiresInSeconds: Number.parseInt(environment.renew_time_before_token_expires_in_seconds),
+    renewTimeBeforeTokenExpiresInSeconds: Number.parseInt(environment.renew_time_before_token_expires),
   },
 };

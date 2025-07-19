@@ -7,7 +7,7 @@ export const environment = {
   redirect_url: 'http://localhost:4200/redirect',
   post_logout_redirect_uri: 'http://localhost:4200',
   client_id: 'nrdg20ifdcabn2nceqrn2c0c9',
-  renew_time_before_token_expires_in_seconds: '30',
+  renew_time_before_token_expires: '30',
   region: 'us-east-1',
   user_pool_id: 'us-east-1_VCtnNvota',
   max_image_file_size_in_bytes: '20971520',

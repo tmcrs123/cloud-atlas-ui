@@ -7,7 +7,7 @@ export const environment = {
   redirect_url: '',
   post_logout_redirect_uri: '',
   client_id: '',
-  renew_time_before_token_expires_in_seconds: '',
+  renew_time_before_token_expires: '',
   region: '',
   user_pool_id: '',
   max_image_file_size_in_bytes: '',
