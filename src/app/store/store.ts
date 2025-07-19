@@ -79,6 +79,7 @@ export const AppStore = signalStore(
                 patchState(store, (state) => {
                   const currentAtlasList = structuredClone(state.atlasList)
                   newAtlas.markers = []
+                  newAtlas.title = data.title ? data.title : '',
                   currentAtlasList[newAtlas.id] = newAtlas
 
                   return {
@@ -174,8 +175,12 @@ export const AppStore = signalStore(
               next: (newMarkers) => {
                 patchState(store, (state) => {
                   //populate images
-                  const newMarkersWithImages = newMarkers.map((marker) => {
+                  const newMarkersWithImages = newMarkers.map((marker,index) => {
                     marker.images = []
+                    marker.atlasId = params.atlasId
+                    marker.title = params.data[index].title ?? ''
+                    marker.latitude = params.data[index].latitude ?? 0
+                    marker.longitude = params.data[index].longitude ?? 0
                     return marker
                   })
 
@@ -229,7 +234,7 @@ export const AppStore = signalStore(
     }>(
       pipe(
         switchMap((params) => {
-          return markersService.updateMarker(params.atlasId, params.markerId, params.data).pipe(
+          return markersService.updateMarker(params.markerId, params.data).pipe(
             tapResponse({
               next: (updatedMarker) => {
                 patchState(store, (state) => {
@@ -355,7 +360,7 @@ export const AppStore = signalStore(
                   const updatedState = structuredClone(state.atlasList)
 
                   const oldMarkerIndex = findMarkerIndex(state, params.data.atlasId!, params.data.markerId!)
-                  const oldImageIndex = findImageIndex(state, params.data.atlasId!, params.data.markerId!, params.data.imageId!)
+                  const oldImageIndex = findImageIndex(state, params.data.atlasId!, params.data.markerId!, params.data.id!)
 
                   const oldImage = store.atlasList()[params.data.atlasId!].markers[oldMarkerIndex].images[oldImageIndex]
 
@@ -432,7 +437,7 @@ const findMarkerIndex = (state: AppState, atlasId: string, markerId: string) => 
 
 const findImageIndex = (state: AppState, atlasId: string, markerId: string, imageId: string) => {
   const markerIndex = findMarkerIndex(state, atlasId, markerId)
-  const imageIndex = state.atlasList[atlasId].markers[markerIndex].images.findIndex((img) => img.imageId === imageId)
+  const imageIndex = state.atlasList[atlasId].markers[markerIndex].images.findIndex((img) => img.id === imageId)
 
   if (imageIndex === -1) throw new Error('Marker not found')
 

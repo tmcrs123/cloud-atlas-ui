@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, input, output, Renderer2, signal, viewChild, viewChildren, ViewContainerRef } from '@angular/core';
+import { Component, computed, effect, EffectRef, ElementRef, inject, input, output, Renderer2, signal, viewChild, viewChildren, ViewContainerRef } from '@angular/core';
 import { MarkerImage } from '../../../shared/models/marker-image';
 import { ButtonComponent, ButtonConfig } from '../../../shared/ui/button/button.component';
 import { DropdownComponent, DropdownConfig } from '../../../shared/ui/dropdown/dropdown.component';
@@ -17,6 +17,7 @@ export class ImageGalleryComponent {
     protected readonly displayCaptionButtonConfig: ButtonConfig = DISPLAY_CAPTION_BUTTON_CONFIG
     protected readonly dropdownConfig: DropdownConfig = DROPDOWN_CONFIG
     protected focusedImageIndex = 0
+    private effectExecuted = false;
 
     protected btnClick = output<number>()
     protected optionSelected = output<{ optionIndex: number, imageIndex: number }>()
@@ -35,6 +36,7 @@ export class ImageGalleryComponent {
     public hostVcr = inject(ViewContainerRef)
 
     protected groupedImages = computed(() => {
+        console.log('grouped images signal...');
         return this.groupImages(this.images()).map(details => {
             if (this.isMobile()) {
                 return { url: details.mobile, id: details.id, legend: details.legend }
@@ -45,20 +47,36 @@ export class ImageGalleryComponent {
     })
 
     constructor() {
+
         effect(() => {
-            if (Object.values(this.loadedImages()).length === this.groupedImages().length) {
+            console.log('images', this.images());
+        })
+
+        effect(() => {
+            console.log('loaded', this.loadedImages());
+        })
+
+        effect(() => {
+            console.log('grouped', this.groupedImages());
+        })
+
+        effect(() => {
+            if (!this.effectExecuted && Object.values(this.loadedImages()).length === this.groupedImages().length) {
                 this.renderer.removeChild(this.hostVcr.element.nativeElement, this.hostVcr.element.nativeElement.firstChild)
                 this.imagesContainerElement().nativeElement.style.opacity = '1'
+                this.effectExecuted = true;
             }
         })
     }
 
     protected imageLoaded(id: string) {
+        console.log('image ', id, 'loaded');
         this.loadedImages.update(s => ({ ...s, [id]: true }))
     }
 
     isMobile(): boolean {
-        return window.matchMedia('(max-width: 768px)').matches;
+        return true;
+        // return window.matchMedia('(max-width: 768px)').matches;
     }
 
     updateFocusedImageIndex(action: 'next' | 'prev') {
@@ -82,10 +100,10 @@ export class ImageGalleryComponent {
     private groupImages(images: MarkerImage[]) {
         const grouped: { [key: string]: { id: string, desktop: string, mobile: string, legend?: string } } = {}
 
-        images.forEach(({ imageId, url, legend }) => {
+        images.forEach(({ id: id, url, legend }) => {
             // Remove "_desktop" or "_mobile" from the imageId to get the base ID
-            const baseId = imageId.replace(/_(desktop|mobile)$/, '');
-            const type = imageId.includes('_desktop') ? 'desktop' : 'mobile';
+            const baseId = id.replace(/_(desktop|mobile)$/, '');
+            const type = id.includes('_desktop') ? 'desktop' : 'mobile';
 
             if (!grouped[baseId]) {
                 grouped[baseId] = { id: baseId, desktop: '', mobile: '', legend };

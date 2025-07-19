@@ -3,5 +3,5 @@ export interface MarkerImage {
   legend?: string;
   atlasId: string;
   markerId: string;
-  imageId: string;
+  id: string;
 }

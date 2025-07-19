@@ -10,10 +10,8 @@ export type Marker = {
   imageCount: number;
   title: string;
   journal?: string;
-  coordinates: {
-    longitude: number;
-    latitude: number;
-  };
+  longitude: number;
+  latitude: number;
   markerPhotosLink: string;
   images: MarkerImage[];
 };

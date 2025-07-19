@@ -25,8 +25,8 @@ export class MarkersService {
       body,
     });
   }
-  public updateMarker(atlasId: string, markerId: string, data: Partial<Marker>) {
-    return this.http.put<Marker>(this.buildApiEndpoint(`marker/${atlasId}/${markerId}`), data);
+  public updateMarker(markerId: string, data: Partial<Marker>) {
+    return this.http.put<Marker>(this.buildApiEndpoint(`marker`), {markerId, title: data.title, journal: data.journal, latitude: data.latitude, longitude: data.longitude});
   }
 
   private buildApiEndpoint(path: string) {

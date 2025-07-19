@@ -87,8 +87,8 @@ export class WorldMapComponent {
         ({
           title: marker.title,
           position: {
-            lat: marker.coordinates.latitude,
-            lng: marker.coordinates.longitude,
+            lat: marker.latitude,
+            lng: marker.longitude,
           },
         }) as google.maps.marker.AdvancedMarkerElementOptions,
     ),
@@ -207,10 +207,8 @@ export class WorldMapComponent {
         {
           atlasId: this.atlasId,
           title: this.newMarkerNameFormControl.value,
-          coordinates: {
-            latitude: this.lastLatLngClicked()?.lat() as number,
-            longitude: this.lastLatLngClicked()?.lng() as number,
-          },
+          latitude: this.lastLatLngClicked()?.lat() as number,
+          longitude: this.lastLatLngClicked()?.lng() as number,
         },
       ],
     })

@@ -11,7 +11,7 @@ export class ImagesServiceMock {
     atlasId: '12312',
     url: 'whatever.com',
     markerId: '234ger',
-    imageId: 'gerg3242'
+    id: 'gerg3242'
   }
   public getImagesForMarker(atlasId: string, markerId: string): Observable<MarkerImage[]> {
 
