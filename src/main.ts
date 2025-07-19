@@ -5,7 +5,7 @@ import { AwsRum, AwsRumConfig } from 'aws-rum-web';
 import { environment } from './environments/environment';
 
 
-if (environment.environment_name === 'production') {
+if (environment.environment === 'production') {
   try {
     const config: AwsRumConfig = {
       signing: false,

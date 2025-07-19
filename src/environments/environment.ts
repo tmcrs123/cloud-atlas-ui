@@ -1,5 +1,5 @@
 export const environment = {
-  environment_name: '',
+  environment: '',
   app_name: '',
   api_endpoint: '',
   authority: '',

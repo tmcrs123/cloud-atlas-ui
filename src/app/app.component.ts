@@ -18,5 +18,5 @@ export class AppComponent {
   loaderService = inject(LoaderService);
   env = inject(EnvironmentVariablesService);
 
-  title = `Cloud-Atlas=${this.env.getEnvironmentValue('environment_name')}`;
+  title = `Cloud-Atlas=${this.env.getEnvironmentValue('environment')}`;
 }
