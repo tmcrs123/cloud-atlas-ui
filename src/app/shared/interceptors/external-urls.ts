@@ -7,4 +7,4 @@ export const COGNITO_URLS = [
   `https://cloud-atlas-${environment.environment}.auth.${environment.region}.amazoncognito.com/oauth2/userInfo`,
 ];
 
-export const S3_URLS = [`https://cloud-atlas-${environment.environment}-dump.s3.${environment.region}.amazonaws.com/`];
+export const S3_URL = `https://cloud-atlas-${environment.environment}-dump.s3.${environment.region}.amazonaws.com/`;
