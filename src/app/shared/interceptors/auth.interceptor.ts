@@ -6,15 +6,18 @@ import { AuthService } from '../../auth/auth.service';
 export function AuthInterceptor(request: HttpRequest<unknown>, next: HttpHandlerFn) {
   const authService = inject(AuthService);
 
-  if (COGNITO_URLS.includes(request.url)) return next(request.clone());
-  if (S3_URLS.includes(request.url)) return next(request.clone());
+  console.log('request.url is:' , request.url);
 
-  // var a = S3_URLS.map(url => request.url.includes(url));
+  if (COGNITO_URLS.includes(request.url)) {
+    console.log('url matched cognito');
+    return next(request.clone());
+  }
+  if (S3_URLS.includes(request.url)) {
+    console.log('url matched s3');
+    return next(request.clone());
+  }
 
-  // var b = a.find(x => x);
-
-  // if (b) return next(request.clone());
-
+  console.log('adding token...', authService.idToken);
   return next(
     request.clone({
       setHeaders: {
