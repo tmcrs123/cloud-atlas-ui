@@ -1,6 +1,6 @@
 import type { HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { COGNITO_URLS, S3_URLS } from './external-urls';
+import { COGNITO_URLS, S3_URL } from './external-urls';
 import { AuthService } from '../../auth/auth.service';
 
 export function AuthInterceptor(request: HttpRequest<unknown>, next: HttpHandlerFn) {
@@ -12,7 +12,7 @@ export function AuthInterceptor(request: HttpRequest<unknown>, next: HttpHandler
     console.log('url matched cognito');
     return next(request.clone());
   }
-  if (S3_URLS.includes(request.url)) {
+  if (request.url.includes(S3_URL)) {
     console.log('url matched s3');
     return next(request.clone());
   }
