@@ -3,7 +3,7 @@ export const environment = {
   app_name: 'cloud-atlas-demo',
   api_endpoint: 'https://q306hjshu2.execute-api.us-east-1.amazonaws.com/demo',
   authority: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_VCtnNvota',
-  auth_well_known_endpoint_url: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_VCtnNvota/.well-known/jwks.json',
+  auth_well_known_endpoint_url: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_VCtnNvota',
   redirect_url: 'http://localhost:4200/redirect',
   post_logout_redirect_uri: 'http://localhost:4200',
   client_id: 'nrdg20ifdcabn2nceqrn2c0c9',
