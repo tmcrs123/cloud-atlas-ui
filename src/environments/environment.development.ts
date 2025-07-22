@@ -1,7 +1,7 @@
 export const environment = {
   environment: 'demo',
   app_name: 'cloud-atlas-dev',
-  api_endpoint: 'https://q306hjshu2.execute-api.us-east-1.amazonaws.com/demo',
+  api_endpoint: 'https://q306hjshu2.execute-api.us-east-1.amazonaws.com/demo/api',
   authority: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_VCtnNvota',
   auth_well_known_endpoint_url: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_VCtnNvota',
   redirect_url: 'http://localhost:4200/redirect',
