@@ -33,7 +33,7 @@
             "scripts": []
           },
           "configurations": {
-            "production": {
+            "prod": {
               "budgets": [
                 {
                   "type": "initial",
@@ -83,13 +83,13 @@
               "sourceMap": true
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "prod"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": {
-              "buildTarget": "cloud-atlas-ui:build:production"
+            "prod": {
+              "buildTarget": "cloud-atlas-ui:build:prod"
             },
             "development": {
               "buildTarget": "cloud-atlas-ui:build:development"
