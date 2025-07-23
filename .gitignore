@@ -53,3 +53,7 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+src/environments/environment.demo.ts
+src/environments/environment.prod.ts
+src/environments/environment.development.ts
