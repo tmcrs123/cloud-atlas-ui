@@ -6,7 +6,7 @@ export const authConfig: PassedInitialConfig = {
     authority: environment.authority,
     authWellknownEndpointUrl: environment.auth_well_known_endpoint_url,
     redirectUrl: environment.redirect_url,
-    logLevel: LogLevel.Debug,
+    logLevel: LogLevel.None,
     postLogoutRedirectUri: environment.post_logout_redirect_uri,
     clientId: environment.client_id,
     scope: 'openid',

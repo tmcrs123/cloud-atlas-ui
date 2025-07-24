@@ -36,7 +36,6 @@ export class ImageGalleryComponent {
     public hostVcr = inject(ViewContainerRef)
 
     protected groupedImages = computed(() => {
-        console.log('grouped images signal...');
         return this.groupImages(this.images()).map(details => {
             if (this.isMobile()) {
                 return { url: details.mobile, id: details.id, legend: details.legend }
@@ -47,19 +46,6 @@ export class ImageGalleryComponent {
     })
 
     constructor() {
-
-        effect(() => {
-            console.log('images', this.images());
-        })
-
-        effect(() => {
-            console.log('loaded', this.loadedImages());
-        })
-
-        effect(() => {
-            console.log('grouped', this.groupedImages());
-        })
-
         effect(() => {
             if (!this.effectExecuted && Object.values(this.loadedImages()).length === this.groupedImages().length) {
                 this.renderer.removeChild(this.hostVcr.element.nativeElement, this.hostVcr.element.nativeElement.firstChild)
@@ -70,7 +56,6 @@ export class ImageGalleryComponent {
     }
 
     protected imageLoaded(id: string) {
-        console.log('image ', id, 'loaded');
         this.loadedImages.update(s => ({ ...s, [id]: true }))
     }
 
